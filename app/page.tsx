@@ -1,7 +1,17 @@
 "use client";
 import { WebAuthnUtils } from "@/utils/webauthn";
 import { client, utils, parsers } from "@passwordless-id/webauthn";
-import { AuthenticationEncoded, RegistrationEncoded, RegisterOptions, AuthenticateOptions } from '@passwordless-id/webauthn/dist/esm/types'
+import {
+  AuthenticationEncoded,
+  RegistrationEncoded,
+  RegisterOptions,
+  AuthenticateOptions,
+} from "@passwordless-id/webauthn/dist/esm/types";
+import { encodeAbiParameters, Hex, keccak256, parseAbiParameters, toBytes, toHex } from "viem";
+
+function toHexString(byteArray: Uint8Array): Hex {
+  return "0x" + Array.from(byteArray, byte => ('0' + (byte & 0xFF).toString(16)).slice(-2)).join('') as Hex;
+}
 
 export default function Home() {
   const register = (
@@ -16,9 +26,17 @@ export default function Home() {
     );
   };
 
+  const authenticate = (
+    challenge: string,
+    keyid?: string[] | undefined,
+    options?: AuthenticateOptions
+  ): Promise<AuthenticationEncoded> => {
+    return client.authenticate(keyid ? keyid : [], challenge, options);
+  };
+
   const createPassKey = async () => {
     const payload = utils.randomChallenge();
-    const name = "imduchuyyy";
+    const name = "imduchuyyy3";
 
     const regData = await register(payload, name, {
       authenticatorType: "both",
@@ -30,28 +48,51 @@ export default function Home() {
       parsedData.credential.publicKey
     );
 
-    console.log(passkey)
+    console.log(passkey);
   };
 
   const signWithPasskey = async () => {
-    const message = "hello world";
-    const encoder = new TextEncoder();
-    const messageBuffer = encoder.encode(message);
+    const message = "0x74b1fa619a31e12d9a8e8349f0becc1ac1560a5b972db5d025bd27165b30858d";
+    const challenge = utils.toBase64url(toBytes(message)).replace(/=/g, "");
+    console.log(challenge)
+    const authData = await authenticate(
+      challenge,
+      [],
+      { userVerification: "required", authenticatorType: "both" }
+    );
+    console.log(authData)
+    const sig = WebAuthnUtils.getMessageSignature(authData.signature);
+    const clientDataJSON = new TextDecoder().decode(
+      utils.parseBase64url(authData.clientData)
+    );
+    const authenticatorData = new Uint8Array(
+      utils.parseBase64url(authData.authenticatorData)
+    );
+    const res = {
+      r: sig[0],
+      s: sig[1],
+      clientDataJSON,
+      authData: authenticatorData,
+    };
+    let encodedSig = encodeAbiParameters(parseAbiParameters('bytes, string, uint256, uint256, uint256, uint256'), [
+      toHex(res.authData),
+      res.clientDataJSON,
+      23n,
+      1n,
+      res.r as bigint,
+      res.s as bigint,
+    ])
 
-    // Generate the challenge based on the message
-    const challenge = new Uint8Array(messageBuffer);
+    console.log([
+      toHex(res.authData),
+      res.clientDataJSON,
+      23n,
+      1n,
+      res.r as bigint,
+      res.s as bigint,
+    ])
 
-    // Get the credential for signing
-    const assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge: challenge,
-        timeout: 60000,
-        userVerification: "preferred",
-        allowCredentials: [],
-      },
-    });
-
-    console.log(assertion);
+    console.log(encodedSig);
   };
 
   return (

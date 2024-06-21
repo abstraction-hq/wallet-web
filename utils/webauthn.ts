@@ -6,6 +6,11 @@ function shouldRemoveLeadingZero(bytes: Uint8Array): boolean {
     return bytes[0] === 0x0 && (bytes[1] & (1 << 7)) !== 0;
 }
 
+function uint8ArrayToBigInt(arr: Uint8Array): BigInt {
+    const hex = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+    return BigInt('0x' + hex);
+}
+
 export class WebAuthnUtils {
     static async getPublicKeyFromBytes(publicKeyBytes: string): Promise<BigInt[]> {
         const cap = {
@@ -43,8 +48,10 @@ export class WebAuthnUtils {
     
         // r and s values
         return [
-            BigInt("0x" + rBytes.toString()),
-            BigInt("0x" + sBytes.toString()),
+            uint8ArrayToBigInt(rBytes),
+            uint8ArrayToBigInt(sBytes),
+            // BigInt(rBytes.toString()),
+            // BigInt(sBytes.toString()),
         ];    
     }
 }
