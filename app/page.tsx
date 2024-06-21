@@ -1,4 +1,5 @@
 "use client";
+import { WebAuthnUtils } from "@/utils/webauthn";
 import { client, utils, parsers } from "@passwordless-id/webauthn";
 import { AuthenticationEncoded, RegistrationEncoded, RegisterOptions, AuthenticateOptions } from '@passwordless-id/webauthn/dist/esm/types'
 
@@ -25,19 +26,11 @@ export default function Home() {
     });
     const parsedData = parsers.parseRegistration(regData);
 
-    let pkey = await WebAuthnUtils.getPublicKeyFromBytes(
+    let passkey = await WebAuthnUtils.getPublicKeyFromBytes(
       parsedData.credential.publicKey
     );
-    return new PassKeyKeyPair(
-      parsedData.credential.id,
-      pkey[0],
-      pkey[1],
-      this,
-      name,
-      parsedData.authenticator.aaguid,
-      parsedData.authenticator.name,
-      Date.now()
-    );
+
+    console.log(passkey)
   };
 
   const signWithPasskey = async () => {

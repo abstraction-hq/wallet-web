@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@passwordless-id/webauthn": "^1.6.1",
+    "@peculiar/asn1-ecc": "^2.3.8",
+    "@peculiar/asn1-schema": "^2.3.8",
+    "base64url": "^3.0.1",
+    "elliptic": "^6.5.5",
     "next": "14.2.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "viem": "^2.16.0"
   },
   "devDependencies": {
     "@types/node": "^20",
