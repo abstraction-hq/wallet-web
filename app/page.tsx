@@ -54,7 +54,6 @@ export default function Home() {
   const signWithPasskey = async () => {
     const message = "0x74b1fa619a31e12d9a8e8349f0becc1ac1560a5b972db5d025bd27165b30858d";
     const challenge = utils.toBase64url(toBytes(message)).replace(/=/g, "");
-    console.log(challenge)
     const authData = await authenticate(
       challenge,
       [],
