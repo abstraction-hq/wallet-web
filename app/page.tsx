@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { client, parsers, utils } from "@passwordless-id/webauthn";
-import { Hex, createPublicClient, http, toBytes } from "viem";
+import { Hex, createPublicClient, hashMessage, http, toBytes } from "viem";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { WebAuthnUtils } from "@/utils/webauthn";
 import { CHAINS } from "@/constants/chain";
 import { handleUserOp } from "@/utils/bundler";
+import { computePasskeyModuleAddress, computeWalletAddress } from "@/utils/create2";
+import { WALLET_FACTORY } from "@/constants";
+import Factory from "@/abis/Factory.json";
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState<Hex>("0x");
@@ -14,13 +17,45 @@ export default function Home() {
 
   const [credentialId, setCredentialId] = useState<string>("");
   const [passkeyAccount, setPasskeyAccount] = useState<PasskeyAccount>(
-    new PasskeyAccount("", BigInt(0), BigInt(0))
+    new PasskeyAccount("0x", BigInt(0), BigInt(0))
   );
+
+  const test = async () => {
+    const ethClient = createPublicClient({
+      chain: CHAINS["testnet"],
+      transport: http()
+    })
+
+    const salt = hashMessage(passkeyName)
+
+    const computeWallet = computeWalletAddress(salt);
+    console.log(computeWallet)
+
+    const walletAddress = await ethClient.readContract({
+      address: WALLET_FACTORY,
+      abi: Factory.abi,
+      functionName: "getWalletAddress",
+      args: [hashMessage(passkeyName)],
+    })
+    console.log(walletAddress)
+
+    const account = new PasskeyAccount(
+      salt,
+      0n,
+      0n
+    );
+
+    console.log(account.getSender())
+
+    return
+
+  }
 
   const createPassKey = async () => {
     if (passkeyName.length === 0) {
       return;
     }
+
     const payload = utils.randomChallenge();
 
     const regData: RegistrationEncoded = await client.register(
@@ -37,28 +72,22 @@ export default function Home() {
       parsedData.credential.publicKey
     );
 
+    const ethClient = createPublicClient({
+      chain: CHAINS["testnet"],
+      transport: http()
+    })
+
     const account = new PasskeyAccount(
       parsedData.credential.id,
       passkey[0] as bigint,
       passkey[1] as bigint
     );
 
-    console.log(      
-      parsedData.credential.id,
-      passkey[0] as bigint,
-      passkey[1] as bigint
-    )
-
-    const ethClient = createPublicClient({
-      chain: CHAINS["testnet"],
-      transport: http()
-    })
-
     const [initWalletOp] = await account.sendTransactionOperation(
       ethClient,
       [
         {
-          target: "0x1a663E1d486996c55ac502a6BCfbd6cF836d63d5",
+          target: "0x49827013c5a9ac04136ba5576b0dd56408daef34",
           value: 0n,
           data: "0x",
         },
@@ -83,19 +112,28 @@ export default function Home() {
       BigInt(0),
       BigInt(0)
     );
+    setPasskeyAccount(account);
     setWalletAddress(account.getSender());
     setCredentialId(authData.credentialId);
   };
 
   const signWithPasskey = async () => {
-    const message =
-      "0x74b1fa619a31e12d9a8e8349f0becc1ac1560a5b972db5d025bd27165b30858d";
-    const challenge = utils.toBase64url(toBytes(message)).replace(/=/g, "");
-    const authData = await client.authenticate([], challenge, {
-      userVerification: "required",
-      authenticatorType: "both",
-    });
-    console.log(authData);
+    const ethClient = createPublicClient({
+      chain: CHAINS["testnet"],
+      transport: http()
+    })
+    const [initWalletOp] = await passkeyAccount.sendTransactionOperation(
+      ethClient,
+      [
+        {
+          target: "0x49827013c5a9ac04136ba5576b0dd56408daef34",
+          value: 0n,
+          data: "0x",
+        },
+      ]
+    );
+
+    await handleUserOp(initWalletOp);
   };
 
   return (

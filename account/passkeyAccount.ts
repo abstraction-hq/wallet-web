@@ -8,26 +8,21 @@ import { WALLET_FACTORY } from "@/constants";
 import Factory from "@/abis/Factory.json";
 
 export default class PasskeyAccount extends BaseAccount {
+  credentialId: string;
   singerAddress: Address;
   x: bigint;
   y: bigint;
 
-  constructor(credentialIs: string, x: bigint, y: bigint) {
-    const salt = hashMessage(credentialIs);
+  constructor(credentialId: string, x: bigint, y: bigint) {
+    const salt: Hex = hashMessage(credentialId)
     super(salt);
+    this.credentialId = credentialId;
     this.singerAddress = computePasskeyModuleAddress(salt);
     this.x = x
     this.y = y
   }
 
-  test = async () => {
-
-  }
-
   getInitCode = async (client: PublicClient): Promise<Hex> => {
-    if (this.initCode != undefined) {
-      return this.initCode;
-    }
     const sender = this.getSender();
     const walletCode: string | undefined = await client.getBytecode({
       address: sender,
@@ -61,9 +56,9 @@ export default class PasskeyAccount extends BaseAccount {
   };
 
   signMessage = async (message: any): Promise<Hex> => {
-    console.log(message)
-    const challenge = utils.toBase64url(toBytes(message)).replace(/=/g, "");
-    const authData = await this.authenticate(challenge, [], {
+    console.log("signing message", message)
+    const challenge = utils.toBase64url(toBytes(message));
+    const authData = await this.authenticate(challenge, [this.credentialId], {
       userVerification: "required",
       authenticatorType: "both",
     });
@@ -74,7 +69,7 @@ export default class PasskeyAccount extends BaseAccount {
     const authenticatorData = new Uint8Array(
       utils.parseBase64url(authData.authenticatorData)
     );
-    return encodeAbiParameters(
+    const res = encodeAbiParameters(
       parseAbiParameters("bytes, string, uint256, uint256, uint256, uint256"),
       [
         toHex(authenticatorData),
@@ -85,5 +80,9 @@ export default class PasskeyAccount extends BaseAccount {
         sig[1] as bigint,
       ]
     );
+
+    console.log("signature", res)
+
+    return res
   };
 }
