@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { client, parsers, utils } from "@passwordless-id/webauthn";
-import { Hex, createPublicClient, hashMessage, http, toBytes } from "viem";
+import { Address, Hex, createPublicClient, hashMessage, http, toBytes } from "viem";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { WebAuthnUtils } from "@/utils/webauthn";
@@ -19,6 +19,9 @@ export default function Home() {
   const [passkeyAccount, setPasskeyAccount] = useState<PasskeyAccount>(
     new PasskeyAccount("0x", BigInt(0), BigInt(0))
   );
+
+  const [receiver, setReceiver] = useState<Address | null>()
+  const [amount, setAmount] = useState<number>()
 
   const test = async () => {
     const ethClient = createPublicClient({
@@ -117,7 +120,7 @@ export default function Home() {
     setCredentialId(authData.credentialId);
   };
 
-  const signWithPasskey = async () => {
+  const sendToken = async () => {
     const ethClient = createPublicClient({
       chain: CHAINS["testnet"],
       transport: http()
@@ -126,8 +129,8 @@ export default function Home() {
       ethClient,
       [
         {
-          target: "0x49827013c5a9ac04136ba5576b0dd56408daef34",
-          value: 0n,
+          target: receiver,
+          value: BigInt(amount || 0),
           data: "0x",
         },
       ]
@@ -165,9 +168,23 @@ export default function Home() {
         <div className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
           Wallet Address: {walletAddress}
         </div>
+        <input
+          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+          type="text"
+          placeholder="Receiver"
+          onChange={(e) => setReceiver(e.target.value as Address)}
+          value={receiver as string}
+        />
+        <input
+          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+          type="number"
+          placeholder="Amount"
+          onChange={(e) => setAmount(Number(e.target.value))}
+          value={amount}
+        />
         <button
           className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          onClick={signWithPasskey}
+          onClick={sendToken}
         >
           Send Token
         </button>
