@@ -6,10 +6,7 @@ import {
 import {
   Address,
   Hex,
-  encodeAbiParameters,
   getContractAddress,
-  keccak256,
-  parseAbiParameters,
 } from "viem";
 
 export const computeWalletAddress = (salt: Hex): Address => {
@@ -21,10 +18,7 @@ export const computeWalletAddress = (salt: Hex): Address => {
   });
 };
 
-export const computePasskeyModuleAddress = (x: bigint, y: bigint): Address => {
-  const salt = keccak256(
-    encodeAbiParameters(parseAbiParameters("uint256, uint256"), [x, y])
-  );
+export const computePasskeyModuleAddress = (salt: Hex): Address => {
   return getContractAddress({
     bytecodeHash: PASSKEY_MODULE_CREATION_CODE_HASH,
     from: WALLET_FACTORY,

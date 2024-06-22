@@ -12,7 +12,6 @@ import {
 } from "viem";
 
 import Entrypoint from "@/abis/Entrypoint.json";
-import Factory from "@/abis/Factory.json";
 import Wallet from "@/abis/Wallet.json";
 
 import { ENTRY_POINT, WALLET_FACTORY } from "@/constants";
@@ -28,9 +27,9 @@ export const DEFAULT_USER_OP: UserOperation = {
   nonce: 0n,
   initCode: "0x",
   callData: "0x",
-  callGasLimit: 1000000n,
-  verificationGasLimit: 1000000n,
-  preVerificationGas: 800000n,
+  callGasLimit: 3000000n,
+  verificationGasLimit: 3000000n,
+  preVerificationGas: 3000000n,
   maxFeePerGas: 0n,
   maxPriorityFeePerGas: 0n,
   paymasterAndData: "0x",
@@ -42,10 +41,15 @@ export abstract class BaseAccount {
   initCode: Hex | undefined;
   nonceKey = 0n;
 
-  constructor() {}
+  salt: Hex
+
+  constructor(salt: Hex) {
+    this.salt = salt
+  }
 
   abstract getSignerAddress(): Address;
   abstract signMessage(message: any): Promise<Hex>;
+  abstract getInitCode(client: PublicClient): Promise<Hex>;
 
   private calculateUserOpHash = (userOp: UserOperation, chainId: number) => {
     const packed = encodeAbiParameters(
@@ -74,30 +78,6 @@ export abstract class BaseAccount {
     return keccak256(enc);
   };
 
-  private getInitCode = async (client: PublicClient): Promise<Hex> => {
-    if (this.initCode != undefined) {
-      return this.initCode;
-    }
-    const sender = this.getSender();
-    const walletCode: string | undefined = await client.getBytecode({
-      address: sender,
-    });
-    if (walletCode != undefined) {
-      this.initCode = "0x";
-    } else {
-      this.initCode = concat([
-        WALLET_FACTORY,
-        encodeFunctionData({
-          abi: Factory.abi,
-          functionName: "createWallet",
-          args: [this.getSignerAddress()],
-        }),
-      ]);
-    }
-
-    return this.initCode;
-  };
-
   async getNonce(client: PublicClient): Promise<bigint> {
     const ret = (await client.readContract({
       address: ENTRY_POINT,
@@ -115,7 +95,7 @@ export abstract class BaseAccount {
 
   getSender = (): Address => {
     if (this.address == zeroAddress) {
-      computeWalletAddress(keccak256(this.getSignerAddress()));
+      this.address = computeWalletAddress(this.salt);
     }
 
     return this.address;
