@@ -7,9 +7,7 @@ import PasskeyAccount from "@/account/passkeyAccount";
 import { WebAuthnUtils } from "@/utils/webauthn";
 import { CHAINS } from "@/constants/chain";
 import { handleUserOp } from "@/utils/bundler";
-import { computePasskeyModuleAddress, computeWalletAddress } from "@/utils/create2";
-import { WALLET_FACTORY } from "@/constants";
-import Factory from "@/abis/Factory.json";
+import { computeWalletAddress } from "@/utils/create2";
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState<Hex>("0x");
@@ -22,36 +20,16 @@ export default function Home() {
 
   const [receiver, setReceiver] = useState<Address | null>()
   const [amount, setAmount] = useState<number>()
+  
 
   const test = async () => {
-    const ethClient = createPublicClient({
-      chain: CHAINS["testnet"],
-      transport: http()
-    })
+    const credentialId = "kelQ7h3iXsP3Yf1pEODMUC1p4OI"
+    const salt = hashMessage(credentialId)
 
-    const salt = hashMessage(passkeyName)
+    console.log(salt)
 
-    const computeWallet = computeWalletAddress(salt);
-    console.log(computeWallet)
-
-    const walletAddress = await ethClient.readContract({
-      address: WALLET_FACTORY,
-      abi: Factory.abi,
-      functionName: "getWalletAddress",
-      args: [hashMessage(passkeyName)],
-    })
-    console.log(walletAddress)
-
-    const account = new PasskeyAccount(
-      salt,
-      0n,
-      0n
-    );
-
-    console.log(account.getSender())
-
-    return
-
+    const address = computeWalletAddress(salt)
+    console.log(address)
   }
 
   const createPassKey = async () => {
@@ -80,6 +58,13 @@ export default function Home() {
       transport: http()
     })
 
+    console.log(
+      parsedData.credential.id,
+      passkey[0] as bigint,
+      passkey[1] as bigint,
+      hashMessage(parsedData.credential.id)
+    )
+
     const account = new PasskeyAccount(
       parsedData.credential.id,
       passkey[0] as bigint,
@@ -90,14 +75,15 @@ export default function Home() {
       ethClient,
       [
         {
-          target: "0x49827013c5a9ac04136ba5576b0dd56408daef34",
+          target: account.getSender(),
           value: 0n,
-          data: "0x",
+          data: "",
         },
       ]
     );
 
-    await handleUserOp(initWalletOp);
+    const txHash = await handleUserOp(initWalletOp);
+    console.log(txHash);
 
     setPasskeyAccount(account);
     setWalletAddress(account.getSender());
@@ -131,7 +117,7 @@ export default function Home() {
         {
           target: receiver,
           value: BigInt(amount || 0),
-          data: "0x",
+          data: "",
         },
       ]
     );

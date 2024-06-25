@@ -6,6 +6,38 @@ import { AuthenticateOptions, AuthenticationEncoded } from "@passwordless-id/web
 import { WebAuthnUtils } from "@/utils/webauthn";
 import { WALLET_FACTORY } from "@/constants";
 import Factory from "@/abis/Factory.json";
+import WebAuthn from "@/abis/WebAuthn.json";
+
+const WebAuthnAuth = [{
+  components: [
+    {
+      name: 'authenticatorData',
+      type: 'bytes',
+    },
+    {
+      name: 'clientDataJSON',
+      type: 'string',
+    },
+    {
+      name: 'challengeIndex',
+      type: 'uint256',
+    },
+    {
+      name: 'typeIndex',
+      type: 'uint256',
+    },
+    {
+      name: 'r',
+      type: 'uint256',
+    },
+    {
+      name: 's',
+      type: 'uint256',
+    },
+  ],
+  name: 'webAuthnAuth',
+  type: 'tuple',
+}]
 
 export default class PasskeyAccount extends BaseAccount {
   credentialId: string;
@@ -70,15 +102,15 @@ export default class PasskeyAccount extends BaseAccount {
       utils.parseBase64url(authData.authenticatorData)
     );
     const res = encodeAbiParameters(
-      parseAbiParameters("bytes, string, uint256, uint256, uint256, uint256"),
-      [
-        toHex(authenticatorData),
+      WebAuthnAuth,
+      [{
+        authenticatorData: toHex(authenticatorData),
         clientDataJSON,
-        23n,
-        1n,
-        sig[0] as bigint,
-        sig[1] as bigint,
-      ]
+        challengeIndex: 23n,
+        typeIndex: 1n,
+        r: sig[0] as bigint,
+        s: sig[1] as bigint,
+      }]
     );
 
     console.log("signature", res)
