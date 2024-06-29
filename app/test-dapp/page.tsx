@@ -10,15 +10,14 @@ function App() {
   const [popup, setPopup] = React.useState<Window | null>(null);
   
   useEffect(() => {
-
-  })
-
-  function openPopup(): Window {
     window.addEventListener("message", (event) => {
       if (event.origin !== url) return;
 
       console.log("event", event);
     });
+  })
+
+  function openPopup(): Window {
     const left = (window.innerWidth - POPUP_WIDTH) / 2 + window.screenX;
     const top = (window.innerHeight - POPUP_HEIGHT) / 2 + window.screenY;
 
