@@ -63,7 +63,7 @@ function App() {
             </div>
           </div>
           <div className="relative w-[15.75rem] h-[5.75rem] mx-auto flex items-center justify-center">
-            <div className="text-base-1s text-left">
+            <div className="text-base-1s text-left mt-10">
               Connected Address
               <div className="relative">
                 <button className="group absolute top-0 left-0 bottom-0 z-1 w-12 pl-1 text-0">
@@ -80,7 +80,7 @@ function App() {
               </div>
 
               {isConnected && (
-                  <div className="flex justify-center w-full mt-3">
+                  <div className="flex justify-center w-full mt-5">
                     <button onClick={mintNFT} className="btn-secondary w-3/5 px-4">
                       Mint NFT
                     </button>
@@ -88,7 +88,7 @@ function App() {
               )}
             </div>
           </div>
-          <div className="flex justify-center w-full mt-6">
+          <div className="flex justify-center w-full mt-14">
             <button onClick={openPopup} className="btn-secondary w-1/2 px-4">
               Connect
             </button>
