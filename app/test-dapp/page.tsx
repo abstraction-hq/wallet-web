@@ -1,5 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
+import CurrencyFormat from "@/components/CurrencyFormat";
+import Percent from "@/components/Percent";
+import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
 
 const POPUP_WIDTH = 420;
 const POPUP_HEIGHT = 540;
@@ -48,16 +51,22 @@ function App() {
   }
 
   return (
-    <div>
-      <button onClick={openPopup}>Connect</button>
-      <div>Is connect: {isConnected ? "True": "False"}</div>
-      <div>Connected Address: {connectedAddress}</div>
-      {
-        isConnected && (
-          <button onClick={mintNFT}>Mint NFT</button>
-        )
-      }
-    </div>
+      <div className="card-sidebar">
+        <div className="mb-6 text-title-1s md:mb-4 md:text-[1.125rem]">
+          Is connect: {isConnected ? "True": "False"}
+        </div>
+        <div className="relative w-[15.75rem] h-[15.75rem] mx-auto">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-base-1s">
+            Connected Address: {connectedAddress}
+            {
+                  isConnected && (
+                    <button onClick={mintNFT}>Mint NFT</button>
+                  )
+                }
+          </div>
+        </div>
+        <button onClick={openPopup} className="btn-gray w-full mt-6">Connect</button>
+      </div>
   );
 }
 
