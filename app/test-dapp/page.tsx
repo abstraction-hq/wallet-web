@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
-import CurrencyFormat from "@/components/CurrencyFormat";
-import Percent from "@/components/Percent";
-import {Cell, Pie, PieChart, ResponsiveContainer} from "recharts";
+import Icon from "@/components/Icon";
+import Field from "@/components/Field";
 
 const POPUP_WIDTH = 420;
 const POPUP_HEIGHT = 540;
@@ -51,21 +50,39 @@ function App() {
   }
 
   return (
-      <div className="card-sidebar">
-        <div className="mb-6 text-title-1s md:mb-4 md:text-[1.125rem]">
-          Is connect: {isConnected ? "True": "False"}
-        </div>
-        <div className="relative w-[15.75rem] h-[15.75rem] mx-auto">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-base-1s">
-            Connected Address: {connectedAddress}
-            {
-                  isConnected && (
-                    <button onClick={mintNFT}>Mint NFT</button>
-                  )
-                }
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="card-sidebar">
+          <div className="mb-6 text-title-1s md:mb-4 md:text-[1.125rem] text-center">
+            Is connected: {isConnected ? "True": "False"}
+          </div>
+          <div className="relative w-[15.75rem] h-[5.75rem] mx-auto flex items-center justify-center">
+            <div className="text-base-1s text-left">
+              Connected Address
+              <div className="relative">
+                <button className="group absolute top-0 left-0 bottom-0 z-1 w-12 pl-1 text-0">
+                  <Icon
+                      className="!w-5 !h-5 fill-theme-tertiary transition-colors group-hover:fill-theme-primary"
+                      name="copy-1"
+                  />
+                </button>
+                <Field
+                    className="flex-1"
+                    classInput="pl-12 pr-42 truncate"
+                    value={connectedAddress}
+                />
+              </div>
+
+              {isConnected && (
+                  <button onClick={mintNFT} className="block mt-2">Mint NFT</button>
+              )}
+            </div>
+          </div>
+          <div className="flex justify-center w-full mt-3">
+            <button onClick={openPopup} className="btn-secondary w-1/2 px-4">
+              Connect
+            </button>
           </div>
         </div>
-        <button onClick={openPopup} className="btn-gray w-full mt-6">Connect</button>
       </div>
   );
 }
