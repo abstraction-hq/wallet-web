@@ -145,7 +145,7 @@ function App() {
                   <Field
                     className="flex-1"
                     classInput="pl-12 truncate"
-                    value={connectedAddress}
+                    value={"View on Vicscan"}
                   />
                 </a>
               </div>
