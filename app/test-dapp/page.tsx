@@ -8,16 +8,25 @@ const url = "http://localhost:3000";
 
 function App() {
   const [popup, setPopup] = React.useState<Window | null>(null);
-  
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.origin !== url) return;
-
-      console.log("event", event);
-    });
-  })
+  const [isConnected, setIsConnected] = React.useState<boolean>(false);
+  const [connectedAddress, setConnectedAddress] = React.useState<string>("");
 
   function openPopup(): Window {
+    window.addEventListener("message", (event) => {
+      console.log("event", event);
+      if (event.origin !== url) return;
+
+      if (event.data.type == "connect") {
+        if (event.data.message == "Reject") {
+          setIsConnected(false);
+        } else if (event.data.message.walletAddress) {
+          setIsConnected(true);
+          setConnectedAddress(event.data.message.walletAddress);
+        }
+      }
+      window.removeEventListener("message", () => {});
+    });
+
     const left = (window.innerWidth - POPUP_WIDTH) / 2 + window.screenX;
     const top = (window.innerHeight - POPUP_HEIGHT) / 2 + window.screenY;
 
@@ -26,36 +35,28 @@ function App() {
       "Abstraction Wallet",
       `width=${POPUP_WIDTH}, height=${POPUP_HEIGHT}, left=${left}, top=${top}`
     );
+    console.log("popup", popup);
     popup?.focus();
     if (!popup) {
       throw "Pop up window failed to open";
     }
-
-    // window.addEventListener('message', (event) => {
-    //   console.log(event.data, url)
-    //   if (event.origin !== url) return
-
-    //   console.log('event', event);
-    // })
-
-    popup?.postMessage("Gm Gm", url);
     setPopup(popup);
     return popup;
   }
 
-  function sendMessage() {
-    popup?.postMessage(
-      {
-        type: "GET_ACCOUNTS",
-      },
-      url
-    );
+  function mintNFT() {
   }
 
   return (
     <div>
-      <button onClick={openPopup}>Open Popup</button>
-      <button onClick={sendMessage}>Send Message</button>
+      <button onClick={openPopup}>Connect</button>
+      <div>Is connect: {isConnected ? "True": "False"}</div>
+      <div>Connected Address: {connectedAddress}</div>
+      {
+        isConnected && (
+          <button onClick={mintNFT}>Mint NFT</button>
+        )
+      }
     </div>
   );
 }
