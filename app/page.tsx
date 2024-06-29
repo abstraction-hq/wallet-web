@@ -15,6 +15,7 @@ import { WebAuthnUtils } from "@/utils/webauthn";
 import { CHAINS } from "@/constants/chain";
 import { handleUserOp } from "@/utils/bundler";
 import { computeWalletAddress } from "@/utils/create2";
+import HomePage from "@/templates/HomePage";
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState<Hex>("0x");
@@ -128,67 +129,69 @@ export default function Home() {
     await handleUserOp(initWalletOp);
   };
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="flex flex-col items-center justify-center p-4">
-        <div className="mb-4 flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
-          Wallet Address: {walletAddress}
-        </div>
-        <button
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          onClick={sendToken}
-        >
-          Send Token
-        </button>
-      </div>
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <input
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          type="text"
-          placeholder="Passkey Name"
-          onChange={(e) => setPasskeyName(e.target.value)}
-          value={passkeyName}
-        />
-        <button
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          onClick={createPassKey}
-        >
-          Init Wallet
-        </button>
-        <button
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          onClick={loginPassKey}
-        >
-          Login
-        </button>
+  return <HomePage />;
 
-        <div className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
-          Credential Id: {credentialId}
-        </div>
-        <div className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
-          Wallet Address: {walletAddress}
-        </div>
-        <input
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          type="text"
-          placeholder="Receiver"
-          onChange={(e) => setReceiver(e.target.value as Address)}
-          value={receiver as string}
-        />
-        <input
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          type="number"
-          placeholder="Amount"
-          onChange={(e) => setAmount(Number(e.target.value))}
-          value={amount}
-        />
-        <button
-          className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
-          onClick={sendToken}
-        >
-          Send Token
-        </button>
-      </div>
-    </main>
-  );
+  // return (
+  //   <main className="flex min-h-screen flex-col items-center justify-between p-24">
+  //     <div className="flex flex-col items-center justify-center p-4">
+  //       <div className="mb-4 flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
+  //         Wallet Address: {walletAddress}
+  //       </div>
+  //       <button
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         onClick={sendToken}
+  //       >
+  //         Send Token
+  //       </button>
+  //     </div>
+  //     <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+  //       <input
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         type="text"
+  //         placeholder="Passkey Name"
+  //         onChange={(e) => setPasskeyName(e.target.value)}
+  //         value={passkeyName}
+  //       />
+  //       <button
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         onClick={createPassKey}
+  //       >
+  //         Init Wallet
+  //       </button>
+  //       <button
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         onClick={loginPassKey}
+  //       >
+  //         Login
+  //       </button>
+
+  //       <div className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
+  //         Credential Id: {credentialId}
+  //       </div>
+  //       <div className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30">
+  //         Wallet Address: {walletAddress}
+  //       </div>
+  //       <input
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         type="text"
+  //         placeholder="Receiver"
+  //         onChange={(e) => setReceiver(e.target.value as Address)}
+  //         value={receiver as string}
+  //       />
+  //       <input
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         type="number"
+  //         placeholder="Amount"
+  //         onChange={(e) => setAmount(Number(e.target.value))}
+  //         value={amount}
+  //       />
+  //       <button
+  //         className="flex items-center gap-2 p-4 rounded-lg border border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30"
+  //         onClick={sendToken}
+  //       >
+  //         Send Token
+  //       </button>
+  //     </div>
+  //   </main>
+  // );
 }
