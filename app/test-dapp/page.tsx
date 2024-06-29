@@ -52,8 +52,15 @@ function App() {
   return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="card-sidebar">
-          <div className="mb-6 text-title-1s md:mb-4 md:text-[1.125rem] text-center">
-            Is connected: {isConnected ? "True": "False"}
+          <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
+            Is connected:
+            <div
+                className={`ml-2 text-title-1s ${
+                    isConnected ? "text-theme-green" : "text-theme-yellow"
+                }`}
+            >
+              {isConnected ? "True" : "False"}
+            </div>
           </div>
           <div className="relative w-[15.75rem] h-[5.75rem] mx-auto flex items-center justify-center">
             <div className="text-base-1s text-left">
@@ -73,11 +80,15 @@ function App() {
               </div>
 
               {isConnected && (
-                  <button onClick={mintNFT} className="block mt-2">Mint NFT</button>
+                  <div className="flex justify-center w-full mt-3">
+                    <button onClick={mintNFT} className="btn-secondary w-3/5 px-4">
+                      Mint NFT
+                    </button>
+                  </div>
               )}
             </div>
           </div>
-          <div className="flex justify-center w-full mt-3">
+          <div className="flex justify-center w-full mt-6">
             <button onClick={openPopup} className="btn-secondary w-1/2 px-4">
               Connect
             </button>
