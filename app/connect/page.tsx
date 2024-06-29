@@ -2,8 +2,6 @@
 import { useWalletStore } from "@/stores/walletStore";
 import type { NextPage } from "next";
 import React, { useEffect } from "react";
-import Icon from "@/components/Icon";
-import Field from "@/components/Field";
 
 const Connect: NextPage = () => {
   const loading = useWalletStore((state) => state.loading);
