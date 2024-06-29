@@ -14,6 +14,7 @@ import CurrencyFormat from "@/components/CurrencyFormat";
 import Percent from "@/components/Percent";
 
 import { chartTotalBalance } from "@/mocks/charts";
+import { WalletBalance } from "@/apis/fetchWalletBalance";
 
 const duration = [
     {
@@ -49,9 +50,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
-type BalanceProps = {};
+type BalanceProps = {
+  usdValue: number;
+};
 
-const Balance = ({}: BalanceProps) => {
+const Balance = ({usdValue}: BalanceProps) => {
     const [time, setTime] = useState(duration[0]);
     const { colorMode } = useColorMode();
     const isDarkMode = colorMode === "dark";
@@ -67,10 +70,10 @@ const Balance = ({}: BalanceProps) => {
             <div className="flex items-end mt-0.5 md:mt-2">
                 <CurrencyFormat
                     className="text-h1 md:text-h3"
-                    value={3200.8}
+                    value={usdValue}
                     currency="$"
                 />
-                <Percent className="ml-1 text-title-1s" value={85.66} />
+                <Percent className="ml-1 text-title-1s" value={1} />
             </div>
         </Card>
     );
