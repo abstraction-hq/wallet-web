@@ -14,10 +14,12 @@ import { createPublicClient, hashMessage, http } from "viem";
 import { CHAINS } from "@/constants/chain";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { handleUserOp } from "@/utils/bundler";
+import { useRouter } from "next/navigation";
 
 const SignUpPage = () => {
   const loading: boolean = useWalletStore((state) => state.loading);
   const createWallet = useWalletStore((state) => state.onCreateWallet);
+  const route = useRouter();
 
   const onCreateWallet = async () => {
     const passkeyName = "passkey";
@@ -58,6 +60,14 @@ const SignUpPage = () => {
     ]);
 
     const txHash = await handleUserOp(initWalletOp);
+    createWallet({
+      id: 0,
+      name: "Account 0",
+      senderAddress: account.getSender(),
+      passkeyCredentialId: parsedData.credential.id,
+    })
+    console.log("Create wallet tx", txHash);
+    route.replace("/");
   }
 
   return (
