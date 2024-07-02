@@ -34,7 +34,7 @@ const MyAssetsPage = () => {
   }, [wallet, loading]);
 
   return (
-    <Layout title="My assets">
+    <Layout title="Dashboard">
       <div className="space-y-2">
         <div className="flex lg:block">
           {walletBalance && <Balance usdValue={walletBalance.usdValue} />}
