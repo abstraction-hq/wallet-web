@@ -12,6 +12,7 @@ import { WalletBalance } from "@/apis/fetchWalletBalance";
 import { formatEther } from "viem";
 import Modal from "@/components/Modal";
 import Send from "./Send";
+import {nftItems} from "@/mocks/nftItems";
 
 const typeItems = [
   {
@@ -30,25 +31,6 @@ const typeItems = [
     id: "3",
     title: "Transactions",
   },
-];
-
-const NFTsItems = [
-  {
-      id: "0",
-      type: "1",
-      logo: "/images/nft_1.png",
-      name: "PudyA",
-      key: "#12344",
-      value: '1 VIC',
-  },
-  {
-    id: "1",
-    type: "1",
-    logo: "/images/nft_2.png",
-    name: "PudyB",
-    key: "#12345s",
-    value: '2 VIC',
-  }
 ];
 
 type AllAssetsProps = {
@@ -100,7 +82,7 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
             items={typeItems}
           />
         </div>
-        <div className="mt-5 -mx-6 md:-mx-4">
+        {type.id === "0" ? <div className="mt-5 -mx-6 md:-mx-4">
           <table className="w-full">
             <thead>
               <tr>
@@ -120,7 +102,7 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
               </tr>
             </thead>
             <tbody>
-            {type.id === "0" ? assets.map((asset) => (
+            {assets.map((asset) => (
                 <tr className="" key={asset.id}>
                   <td className="border-t border-theme-stroke pl-6 py-3 md:pl-4">
                     <div className="inline-flex items-center text-base-1s">
@@ -170,20 +152,21 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                     </div>
                   </td>
                 </tr>
-            )) : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-              {NFTsItems.map(item => (
-                  <NFTCard
-                      key={item.id}
-                      logo={item.logo}
-                      name={item.name}
-                      keyProp={item.key}
-                      value={item.value}
-                  />
-              ))}
-            </div>}
+            ))}
             </tbody>
           </table>
-        </div>
+        </div> : <div className="grid grid-cols-4 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+          {nftItems.map(item => (
+              <NFTCard
+                  key={item.id}
+                  nft={item.nft}
+                  fromAvatar={item.fromAvatar}
+                  fromLogin={item.fromLogin}
+                  price={item.price}
+                  buyNowPrice={'1.44 VIC'}
+              />
+          ))}
+        </div>}
       </Card>
       <Modal
         classWrap="max-w-[40rem] !p-0 rounded-3xl overflow-hidden"
