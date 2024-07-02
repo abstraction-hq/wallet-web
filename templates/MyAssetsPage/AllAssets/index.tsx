@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import Tabs from "@/components/Tabs";
 import { useState } from "react";
 import Select from "@/components/Select";
+import NFTCard from "@/components/NFTCard";
 import { WalletBalance } from "@/apis/fetchWalletBalance";
 import { formatEther } from "viem";
 import Modal from "@/components/Modal";
@@ -29,6 +30,25 @@ const typeItems = [
     id: "3",
     title: "Transactions",
   },
+];
+
+const NFTsItems = [
+  {
+      id: "0",
+      type: "1",
+      logo: "/images/nft_1.png",
+      name: "PudyA",
+      key: "#12344",
+      value: '1 VIC',
+  },
+  {
+    id: "1",
+    type: "1",
+    logo: "/images/nft_2.png",
+    name: "PudyB",
+    key: "#12345s",
+    value: '2 VIC',
+  }
 ];
 
 type AllAssetsProps = {
@@ -100,17 +120,17 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
               </tr>
             </thead>
             <tbody>
-              {assets.map((asset) => (
+            {type.id === "0" ? assets.map((asset) => (
                 <tr className="" key={asset.id}>
                   <td className="border-t border-theme-stroke pl-6 py-3 md:pl-4">
                     <div className="inline-flex items-center text-base-1s">
                       <div className="crypto-logo shrink-0 mr-4">
                         <Image
-                          className="w-8 opacity-100"
-                          src={asset.logo}
-                          width={32}
-                          height={32}
-                          alt=""
+                            className="w-8 opacity-100"
+                            src={asset.logo}
+                            width={32}
+                            height={32}
+                            alt=""
                         />
                       </div>
                       {asset.currency}
@@ -118,8 +138,8 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                   </td>
                   <td className="border-t border-theme-stroke pl-4 py-3">
                     <CurrencyFormat
-                      className="text-base-1s"
-                      value={asset.balance}
+                        className="text-base-1s"
+                        value={asset.balance}
                     />
                   </td>
                   <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
@@ -131,26 +151,36 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                   <td className="border-t border-theme-stroke pl-4 py-3 pr-6 text-right md:pr-4">
                     <div className="inline-flex space-x-2">
                       <button
-                        className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
-                        onClick={onSendToken}
+                          className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
+                          onClick={onSendToken}
                       >
                         <span className="md:hidden">Send</span>
                         <Icon
-                          className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                          name="plus"
+                            className="hidden !fill-theme-secondary md:inline-block md:!m-0"
+                            name="plus"
                         />
                       </button>
                       <button className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0">
                         <span className="md:hidden">Detail</span>
                         <Icon
-                          className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                          name="arrow-up-right-thin"
+                            className="hidden !fill-theme-secondary md:inline-block md:!m-0"
+                            name="arrow-up-right-thin"
                         />
                       </button>
                     </div>
                   </td>
                 </tr>
+            )) : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+              {NFTsItems.map(item => (
+                  <NFTCard
+                      key={item.id}
+                      logo={item.logo}
+                      name={item.name}
+                      keyProp={item.key}
+                      value={item.value}
+                  />
               ))}
+            </div>}
             </tbody>
           </table>
         </div>
