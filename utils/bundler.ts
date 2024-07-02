@@ -3,7 +3,7 @@ import { RawUserOperation } from "@/types/account";
 import axios from "axios"
 
 export const handleUserOp = async (userOp: RawUserOperation): Promise<Hex> => {
-    const url = 'http://localhost:4337/eth_sendUserOperation';
+    const url = 'http://173.249.40.143:4337/eth_sendUserOperation';
     const data = {
         userOp
     }
