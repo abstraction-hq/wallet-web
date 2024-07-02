@@ -65,12 +65,12 @@ const Header = ({ title, visible, showMenu, onClickBurger }: HeaderProps) => {
                         {title}
                     </button>
                     <div className="flex items-center ml-auto space-x-6">
-                        <button
-                            className="btn-primary md:hidden"
-                            onClick={() => setVisibleModalTrade(true)}
-                        >
-                            Buy & Sell
-                        </button>
+                        {/*<button*/}
+                        {/*    className="btn-primary md:hidden"*/}
+                        {/*    onClick={() => setVisibleModalTrade(true)}*/}
+                        {/*>*/}
+                        {/*    Buy & Sell*/}
+                        {/*</button>*/}
                         <button
                             className="group w-12 h-12 outline-none md:w-8 md:h-8"
                             onClick={() => setVisibleModalSearch(true)}

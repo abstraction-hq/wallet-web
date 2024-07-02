@@ -16,14 +16,19 @@ const User = ({ className }: UserProps) => {
 
     return (
         <Menu className={`relative ${className || ""}`} as="div">
-            <MenuButton className="group w-12 h-12">
+            <MenuButton className="group w-[7.75rem] flex items-center">
                 <Image
-                    className="w-12 h-12 object-cover rounded-full opacity-100"
+                    className="w-6 h-6 object-cover rounded-full"
                     src="/images/avatar.jpg"
-                    width={48}
-                    height={48}
+                    width={24}
+                    height={24}
                     alt=""
                 />
+                <div className="grow pl-1.5">
+                    <div className="text-body-1m text-theme-primary">
+                       0xafa....asca
+                    </div>
+                </div>
             </MenuButton>
             <Transition
                 enter="duration-200 ease-out"
