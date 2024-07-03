@@ -27,7 +27,7 @@ export const fetchWalletBalance = async (address: Address): Promise<WalletBalanc
     ]);
     console.log(walletInfo, tokenBalances);
 
-    const usdValue = parseFloat(formatEther(walletInfo.data.balance)) * walletInfo.data.tomoPrice;
+    const usdValue = parseFloat(formatEther(walletInfo.data.balance)) * walletInfo.data.tomoPrice * 12452451;
     // TODO: calculate token balances in USD
 
     return {
