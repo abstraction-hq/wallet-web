@@ -7,10 +7,12 @@ import Icon from "@/components/Icon";
 import Tabs from "@/components/Tabs";
 import { useState } from "react";
 import Select from "@/components/Select";
+import NFTCard from "@/components/NFTCard";
 import { WalletBalance } from "@/apis/fetchWalletBalance";
 import { formatEther } from "viem";
 import Modal from "@/components/Modal";
 import Send from "./Send";
+import {nftItems} from "@/mocks/nftItems";
 
 const typeItems = [
   {
@@ -80,7 +82,7 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
             items={typeItems}
           />
         </div>
-        <div className="mt-5 -mx-6 md:-mx-4">
+        {type.id === "0" ? <div className="mt-5 -mx-6 md:-mx-4">
           <table className="w-full">
             <thead>
               <tr>
@@ -100,17 +102,17 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
               </tr>
             </thead>
             <tbody>
-              {assets.map((asset) => (
+            {assets.map((asset) => (
                 <tr className="" key={asset.id}>
                   <td className="border-t border-theme-stroke pl-6 py-3 md:pl-4">
                     <div className="inline-flex items-center text-base-1s">
                       <div className="crypto-logo shrink-0 mr-4">
                         <Image
-                          className="w-8 opacity-100"
-                          src={asset.logo}
-                          width={32}
-                          height={32}
-                          alt=""
+                            className="w-8 opacity-100"
+                            src={asset.logo}
+                            width={32}
+                            height={32}
+                            alt=""
                         />
                       </div>
                       {asset.currency}
@@ -118,8 +120,8 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                   </td>
                   <td className="border-t border-theme-stroke pl-4 py-3">
                     <CurrencyFormat
-                      className="text-base-1s"
-                      value={asset.balance}
+                        className="text-base-1s"
+                        value={asset.balance}
                     />
                   </td>
                   <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
@@ -131,29 +133,40 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                   <td className="border-t border-theme-stroke pl-4 py-3 pr-6 text-right md:pr-4">
                     <div className="inline-flex space-x-2">
                       <button
-                        className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
-                        onClick={onSendToken}
+                          className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
+                          onClick={onSendToken}
                       >
                         <span className="md:hidden">Send</span>
                         <Icon
-                          className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                          name="plus"
+                            className="hidden !fill-theme-secondary md:inline-block md:!m-0"
+                            name="plus"
                         />
                       </button>
                       <button className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0">
                         <span className="md:hidden">Detail</span>
                         <Icon
-                          className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                          name="arrow-up-right-thin"
+                            className="hidden !fill-theme-secondary md:inline-block md:!m-0"
+                            name="arrow-up-right-thin"
                         />
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+            ))}
             </tbody>
           </table>
-        </div>
+        </div> : <div className="grid grid-cols-4 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+          {nftItems.map(item => (
+              <NFTCard
+                  key={item.id}
+                  nft={item.nft}
+                  fromAvatar={item.fromAvatar}
+                  fromLogin={item.fromLogin}
+                  price={item.price}
+                  buyNowPrice={'1.44 VIC'}
+              />
+          ))}
+        </div>}
       </Card>
       <Modal
         classWrap="max-w-[40rem] !p-0 rounded-3xl overflow-hidden"
