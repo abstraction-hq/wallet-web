@@ -21,15 +21,7 @@ const typeItems = [
   {
     id: "1",
     title: "NFTs",
-  },
-  {
-    id: "2",
-    title: "Defi",
-  },
-  {
-    id: "3",
-    title: "Transactions",
-  },
+  }
 ];
 
 type AllAssetsProps = {
@@ -37,7 +29,7 @@ type AllAssetsProps = {
 };
 
 const AllAssets = ({ walletBalance }: AllAssetsProps) => {
-  const [type, setType] = useState(typeItems[0]);
+  const [type, setType] = useState(typeItems[1]);
   const [visibleModalSend, setVisibleModalSend] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<any>();
   const assets: any[] = [];
