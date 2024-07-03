@@ -10,9 +10,8 @@ import Select from "@/components/Select";
 import NFTCard from "@/components/NFTCard";
 import { WalletBalance } from "@/apis/fetchWalletBalance";
 import { formatEther } from "viem";
-import Modal from "@/components/Modal";
-import Send from "./Send";
 import {nftItems} from "@/mocks/nftItems";
+import SendAndReceive from "@/components/SendAndReceive";
 
 const typeItems = [
   {
@@ -40,12 +39,15 @@ type AllAssetsProps = {
 const AllAssets = ({ walletBalance }: AllAssetsProps) => {
   const [type, setType] = useState(typeItems[0]);
   const [visibleModalSend, setVisibleModalSend] = useState<boolean>(false);
-  const assets = [];
+  const [selectedToken, setSelectedToken] = useState<any>();
+  const assets: any[] = [];
 
   assets.push({
     id: "0",
     logo: "/images/dcr.svg",
-    currency: "VIC",
+    symbol: "VIC",
+    name: "Viction",
+    decimals: 18,
     balance: parseFloat(formatEther(walletBalance.vicBalance)),
     price: walletBalance.vicPrice,
   });
@@ -54,14 +56,17 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
     assets.push({
       id: token.tokenAddress,
       logo: "/images/dcr.svg",
-      currency: token.tokenSymbol,
+      symbol: token.tokenSymbol,
+      name: token.tokenName,
+      decimals: token.tokenDecimals,
       balance: parseFloat(formatEther(token.tokenBalance)),
       price: 0,
     });
   }
 
-  const onSendToken = async () => {
-    console.log("Send token");
+  const onSendToken = async (assetId: string) => {
+    const asset = assets.find((asset) => asset.id === assetId);
+    setSelectedToken(asset)
     setVisibleModalSend(true);
   };
 
@@ -134,19 +139,19 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
                     <div className="inline-flex space-x-2">
                       <button
                           className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
-                          onClick={onSendToken}
+                          onClick={() => onSendToken(asset.id)}
                       >
-                        <span className="md:hidden">Send</span>
+                        <span className="md:hidden">Send & Receive</span>
                         <Icon
                             className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                            name="plus"
+                            name="arrow-up-right-thin"
                         />
                       </button>
                       <button className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0">
                         <span className="md:hidden">Detail</span>
                         <Icon
                             className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                            name="arrow-up-right-thin"
+                            name="plus"
                         />
                       </button>
                     </div>
@@ -168,13 +173,7 @@ const AllAssets = ({ walletBalance }: AllAssetsProps) => {
           ))}
         </div>}
       </Card>
-      <Modal
-        classWrap="max-w-[40rem] !p-0 rounded-3xl overflow-hidden"
-        visible={visibleModalSend}
-        onClose={() => setVisibleModalSend(false)}
-      >
-        <Send />
-      </Modal>
+      <SendAndReceive visibleModal={visibleModalSend} onClose={() => setVisibleModalSend(false)} asset={selectedToken}/>
     </>
   );
 };

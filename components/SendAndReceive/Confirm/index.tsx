@@ -1,8 +1,11 @@
 import Image from "@/components/Image";
 
-type ConfirmProps = {};
+type ConfirmProps = {
+  txHash: string;
+  amount: string;
+};
 
-const Confirm = ({}: ConfirmProps) => (
+const Confirm = ({txHash, amount}: ConfirmProps) => (
     <div className="pt-6 text-center">
         <div className="mb-8">
             <Image
@@ -13,13 +16,13 @@ const Confirm = ({}: ConfirmProps) => (
                 alt=""
             />
         </div>
-        <div className="text-h1 md:text-h2">Ξ 0,1568</div>
+        <div className="text-h1 md:text-h2">Ξ {amount.toString()}</div>
         <div className="text-title-1s text-theme-green md:text-base-1s">
-            Successfully sent to 0x1e8...d533B
+            Successfully sent
         </div>
-        <button className="btn-gray w-full mt-12 md:mt-8">
+        <a className="btn-gray w-full mt-12 md:mt-8" href={`https://testnet.vicscan.xyz/tx/${txHash}`} target="_blank">
             View transaction
-        </button>
+        </a>
     </div>
 );
 

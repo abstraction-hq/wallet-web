@@ -35,7 +35,7 @@ export const fetchWalletBalance = async (address: Address): Promise<WalletBalanc
       vicPrice: walletInfo.data.tomoPrice,
       usdValue,
       tokenBalances: tokenBalances.data.data?.map((token: any) => ({
-        tokenAddress: token.address,
+        tokenAddress: token.token,
         tokenSymbol: token.tokenSymbol,
         tokenDecimals: token.tokenDecimals,
         tokenBalance: BigInt(token.quantity),
