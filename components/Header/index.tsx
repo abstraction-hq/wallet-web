@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useColorMode } from "@chakra-ui/react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import Modal from "@/components/Modal";
-import Trade from "@/components/Trade";
 import User from "@/components/User";
 import Image from "@/components/Image";
 import Notifications from "./Notifications";
 import Search from "./Search";
+import SendAndReceive from "../SendAndReceive";
 
 type HeaderProps = {
   title: string;
@@ -71,7 +71,7 @@ const Header = ({ title, visible, showMenu, onClickBurger }: HeaderProps) => {
             >
               Send & Receive
             </button>
-            <button
+            {/* <button
               className="group w-12 h-12 outline-none md:w-8 md:h-8"
               onClick={() => setVisibleModalSearch(true)}
             >
@@ -94,7 +94,7 @@ const Header = ({ title, visible, showMenu, onClickBurger }: HeaderProps) => {
                 height={32}
                 alt=""
               />
-            </button>
+            </button> */}
             <User className="md:hidden" />
           </div>
         </div>
@@ -106,13 +106,8 @@ const Header = ({ title, visible, showMenu, onClickBurger }: HeaderProps) => {
       >
         <Search />
       </Modal>
-      <Modal
-        classWrap="p-8 md:!px-4 md:!py-6"
-        visible={visibleModalSendReceive}
-        onClose={() => setVisibleModalSendReceive(false)}
-      >
-        <Trade />
-      </Modal>
+
+      <SendAndReceive visibleModal={visibleModalSendReceive} onClose={() => setVisibleModalSendReceive(false)}/>
     </>
   );
 };

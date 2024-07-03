@@ -25,7 +25,6 @@ export const fetchWalletBalance = async (address: Address): Promise<WalletBalanc
         `https://scan-api-testnet.viction.xyz/api/account/${address}/tokenBalance?offset=0&limit=50`
       ),
     ]);
-    console.log(walletInfo, tokenBalances);
 
     const usdValue = parseFloat(formatEther(walletInfo.data.balance)) * walletInfo.data.tomoPrice * 12452451;
     // TODO: calculate token balances in USD

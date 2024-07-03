@@ -7,9 +7,9 @@ export const navigation = [
   // },
   {
     id: "1",
-    title: "Dashboard",
+    title: "Wallet",
     icon: "wallet",
-    url: "/my-assets",
+    url: "/",
   },
   // {
   //     id: "2",

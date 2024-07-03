@@ -7,7 +7,7 @@ import Receive from "./Receive";
 
 type SendAndReceiveProps = {
   visibleModal: boolean;
-  asset: any;
+  asset?: any;
   onClose: () => void;
 };
 
@@ -16,16 +16,17 @@ const SendAndReceive = ({
   onClose,
   asset,
 }: SendAndReceiveProps) => {
-  console.log("asset", asset);
   const [type, setType] = useState<string>("send");
-  const [mounted, setMounted] = useState(false);
-  const isTablet = useMediaQuery({
-    query: "(max-width: 1023px)",
-  });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  if (!asset) {
+    asset = {
+      id: "0",
+      logo: "/images/dcr.svg",
+      symbol: "VIC",
+      name: "Viction",
+      decimals: 18,
+    };
+  }
 
   const typeTasks = [
     {
