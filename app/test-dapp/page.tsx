@@ -1,108 +1,45 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Icon from "@/components/Icon";
 import Field from "@/components/Field";
-import { encodeFunctionData } from "viem";
+import { Address, encodeFunctionData } from "viem";
 import MyERC721Abi from "@/abis/MyERC721.json";
 import { MY_ERC721 } from "@/constants";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const POPUP_WIDTH = 420;
-const POPUP_HEIGHT = 540;
-
-const url = "http://localhost:3000";
+import { AbstractionProvider } from "@/sdk/provider";
 
 function App() {
-  const [popup, setPopup] = React.useState<Window | null>(null);
   const [isConnected, setIsConnected] = React.useState<boolean>(false);
-  const [connectedAddress, setConnectedAddress] = React.useState<string>("");
+  const [connectedAddress, setConnectedAddress] = React.useState<Address>("0x");
   const [txHash, setTxHash] = React.useState<string>("");
+  const [provider, setProvider] = React.useState<AbstractionProvider | null>(null);
 
-  function openPopup(): Window {
-    window.addEventListener("message", (event) => {
-      console.log("event", event);
-      if (event.origin !== url) return;
+  useEffect(() => {
+    setProvider(new AbstractionProvider());
+  }, [])
 
-      if (event.data.type == "connect") {
-        if (event.data.message == "Reject") {
-          setIsConnected(false);
-        } else if (event.data.message.walletAddress) {
-          setIsConnected(true);
-          setConnectedAddress(event.data.message.walletAddress);
-        }
-      }
-      window.removeEventListener("message", () => {});
-    });
-
-    const left = (window.innerWidth - POPUP_WIDTH) / 2 + window.screenX;
-    const top = (window.innerHeight - POPUP_HEIGHT) / 2 + window.screenY;
-
-    const popup = window.open(
-      `${url}/connect`,
-      "Abstraction Wallet",
-      `width=${POPUP_WIDTH}, height=${POPUP_HEIGHT}, left=${left}, top=${top}`
-    );
-    console.log("popup", popup);
-    popup?.focus();
-    if (!popup) {
-      throw "Pop up window failed to open";
-    }
-    setPopup(popup);
-    return popup;
+  const onConnect = async () => {
+    if (!provider) return
+    const res: Address[] = await provider.request({ method: "eth_requestAccounts" }) as Address[]
+    setIsConnected(true)
+    setConnectedAddress(res[0])
   }
 
-  function mintNFT() {
-    const left = (window.innerWidth - POPUP_WIDTH) / 2 + window.screenX;
-    const top = (window.innerHeight - POPUP_HEIGHT) / 2 + window.screenY;
-
-    const popup = window.open(
-      `${url}/sign-transaction`,
-      "Abstraction Wallet",
-      `width=${POPUP_WIDTH}, height=${POPUP_HEIGHT}, left=${left}, top=${top}`
-    );
-    console.log("popup", popup);
-    popup?.focus();
-    if (!popup) {
-      throw "Pop up window failed to open";
+  const mintNFT = async () => {
+    if (!provider) return
+    const signTransactionRequest = {
+      from: connectedAddress,
+      to: MY_ERC721,
+      value: 0n,
+      data: encodeFunctionData({
+        abi: MyERC721Abi.abi,
+        functionName: "mint",
+        args: [Math.floor(Math.random() * 1000)],
+      }),
     }
-    setPopup(popup);
-    window.addEventListener("message", (event) => {
-      if (event.origin !== url) return;
 
-      if (event.data.type == "sign-transaction-response") {
-        console.log("txHash", event.data.message);
-        setTxHash(event.data.message);
-      }
-
-      if (event.data.type == "sign-transaction") {
-        if (event.data.message == "PopupLoaded") {
-          // send mint nft transaction
-          popup.postMessage(
-            {
-              type: "sign-transaction-request",
-              message: {
-                target: MY_ERC721,
-                value: 0n,
-                data: encodeFunctionData({
-                  abi: MyERC721Abi.abi,
-                  functionName: "mint",
-                  args: [Math.floor(Math.random() * 1000)],
-                }),
-              },
-            },
-            url
-          );
-        }
-        if (event.data.message == "Reject") {
-          setIsConnected(false);
-        } else if (event.data.message.walletAddress) {
-          setIsConnected(true);
-          setConnectedAddress(event.data.message.walletAddress);
-        }
-      }
-    });
-    return popup;
+    const res: string = await provider.request({ method: "eth_sendTransaction", params: [signTransactionRequest] }) as string
+    setTxHash(res)
   }
 
   return (
@@ -161,7 +98,7 @@ function App() {
         )}
         {!isConnected && (
           <div className="flex justify-center w-full mt-14">
-            <button onClick={openPopup} className="btn-secondary w-1/2 px-4">
+            <button onClick={onConnect} className="btn-secondary w-1/2 px-4">
               Connect
             </button>
           </div>

@@ -4,24 +4,32 @@ import { CHAINS } from "@/constants/chain";
 import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import { NextPage } from "next";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation'
 import { createPublicClient, http } from "viem";
+import { Communicator } from "@/sdk/communicator/communicator";
 
 const SignTransactionPage: NextPage = () => {
-  const [signTransactionRequest, setSignTransactionRequest] = React.useState<any>(null);
+  const loading = useWalletStore((state) => state.loading);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.origin !== window.opener.origin) return;
-      if (event.data.type === "sign-transaction-request") {
-        setSignTransactionRequest(event.data.message);
-      }
-    });
-  }, []);
+  const [messageId, setMessageId] = useState<string>("");
+  const [signData, setSignData] = useState<any>(null)
+  const searchParams = useSearchParams()
+  const communicator = new Communicator(window.opener);
 
   useEffect(() => {
-    window.opener.postMessage({ type: "sign-transaction", message: "PopupLoaded" }, "*");
-  }, []);
+    communicator.onPopupLoaded(searchParams.get('id') || "");
+  }, [loading, wallet]);
+
+  useEffect(() => {
+    communicator.listenRequestMessage((message) => {
+      setMessageId(message.id)
+      setSignData({
+        method: message.payload.method,
+        data: message.payload.params[0]
+      })
+    })
+  }, )
 
   const onConfirm = async () => {
     if (!wallet) window.close()
@@ -33,15 +41,14 @@ const SignTransactionPage: NextPage = () => {
 
     const [userOp] = await account.sendTransactionOperation(ethClient, [
       {
-        target: signTransactionRequest.target,
-        value: signTransactionRequest.value,
-        data: signTransactionRequest.data,
+        target: signData.data.to,
+        value: signData.data.value,
+        data: signData.data.data,
       },
     ]);
 
     const txHash = await handleUserOp(userOp);
-
-    window.opener.postMessage({ type: "sign-transaction-response", message: txHash }, "*");
+    communicator.sendResponseMessage(messageId, txHash)
     window.close();
   };
 
@@ -56,13 +63,19 @@ const SignTransactionPage: NextPage = () => {
           Sign transaction
         </div>
         <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
-          To: {signTransactionRequest?.target}
+          Method: {signData?.method}
         </div>
         <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
-          Value: {signTransactionRequest?.value}
+          From: {signData?.data.from}
         </div>
         <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
-          Data: {signTransactionRequest?.data}
+          To: {signData?.data.to}
+        </div>
+        <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
+          Value: {signData?.data.value}
+        </div>
+        <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
+          Data: {signData?.data.data}
         </div>
         <div className="flex justify-center w-full mt-6">
           <button onClick={onConfirm} className="btn-secondary mr-2 w-1/2 px-4">

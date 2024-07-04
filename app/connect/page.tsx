@@ -1,26 +1,30 @@
 "use client";
+import { Communicator } from "@/sdk/communicator/communicator";
 import { useWalletStore } from "@/stores/walletStore";
 import type { NextPage } from "next";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation'
 
 const Connect: NextPage = () => {
   const loading = useWalletStore((state) => state.loading);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const [messageId, setMessageId] = useState<string>("");
+  const searchParams = useSearchParams()
+  const communicator = new Communicator(window.opener);
 
   useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.origin !== window.opener.origin) return;
-    });
-  }, []);
-
-  useEffect(() => {
-    window.opener.postMessage({ type: "connect", message: "PopupLoaded" }, "*");
+    communicator.onPopupLoaded(searchParams.get('id') || "");
   }, [loading, wallet]);
 
+  useEffect(() => {
+    communicator.listenRequestMessage((payload) => {
+      setMessageId(payload.id)
+      console.log("payload", payload)
+    })
+  }, )
+
   const onConfirm = () => {
-    window.opener.postMessage({ type: "connect", message: {
-      walletAddress: wallet.senderAddress,
-    } }, "*");
+    communicator.sendResponseMessage(messageId, [wallet.senderAddress])
     window.close();
   };
 
