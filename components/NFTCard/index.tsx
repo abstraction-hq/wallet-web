@@ -21,13 +21,13 @@ const NFTCard: React.FC<NFTCardProps> = ({ nft, isDarkMode }) => {
              className="shadow-lg rounded-lg overflow-hidden">
             <div className="relative">
                 {isVideo(nft.image) ? (
-                    <video className="object-cover" width={300} height={300} autoPlay loop muted playsInline>
+                    <video className="object-cover transform group-hover:scale-110 transition-transform duration-300" width={300} height={300} autoPlay loop muted playsInline>
                         <source src={nft.image} type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
                 ) : (
                     <Image
-                        className="object-cover"
+                        className="object-cover transform group-hover:scale-110 transition-transform duration-300"
                         src={nft.image}
                         alt="NFT Image"
                         width={300}
