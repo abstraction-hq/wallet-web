@@ -7,7 +7,7 @@ import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from 'next/navigation'
 import { createPublicClient, http } from "viem";
-import { Communicator } from "@/sdk/communicator/communicator";
+import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 const SignTransactionPage: NextPage = () => {
   const loading = useWalletStore((state) => state.loading);
@@ -42,8 +42,8 @@ const SignTransactionPage: NextPage = () => {
     const [userOp] = await account.sendTransactionOperation(ethClient, [
       {
         target: signData.data.to,
-        value: signData.data.value,
-        data: signData.data.data,
+        value: signData.data.value || 0n,
+        data: signData.data.data || "0x",
       },
     ]);
 
