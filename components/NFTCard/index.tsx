@@ -1,7 +1,9 @@
 "use client";
 
 import { NFT } from "@/apis/fetchNFTBalance";
+import { useRouter } from 'next/navigation'
 import Image from "@/components/Image";
+import Link from "next/link";
 
 interface NFTCardProps {
   nft: NFT;
@@ -11,13 +13,21 @@ interface NFTCardProps {
 const MAX_LENGTH = 8;
 
 const NFTCard: React.FC<NFTCardProps> = ({ nft, isDarkMode }) => {
+
+    const router = useRouter();
+
+    const handleCardClick = () => {
+        if (router) {
+            router.push(`/nft-detail/${nft.id}`);
+        }
+    };
     const isVideo = (url: string) => {
         const videoExtensions = ['mp4'];
         const extension = url.split('.').pop();
         return extension ? videoExtensions.includes(extension) : false;
     };
     return (
-        <div style={{backgroundColor: isDarkMode ? '#202020' : '#FFFFFF'}}
+        <div onClick={handleCardClick} style={{backgroundColor: isDarkMode ? '#202020' : '#FFFFFF'}}
              className="shadow-lg rounded-lg overflow-hidden">
             <div className="relative">
                 {isVideo(nft.image) ? (

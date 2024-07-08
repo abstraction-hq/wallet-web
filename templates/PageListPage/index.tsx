@@ -22,6 +22,10 @@ const links = [
         url: "/notification",
     },
     {
+       title: "NFT Detail",
+        url: "/nft-detail",
+    },
+    {
         title: "Trade",
         url: "/trade",
     },
