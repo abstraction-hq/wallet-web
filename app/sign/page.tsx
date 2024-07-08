@@ -56,6 +56,18 @@ const SignTransactionPage: NextPage = () => {
     window.opener.postMessage({ type: "sign-transaction", message: "Reject" }, "*");
   };
 
+  if (!signData) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="card-sidebar">
+          <div className="mb-3 text-title-1s md:mb-4 md:text-[1.125rem] text-center flex justify-center items-center">
+            Loading...
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="card-sidebar">
