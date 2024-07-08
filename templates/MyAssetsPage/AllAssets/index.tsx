@@ -2,6 +2,7 @@ import Card from "@/components/Card";
 import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";
 import Icon from "@/components/Icon";
+import { useColorMode } from "@chakra-ui/color-mode";
 
 import Tabs from "@/components/Tabs";
 import { useState } from "react";
@@ -34,6 +35,8 @@ const AllAssets = ({ walletBalance, nfts }: AllAssetsProps) => {
   const [visibleModalSend, setVisibleModalSend] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<any>();
   const assets: any[] = [];
+  const { colorMode, setColorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark";
 
   assets.push({
     id: "0",
@@ -158,9 +161,7 @@ const AllAssets = ({ walletBalance, nfts }: AllAssetsProps) => {
         ) : (
           <div className="grid grid-cols-4 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
             {nfts.map((nft) => (
-              <NFTCard
-                nft={nft}
-              />
+              <NFTCard key={nft.id} nft={nft} isDarkMode={isDarkMode}/>
             ))}
           </div>
         )}
