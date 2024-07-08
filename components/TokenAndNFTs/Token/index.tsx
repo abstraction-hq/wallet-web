@@ -1,35 +1,68 @@
-import { use, useState } from "react";
+import { useState } from "react";
+import ButtonBack from "@/components/ButtonBack";
+import Icon from "@/components/Icon";
+import Image from "@/components/Image";
+
+import { selectAsset } from "@/mocks/assets";
 
 type TokenProps = {
-  asset: any;
 };
 
-const Token = ({ asset }: TokenProps) => {
+const Token = ({  }: TokenProps) => {
+    const [search, setSearch] = useState("");
+    const [activeId, setActiveId] = useState("2");
 
-  return (
-      <div className="space-y-1">
-        <div className="relative mt-4 mb-6">
-          <input
-              type="text"
-              className="w-full bg-gray-800 text-white rounded-full py-2 pl-10 pr-4 focus:outline-none"
-              placeholder="Search"
-          />
-        </div>
-        <div className="mt-4 flex items-center justify-between text-white">
-          <div className="flex items-center space-x-4">
-            <img src={asset.logo} alt="VIC" className="w-8 h-8" />
-              <div className="flex flex-col items-start">
-                  <span className="font-bold">{asset.name}</span>
-                  <span className="text-gray-500">0xbBE6...aD39</span>
-              </div>
-          </div>
-          <div className="text-right">
-            <span className="block font-bold">$3.12</span>
-            <span className="block text-gray-500">0.00102 VIC</span>
-          </div>
-        </div>
-      </div>
-  );
+    return (
+        <>
+            <div className="relative mb-4">
+                <input
+                    className="w-full h-14 pl-14 pr-4 bg-transparent border border-theme-stroke text-base-1s text-theme-primary outline-none rounded-xl transition-colors placeholder:text-theme-tertiary focus:border-theme-brand md:text-[1rem]"
+                    type="text"
+                    placeholder="Search for asset"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    required
+                    data-autofocus
+                />
+                <div className="absolute top-1/2 left-4 flex justify-center items-center w-9 h-9 -translate-y-1/2">
+                    <Icon className="fill-theme-tertiary" name="search" />
+                </div>
+            </div>
+            <div className="space-y-1">
+                {selectAsset.map((asset) => (
+                    <div
+                        className={`flex items-center h-16 pl-3 pr-6 rounded-2xl cursor-pointer transition-colors hover:bg-theme-n-8 ${
+                            asset.id === activeId ? "bg-theme-n-8" : ""
+                        }`}
+                        key={asset.id}
+                        onClick={() => setActiveId(asset.id)}
+                    >
+                        <div className="mr-3">
+                            <Image
+                                className="crypto-logo w-8"
+                                src={asset.logo}
+                                width={32}
+                                height={32}
+                                alt=""
+                            />
+                        </div>
+                        <div className="grow">
+                            <div className="text-base-1s">{asset.currency}</div>
+                            <div className="text-caption-2 font-bold opacity-75 text-theme-secondary dark:opacity-100">
+                                {asset.currencyShort}
+                            </div>
+                        </div>
+                        {asset.id === activeId && (
+                            <Icon
+                                className="shrink-0 !w-4 !h-4 ml-6 fill-theme-primary"
+                                name="check"
+                            />
+                        )}
+                    </div>
+                ))}
+            </div>
+        </>
+    );
 };
 
 export default Token;

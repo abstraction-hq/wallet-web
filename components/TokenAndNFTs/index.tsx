@@ -51,8 +51,8 @@ const TokenAndNFTs = ({
                 value={type}
                 setValue={setType}
             />
-            {type === "token" && <Token asset={asset} />}
-            {type === "nfts" && <Token asset={asset} />}
+            {type === "token" && <Token/>}
+            {type === "nfts" && <Token />}
         </Modal>
     );
 };
