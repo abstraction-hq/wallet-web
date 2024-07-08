@@ -11,13 +11,17 @@ import Notifications from "./Notifications";
 import DeleteAccount from "./DeleteAccount";
 
 const settings = [
-  // {
-  //   id: "0",
-  //   title: "Profile",
-  // },
+  {
+    id: "0",
+    title: "Profile",
+  },
   {
     id: "1",
-    title: "Security",
+    title: "Devices",
+  },
+  {
+    id: "2",
+    title: "Recovery",
   },
 ];
 
