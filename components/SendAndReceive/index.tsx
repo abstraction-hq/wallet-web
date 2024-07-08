@@ -54,7 +54,9 @@ const SendAndReceive = ({
       {type === "send" && <Send asset={asset} />}
       {type === "receive" && <Receive />}
     </Modal>
+
   );
+
 
   // return mounted && isTablet ? (
   //   <Modal
@@ -68,7 +70,7 @@ const SendAndReceive = ({
   //       value={type}
   //       setValue={setType}
   //     />
-  //     {type === "send" && <Send />}
+  //     {type === "send" && <Token />}
   //     {type === "receive" && <Receive />}
   //   </Modal>
   // ) : (
@@ -79,7 +81,7 @@ const SendAndReceive = ({
   //       value={type}
   //       setValue={setType}
   //     />
-  //     {type === "send" && <Send />}
+  //     {type === "send" && <Token />}
   //     {type === "receive" && <Receive />}
   //   </div>
   // );

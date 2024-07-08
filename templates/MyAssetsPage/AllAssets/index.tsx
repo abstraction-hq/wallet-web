@@ -139,7 +139,7 @@ const AllAssets = ({ walletBalance, nfts }: AllAssetsProps) => {
                           className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0"
                           onClick={() => onSendToken(asset.id)}
                       >
-                        <span className="md:hidden">Send & Receive</span>
+                        <span className="md:hidden">Token & Receive</span>
                         <Icon
                             className="hidden !fill-theme-secondary md:inline-block md:!m-0"
                             name="arrow-up-right-thin"

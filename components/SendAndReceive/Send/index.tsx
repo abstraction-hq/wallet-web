@@ -23,6 +23,8 @@ import { CHAINS } from "@/constants/chain";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { handleUserOp } from "@/utils/bundler";
 import { erc20Abi } from "viem";
+import TokenAndNFTs from "@/components/TokenAndNFTs";
+import Icon from "@/components/Icon";
 
 type SendProps = {
   asset: any;
@@ -32,11 +34,11 @@ const Send = ({ asset }: SendProps) => {
   const [visibleModal, setVisibleModal] = useState(false);
   const [confirm, setConfirm] = useState(false);
 
+  const [visibleModalTokenAndNFTs, setVisibleModalTokenAndNFTs] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-
   const onSend = async () => {
     console.log("send", amount, receiver);
     let target: Address;
@@ -96,17 +98,28 @@ const Send = ({ asset }: SendProps) => {
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
           <div className="flex items-center grow">
-            <div className="shrink-0 mr-2">
-              <Image
-                className="crypto-logo w-6"
-                src={asset.logo}
-                width={24}
-                height={24}
-                alt=""
+            <button
+                className="flex items-center grow justify-between"
+                onClick={() => setVisibleModalTokenAndNFTs(true)}
+            >
+              <div className="shrink-0 mr-2">
+                <Image
+                    className="crypto-logo w-6"
+                    src={asset.logo}
+                    width={24}
+                    height={24}
+                    alt=""
+                />
+              </div>
+              <div className="flex items-center grow">
+                {asset.name}
+                <span className="ml-2 text-theme-tertiary">{asset.symbol}</span>
+              </div>
+              <Icon
+                  name="arrow-next"
+                  className="fill-theme-primary opacity-100"
               />
-            </div>
-            {asset.name}
-            <span className="ml-2 text-theme-tertiary">{asset.symbol}</span>
+            </button>
           </div>
         </Option>
         <Option classTitle="2xl:mr-3" title="To" color="bg-theme-green" stroke>
@@ -124,6 +137,7 @@ const Send = ({ asset }: SendProps) => {
       <Modal visible={visibleModal} onClose={() => setVisibleModal(false)}>
         <Confirm txHash={txHash} amount={amount} />
       </Modal>
+      <TokenAndNFTs visibleModal={visibleModalTokenAndNFTs} onClose={() => setVisibleModalTokenAndNFTs(false)}/>
     </>
   );
 };
