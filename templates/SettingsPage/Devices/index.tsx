@@ -3,6 +3,7 @@ import Image from "@/components/Image";
 import React from "react";
 import { Icon } from "@chakra-ui/react";
 import { getCurrentBrowser } from "@/utils/browser";
+import Details from "../Details";
 
 type DevicesProps = {};
 
@@ -15,6 +16,12 @@ const Devices = ({}: DevicesProps) => {
   const currentBrowser = getCurrentBrowser()
   const browserLogo = DeviceLogo[currentBrowser.name as string] as string
   return (
+    <Details
+      title="Devices"
+      description="All devices manage this wallet."
+      image="/images/profile-security.png"
+      colorImage="bg-theme-brand-100"
+    >
     <div className="mt-5 -mx-6 md:-mx-4">
       <table className="w-full">
         <thead>
@@ -58,6 +65,7 @@ const Devices = ({}: DevicesProps) => {
         </tbody>
       </table>
     </div>
+    </Details>
   );
 };
 
