@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";

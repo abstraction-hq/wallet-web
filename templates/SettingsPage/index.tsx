@@ -4,11 +4,11 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import Select from "@/components/Select";
 import Profile from "./Profile";
-import Security from "./Security";
-import Wallets from "./Wallets";
+import Recovery from "./Recovery";
 import Card from "./Card";
 import Notifications from "./Notifications";
 import DeleteAccount from "./DeleteAccount";
+import Devices from "./Devices";
 
 const settings = [
   {
@@ -55,11 +55,11 @@ const SettingsPage = () => {
           </div>
           <div className="grow pl-24 3xl:pl-15 lg:pt-15 lg:pl-0 md:pt-8">
             {active.id === "0" && <Profile />}
-            {active.id === "1" && <Security />}
-            {active.id === "2" && <Wallets />}
-            {active.id === "3" && <Card />}
+            {active.id === "1" && <Devices />}
+            {active.id === "2" && <Recovery />}
+            {/* {active.id === "3" && <Card />}
             {active.id === "4" && <Notifications />}
-            {active.id === "5" && <DeleteAccount />}
+            {active.id === "5" && <DeleteAccount />} */}
           </div>
         </div>
       </div>

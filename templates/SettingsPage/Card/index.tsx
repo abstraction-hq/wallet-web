@@ -13,7 +13,7 @@ const Card = ({}: CardProps) => {
     return (
         <Details
             title="Card"
-            desciption="Add new card for trading faster, easy to go Premium"
+            description="Add new card for trading faster, easy to go Premium"
             image="/images/profile-card.png"
             colorImage="bg-theme-yellow-100"
         >
