@@ -2,7 +2,7 @@ import Image from "@/components/Image";
 
 type DetailsProps = {
     title: string;
-    desciption?: string;
+    description?: string;
     colorImage?: string;
     image: string;
     children: React.ReactNode;
@@ -10,7 +10,7 @@ type DetailsProps = {
 
 const Details = ({
     title,
-    desciption,
+    description,
     colorImage,
     image,
     children,
@@ -20,9 +20,9 @@ const Details = ({
             <div className="pb-4 border-b border-theme-stroke text-h4 md:text-title-1s">
                 {title}
             </div>
-            {desciption && (
+            {description && (
                 <div className="max-w-[30rem] mt-6 text-body-2s text-theme-secondary">
-                    {desciption}
+                    {description}
                 </div>
             )}
             <div
