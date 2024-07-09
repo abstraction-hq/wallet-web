@@ -91,7 +91,7 @@ const SignPage = () => {
                 <div className="mb-4 text-xl text-center font-semibold">
                     Contract Interaction
                 </div>
-                <div className="mb-8 space-y-2">
+                <div className="mb-4 space-y-1">
                     <div className="text-base-2 text-theme-secondary">
                         Est. Transaction detail
                     </div>
@@ -123,7 +123,7 @@ const SignPage = () => {
                         </div>
                     ))}
                 </div>
-                <div className="mb-8 space-y-2">
+                <div className="mb-4 space-y-1">
                     <div className="text-base-2 text-theme-secondary">
                         Requested from
                     </div>
@@ -143,6 +143,57 @@ const SignPage = () => {
                                     app.uniswap.org
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                {/*<div className="ml-0">*/}
+                {/*<td className="border-t border-theme-stroke py-3 md:pl-4 w-full">*/}
+                {/*    <div className={` flex justify-center items-center h-12 mr-4 rounded-full`}>*/}
+                {/*        <Image*/}
+                {/*            src={'/images/ethereum.png'}*/}
+                {/*            width={24}*/}
+                {/*            height={24}*/}
+                {/*            alt=""*/}
+                {/*        />*/}
+                {/*        <div className="ml-2">*/}
+                {/*            Ethereum Est network fee*/}
+                {/*        </div>*/}
+
+                {/*    </div>*/}
+                {/*</td>*/}
+                {/*</div>*/}
+                <div className="mb-4 text-sm">
+                    <div className="flex items-center border-t border-theme-stroke py-3">
+                        <Image
+                            src="/images/ethereum.png"
+                            width={24}
+                            height={24}
+                            alt="Ethereum"
+                            className="mr-2"
+                        />
+                        <div>
+                            Ethereum Est network fee
+                        </div>
+                        <div className="ml-auto text-right">
+                            <div>Average | 0.0002005 ETH ≈ $0.6181</div>
+                            <div>The max network fee is 0.0002536 ETH ($0.7817)</div>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-theme-stroke py-3">
+                        <div>
+                            Wallet used
+                        </div>
+                        <div className="flex items-center">
+                            <span className="mr-2">0x4fff0f708c768a46050f9b96c46c265729d1a62f</span>
+                            <span className="bg-gray-700 px-2 py-1 rounded">imduchuyyy – Account 01</span>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-theme-stroke py-3">
+                        <div>
+                            Interact with
+                        </div>
+                        <div>
+                            0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
                         </div>
                     </div>
                 </div>
