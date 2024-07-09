@@ -2,22 +2,24 @@ import { useState } from "react";
 import Icon from "@/components/Icon";
 import Image from "@/components/Image";
 
-import useAssetStore, { Token as IToken } from "@/stores/assetStore";
-import { formatTokenBalance, getAssetLogo } from "@/utils/format";
+import useAssetStore, { NFT as INFT } from "@/stores/assetStore";
+import { getAssetLogo } from "@/utils/format";
+import NFTCard from "@/components/NFTCard";
+import { useColorMode } from "@chakra-ui/react";
 
-type TokenProps = {
+type NFTProps = {
   setSelectedAsset: (asset: any) => void;
   onClose: () => void;
 };
 
-const Token = ({setSelectedAsset, onClose}: TokenProps) => {
+const NFT = ({ setSelectedAsset, onClose }: NFTProps) => {
   const [search, setSearch] = useState("");
-  const tokens = useAssetStore((state) => state.tokens);
+  const nfts = useAssetStore((state) => state.nfts);
 
-  const onSelectAsset = (token: IToken) => {
-    setSelectedAsset(token);
+  const onSelectAsset = (nft: INFT) => {
+    setSelectedAsset(nft);
     onClose();
-  }
+  };
 
   return (
     <>
@@ -36,28 +38,25 @@ const Token = ({setSelectedAsset, onClose}: TokenProps) => {
         </div>
       </div>
       <div className="space-y-1">
-        {tokens.map((token) => (
+        {nfts.map((nft) => (
           <div
-            className={"flex items-center h-16 pl-3 pr-6 rounded-2xl cursor-pointer transition-colors hover:bg-theme-n-8"}
-            key={token.address}
-            onClick={() => onSelectAsset(token)}
+            className={
+              "flex items-center h-16 pl-3 pr-6 rounded-2xl cursor-pointer transition-colors hover:bg-theme-n-8"
+            }
+            onClick={() => onSelectAsset(nft)}
           >
             <div className="mr-3">
               <Image
                 className="crypto-logo w-8"
-                src={getAssetLogo(token)}
+                src={getAssetLogo(nft)}
                 width={32}
                 height={32}
                 alt=""
               />
             </div>
             <div className="grow">
-              <div className="text-base-1s">{token.name}</div>
-              <div className="text-caption-2 font-bold opacity-75 text-theme-secondary dark:opacity-100">
-                {token.symbol}
-              </div>
+              <div className="text-base-1s">{nft.name}</div>
             </div>
-            <div>{formatTokenBalance(token)}</div>
           </div>
         ))}
       </div>
@@ -65,4 +64,4 @@ const Token = ({setSelectedAsset, onClose}: TokenProps) => {
   );
 };
 
-export default Token;
+export default NFT;

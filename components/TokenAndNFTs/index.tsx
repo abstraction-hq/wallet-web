@@ -1,60 +1,48 @@
 import { useState, useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
 import TabsSame from "@/components/TabsSame";
 import Modal from "@/components/Modal";
 import Token from "./Token";
+import { NFT as INFT, Token as IToken } from "@/stores/assetStore";
+import NFT from "./NFT";
 
 type TokenAndNFTsProps = {
-    visibleModal: boolean;
-    asset?: any;
-    onClose: () => void;
+  visibleModal: boolean;
+  asset?: any;
+  setSelectedAsset: (asset: IToken | INFT) => void;
+  onClose: () => void;
 };
 
-const TokenAndNFTs = ({
-                            visibleModal,
-                            onClose,
-                            asset,
-                        }: TokenAndNFTsProps) => {
-    const [type, setType] = useState<string>("token");
+const TokenAndNFTs = ({ visibleModal, onClose, setSelectedAsset }: TokenAndNFTsProps) => {
+  const [type, setType] = useState<string>("token");
 
-    if (!asset) {
-        asset = {
-            id: "0",
-            logo: "/images/dcr.svg",
-            symbol: "VIC",
-            name: "Viction",
-            decimals: 18,
-        };
-    }
+  const typeTasks = [
+    {
+      title: "Tokens",
+      value: "token",
+    },
+    {
+      title: "NFTs",
+      value: "nft",
+    },
+  ];
 
-    const typeTasks = [
-        {
-            title: "Token",
-            value: "token",
-        },
-        {
-            title: "NFTs",
-            value: "nfts",
-        },
-    ];
-
-    return (
-        <Modal
-            classWrap="max-w-[28.5rem] rounded-3xl"
-            visible={visibleModal}
-            onClose={onClose}
-            showTextClose={'Select Asset'}
-        >
-            <TabsSame
-                className="mb-6"
-                items={typeTasks}
-                value={type}
-                setValue={setType}
-            />
-            {type === "token" && <Token/>}
-            {type === "nfts" && <Token />}
-        </Modal>
-    );
+  return (
+    <Modal
+      classWrap="max-w-[28.5rem] rounded-3xl"
+      visible={visibleModal}
+      onClose={onClose}
+      showTextClose={"Select Asset"}
+    >
+      <TabsSame
+        className="mb-6"
+        items={typeTasks}
+        value={type}
+        setValue={setType}
+      />
+      {type === "token" && <Token setSelectedAsset={setSelectedAsset} onClose={onClose} />}
+      {type === "nft" && <NFT setSelectedAsset={setSelectedAsset} onClose={onClose} />}
+    </Modal>
+  );
 };
 
 export default TokenAndNFTs;

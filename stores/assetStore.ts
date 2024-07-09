@@ -3,18 +3,18 @@ import { Address, formatEther, zeroAddress } from "viem";
 import { create } from "zustand";
 
 export interface Token {
-  tokenAddress: string;
-  tokenSymbol: string;
-  tokenDecimals: number;
-  tokenBalance: bigint;
-  tokenName: string;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: bigint;
 }
 
 export interface NFT {
   address: string;
-  id: string;
   name: string;
   image: string;
+  id: string;
 }
 
 export interface IWalletInfo {
@@ -61,21 +61,21 @@ const useAssetStore = create<AssetStore>((set) => ({
 
       const tokens: Token[] = [
         {
-          tokenAddress: zeroAddress,
-          tokenSymbol: "VIC",
-          tokenDecimals: 18,
-          tokenBalance: BigInt(infoRes.data.balance),
-          tokenName: "Viction",
+          address: zeroAddress,
+          symbol: "VIC",
+          decimals: 18,
+          balance: BigInt(infoRes.data.balance),
+          name: "Viction",
         },
       ];
 
       tokensRes.data.data?.map((token: any) => {
         tokens.push({
-          tokenAddress: token.token,
-          tokenSymbol: token.tokenSymbol,
-          tokenDecimals: token.tokenDecimals,
-          tokenBalance: BigInt(token.quantity),
-          tokenName: token.tokenName,
+          address: token.token,
+          symbol: token.tokenSymbol,
+          decimals: token.tokenDecimals,
+          balance: BigInt(token.quantity),
+          name: token.tokenName,
         });
       });
 

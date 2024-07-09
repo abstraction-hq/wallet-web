@@ -11,6 +11,7 @@ import NFTCard from "@/components/NFTCard";
 import { formatEther, zeroAddress } from "viem";
 import SendAndReceive from "@/components/SendAndReceive";
 import useAssetStore from "@/stores/assetStore";
+import { getAssetLogo } from "@/utils/format";
 
 const typeItems = [
   {
@@ -74,32 +75,32 @@ const AllAssets = ({ }: AllAssetsProps) => {
               </thead>
               <tbody>
                 {tokens.map((token) => (
-                  <tr className="" key={token.tokenAddress}>
+                  <tr className="" key={token.address}>
                     <td className="border-t border-theme-stroke pl-6 py-3 md:pl-4">
                       <div className="inline-flex items-center text-base-1s">
                         <div className="crypto-logo shrink-0 mr-4">
                           <Image
                             className="w-8 opacity-100"
-                            src={token.tokenAddress == zeroAddress ? "/images/viction.jpeg": ""}
+                            src={getAssetLogo(token)}
                             width={32}
                             height={32}
                             alt=""
                           />
                         </div>
-                        {token.tokenName} ({token.tokenSymbol})
+                        {token.name} ({token.symbol})
                       </div>
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3">
                       <CurrencyFormat
                         className="text-base-1s"
-                        value={parseFloat(formatEther(token.tokenBalance))}
+                        value={parseFloat(formatEther(token.balance))}
                       />
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
                       ${0}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
-                      ${(parseFloat(formatEther(token.tokenBalance)) * 0).toFixed(2)}
+                      ${(parseFloat(formatEther(token.balance)) * 0).toFixed(2)}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 pr-6 text-right md:pr-4">
                       <div className="inline-flex space-x-2">
