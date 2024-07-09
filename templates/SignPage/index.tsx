@@ -9,6 +9,7 @@ import { createPublicClient, http } from "viem";
 import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";
 import Tooltip from "@/components/Tooltip";
+import Icon from "@/components/Icon";
 // import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 const items = [
@@ -146,57 +147,67 @@ const SignPage = () => {
                         </div>
                     </div>
                 </div>
-                {/*<div className="ml-0">*/}
-                {/*<td className="border-t border-theme-stroke py-3 md:pl-4 w-full">*/}
-                {/*    <div className={` flex justify-center items-center h-12 mr-4 rounded-full`}>*/}
-                {/*        <Image*/}
-                {/*            src={'/images/ethereum.png'}*/}
-                {/*            width={24}*/}
-                {/*            height={24}*/}
-                {/*            alt=""*/}
-                {/*        />*/}
-                {/*        <div className="ml-2">*/}
-                {/*            Ethereum Est network fee*/}
-                {/*        </div>*/}
-
-                {/*    </div>*/}
-                {/*</td>*/}
-                {/*</div>*/}
-                <div className="mb-4 text-sm">
-                    <div className="flex items-center border-t border-theme-stroke py-3">
-                        <Image
-                            src="/images/ethereum.png"
-                            width={24}
-                            height={24}
-                            alt="Ethereum"
-                            className="mr-2"
-                        />
-                        <div>
-                            Ethereum Est network fee
+                <>
+                    <div className="mb-4 text-sm">
+                        <div className="flex items-center border-t border-theme-stroke py-3 justify-between">
+                            <div className="text-left">
+                                <div className="flex items-center">
+                                    <Image
+                                        src="/images/ethereum.png"
+                                        width={24}
+                                        height={24}
+                                        alt="Ethereum"
+                                        className="mr-2"
+                                    />
+                                    <div className="text-base-1 text-theme-secondary">
+                                        Ethereum Est network fee
+                                    </div>
+                                </div>
+                                <div className="text-title-1m font-medium">Average | 0.0002005 ETH ≈ $0.6181</div>
+                                <div className="text-base-1 text-theme-secondary">The max network fee is 0.0002536 ETH ($0.7817)</div>
+                            </div>
+                            <Icon
+                                className="ml-3 fill-theme-primary md:ml-1.5"
+                                name="arrow-next"
+                            />
                         </div>
-                        <div className="ml-auto text-right">
-                            <div>Average | 0.0002005 ETH ≈ $0.6181</div>
-                            <div>The max network fee is 0.0002536 ETH ($0.7817)</div>
+                        <div className="flex items-center border-t border-theme-stroke py-3">
+                            <div className="flex flex-col text-left w-4/5">
+                                <div className="flex items-center">
+                                    <div className="text-base-1 text-theme-secondary">
+                                        Wallet used
+                                    </div>
+                                </div>
+                                <div className="text-base-1s font-medium">0x4fff0f708c768a46050f9b96c46c265729d1a62f</div>
+                                <div className="bg-gray-700 px-2 py-1 rounded">
+                                    <span className="text-base-1 text-theme-secondary">imduchuyyy – Account 01</span>
+                                </div>
+                            </div>
+                            <div className="flex justify-end w-1/5">
+                                <Icon
+                                    className="fill-theme-primary md:ml-1.5"
+                                    name="copy"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center py-3">
+                            <div className="flex flex-col text-left w-4/5">
+                                <div className="flex items-center">
+                                    <div className="text-base-1 text-theme-secondary">
+                                        Interact with
+                                    </div>
+                                </div>
+                                <div className="text-base-1s font-medium">0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2</div>
+                            </div>
+                            <div className="flex justify-end w-1/5">
+                                <Icon
+                                    className="fill-theme-primary md:ml-1.5"
+                                    name="copy"
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="flex justify-between items-center border-t border-theme-stroke py-3">
-                        <div>
-                            Wallet used
-                        </div>
-                        <div className="flex items-center">
-                            <span className="mr-2">0x4fff0f708c768a46050f9b96c46c265729d1a62f</span>
-                            <span className="bg-gray-700 px-2 py-1 rounded">imduchuyyy – Account 01</span>
-                        </div>
-                    </div>
-                    <div className="flex justify-between items-center border-t border-theme-stroke py-3">
-                        <div>
-                            Interact with
-                        </div>
-                        <div>
-                            0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
-                        </div>
-                    </div>
-                </div>
+                </>
                 <div className="flex justify-center w-full mt-6">
                     <button onClick={onConfirm} className="btn-secondary mr-2 w-1/2 px-4">
                         Confirm
