@@ -47,7 +47,6 @@ const Send = ({}: SendProps) => {
   const isToken = "balance" in selectedAsset;
 
   const onSend = async () => {
-    console.log("send", amount, receiver);
     let target: Address = getAddress(selectedAsset.address);
     let value: bigint = 0n;
     let data: Hex = "0x";
@@ -70,7 +69,7 @@ const Send = ({}: SendProps) => {
         args: [
           wallet.senderAddress,
           getAddress(receiver),
-          parseEther(selectedAsset.id),
+          BigInt(selectedAsset.id),
         ],
       });
     }
@@ -94,7 +93,6 @@ const Send = ({}: SendProps) => {
     ]);
 
     const txHash = await handleUserOp(userOp);
-    console.log("txHash", txHash);
     setTxHash(txHash);
 
     setVisibleModal(true);
