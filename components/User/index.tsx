@@ -34,7 +34,7 @@ const User = ({ className }: UserProps) => {
           alt=""
         />
         <div className="grow pl-1.5">
-          <div className="text-body-2m text-theme-primary">
+          <div className="text-body-2m text-theme-primary text-base font-semibold">
             {formatWalletAddress(wallet.senderAddress)}
           </div>
         </div>
@@ -51,7 +51,7 @@ const User = ({ className }: UserProps) => {
           className="absolute top-full -right-4 w-[19.75rem] mt-2 p-3 rounded-2xl border border-theme-stroke bg-theme-surface-pure shadow-depth-1 lg:right-0"
           modal={false}
         >
-          <div className="flex items-center mb-2 p-3 rounded-xl bg-theme-n-8">
+          {/* <div className="flex items-center mb-2 p-3 rounded-xl bg-theme-n-8">
             <div className="">
               <Image
                 className="w-16 h-16 rounded-full opacity-100"
@@ -65,10 +65,11 @@ const User = ({ className }: UserProps) => {
               <div className="text-title-1s">Display Name</div>
               <div className="text-body-1m text-theme-secondary">@username</div>
             </div>
-          </div>
+          </div> */}
           <div className="mb-2 space-y-1">
-            <NavLink title="Settings" icon="settings" url="/settings" />
-            <NavLink title="Contact support" icon="support" url="/support" />
+            <div onClick={copyToClipboard}>
+              <NavLink title="Copy Address" icon="copy" url="/" />
+            </div>
             <div className="group flex items-center h-12 px-4 rounded-xl transition-colors hover:bg-theme-on-surface-2">
               <Icon
                 className="shrink-0 mr-4 fill-theme-secondary transition-colors group-hover:fill-theme-primary"
@@ -84,9 +85,8 @@ const User = ({ className }: UserProps) => {
                 theme
               />
             </div>
-            <NavLink title="News" icon="news" url="/news" />
+            <NavLink title="View on scan" icon="arrows" url={`http://testnet.vicscan.xyz/address/${wallet.senderAddress}`} />
           </div>
-          <NavLink title="Log out" icon="logout" url="/sign-up" />
         </MenuItems>
       </Transition>
     </Menu>

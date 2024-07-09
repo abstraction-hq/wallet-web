@@ -95,7 +95,7 @@ const Header = ({ title, visible, showMenu, onClickBurger }: HeaderProps) => {
                 alt=""
               />
             </button> */}
-            <User className="md:hidden" />
+            <User />
           </div>
         </div>
       </div>
