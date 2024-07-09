@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";
@@ -6,14 +5,12 @@ import Icon from "@/components/Icon";
 import { useColorMode } from "@chakra-ui/color-mode";
 
 import Tabs from "@/components/Tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "@/components/Select";
 import NFTCard from "@/components/NFTCard";
-import { WalletBalance } from "@/apis/fetchWalletBalance";
-import { formatEther } from "viem";
-import { nftItems } from "@/mocks/nftItems";
+import { formatEther, zeroAddress } from "viem";
 import SendAndReceive from "@/components/SendAndReceive";
-import { NFT } from "@/apis/fetchNFTBalance";
+import useAssetStore from "@/stores/assetStore";
 
 const typeItems = [
   {
@@ -27,45 +24,16 @@ const typeItems = [
 ];
 
 type AllAssetsProps = {
-  walletBalance: WalletBalance;
-  nfts: NFT[]
 };
 
-const AllAssets = ({ walletBalance, nfts }: AllAssetsProps) => {
+const AllAssets = ({ }: AllAssetsProps) => {
   const [type, setType] = useState(typeItems[0]);
   const [visibleModalSend, setVisibleModalSend] = useState<boolean>(false);
   const [selectedToken, setSelectedToken] = useState<any>();
-  const assets: any[] = [];
   const { colorMode, setColorMode } = useColorMode();
+  const tokens = useAssetStore((state) => state.tokens);
+  const nfts = useAssetStore((state) => state.nfts);
   const isDarkMode = colorMode === "dark";
-
-  assets.push({
-    id: "0",
-    logo: "/images/viction.jpeg",
-    symbol: "VIC",
-    name: "Viction",
-    decimals: 18,
-    balance: parseFloat(formatEther(walletBalance.vicBalance)),
-    price: walletBalance.vicPrice,
-  });
-
-  for (const token of walletBalance.tokenBalances) {
-    assets.push({
-      id: token.tokenAddress,
-      logo: "/images/dcr.svg",
-      symbol: token.tokenSymbol,
-      name: token.tokenName,
-      decimals: token.tokenDecimals,
-      balance: parseFloat(formatEther(token.tokenBalance)),
-      price: 0,
-    });
-  }
-
-  const onSendToken = async (assetId: string) => {
-    const asset = assets.find((asset) => asset.id === assetId);
-    setSelectedToken(asset);
-    setVisibleModalSend(true);
-  };
 
   return (
     <>
@@ -105,33 +73,33 @@ const AllAssets = ({ walletBalance, nfts }: AllAssetsProps) => {
                 </tr>
               </thead>
               <tbody>
-                {assets.map((asset) => (
-                  <tr className="" key={asset.id}>
+                {tokens.map((token) => (
+                  <tr className="" key={token.tokenAddress}>
                     <td className="border-t border-theme-stroke pl-6 py-3 md:pl-4">
                       <div className="inline-flex items-center text-base-1s">
                         <div className="crypto-logo shrink-0 mr-4">
                           <Image
                             className="w-8 opacity-100"
-                            src={asset.logo}
+                            src={token.tokenAddress == zeroAddress ? "/images/viction.jpeg": ""}
                             width={32}
                             height={32}
                             alt=""
                           />
                         </div>
-                        {asset.name} ({asset.symbol})
+                        {token.tokenName} ({token.tokenSymbol})
                       </div>
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3">
                       <CurrencyFormat
                         className="text-base-1s"
-                        value={asset.balance}
+                        value={parseFloat(formatEther(token.tokenBalance))}
                       />
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
-                      ${asset.price}
+                      ${0}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
-                      ${(asset.balance * asset.price).toFixed(2)}
+                      ${(parseFloat(formatEther(token.tokenBalance)) * 0).toFixed(2)}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 pr-6 text-right md:pr-4">
                       <div className="inline-flex space-x-2">

@@ -1,7 +1,7 @@
 "use client";
 
-import { NFT } from "@/apis/fetchNFTBalance";
 import Image from "@/components/Image";
+import { NFT } from "@/stores/assetStore";
 
 interface NFTCardProps {
   nft: NFT;
