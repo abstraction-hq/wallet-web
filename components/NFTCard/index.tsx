@@ -3,7 +3,6 @@
 import { NFT } from "@/apis/fetchNFTBalance";
 import { useRouter } from 'next/navigation'
 import Image from "@/components/Image";
-import Link from "next/link";
 
 interface NFTCardProps {
   nft: NFT;
@@ -18,7 +17,7 @@ const NFTCard: React.FC<NFTCardProps> = ({ nft, isDarkMode }) => {
 
     const handleCardClick = () => {
         if (router) {
-            router.push(`/nft-detail`);
+            router.push(`/nft-detail/${nft.id}`);
         }
     };
     const isVideo = (url: string) => {
