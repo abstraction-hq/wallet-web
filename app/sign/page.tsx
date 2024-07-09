@@ -15,7 +15,7 @@ const SignTransactionPage: NextPage = () => {
   const [messageId, setMessageId] = useState<string>("");
   const [signData, setSignData] = useState<any>(null)
   const searchParams = useSearchParams()
-  const communicator = new Communicator(window.opener);
+  const communicator = new Communicator(window.opener, "");
 
   useEffect(() => {
     communicator.onPopupLoaded(searchParams.get('id') || "");
