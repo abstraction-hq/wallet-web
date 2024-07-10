@@ -89,7 +89,7 @@ const SignPage = () => {
     return (
         <div className="flex justify-center items-center min-h-screen">
             <div className="card-sidebar max-w-[28.5rem] rounded-3xl w-full p-6 text-white shadow-lg">
-                <div className="mb-4 text-xl text-center font-semibold">
+                <div className="mb-4 text-xl text-center font-semibold text-theme-primary">
                     Contract Interaction
                 </div>
                 <div className="mb-4 space-y-1">
@@ -114,7 +114,7 @@ const SignPage = () => {
                             </div>
                             <div className="grow">
                                 {item?.price > 0 ? <div className="text-3xl font-medium text-green-600">{`+${item?.price} WETH`}</div> :
-                                    <div className="text-3xl font-medium">{`${item?.price} ETH`}</div>}
+                                    <div className="text-3xl text-theme-primary font-medium">{`${item?.price} ETH`}</div>}
                                 <div className="flex justify-between items-center">
                                     <div className="text-base-2 text-theme-secondary">
                                         {`≈ ${item.title}`}
@@ -138,7 +138,7 @@ const SignPage = () => {
                             />
                         </div>
                         <div className="grow">
-                            <div className="text-3xl font-medium">Uniswap Interface</div>
+                            <div className="text-3xl text-theme-primary font-medium">Uniswap Interface</div>
                             <div className="flex justify-between items-center">
                                 <div className="text-base-2 text-theme-secondary">
                                     app.uniswap.org
@@ -163,7 +163,7 @@ const SignPage = () => {
                                         Ethereum Est network fee
                                     </div>
                                 </div>
-                                <div className="text-title-1m font-medium">Average | 0.0002005 ETH ≈ $0.6181</div>
+                                <div className="text-title-1m font-medium text-theme-primary">Average | 0.0002005 ETH ≈ $0.6181</div>
                                 <div className="text-base-1 text-theme-secondary">The max network fee is 0.0002536 ETH ($0.7817)</div>
                             </div>
                             <Icon
@@ -178,7 +178,7 @@ const SignPage = () => {
                                         Wallet used
                                     </div>
                                 </div>
-                                <div className="text-base-1s font-medium">0x4fff0f708c768a46050f9b96c46c265729d1a62f</div>
+                                <div className="text-base-1s font-medium text-theme-primary">0x4fff0f708c768a46050f9b96c46c265729d1a62f</div>
                                 <div className="bg-gray-700 px-2 py-1 rounded">
                                     <span className="text-base-1 text-theme-secondary">imduchuyyy – Account 01</span>
                                 </div>
@@ -197,7 +197,7 @@ const SignPage = () => {
                                         Interact with
                                     </div>
                                 </div>
-                                <div className="text-base-1s font-medium">0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2</div>
+                                <div className="text-base-1s font-medium text-theme-primary">0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2</div>
                             </div>
                             <div className="flex justify-end w-1/5">
                                 <Icon
