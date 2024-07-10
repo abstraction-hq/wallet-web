@@ -13,12 +13,20 @@ import { Icon } from "@chakra-ui/react";
 // import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 const SignPage = () => {
-  const loading = useWalletStore((state) => state.loading);
-  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-  const [messageId, setMessageId] = useState<string>("");
-  const [signData, setSignData] = useState<any>(null);
-  const searchParams = useSearchParams();
-  // const communicator = new Communicator(window.opener, "");
+    const loading = useWalletStore((state) => state.loading);
+    const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+    const [messageId, setMessageId] = useState<string>("");
+    const [signData, setSignData] = useState<any>(null)
+    const searchParams = useSearchParams();
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(wallet.senderAddress).then(
+            (err) => {
+                console.error("Failed to copy text: ", err);
+            }
+        );
+    };
+    // const communicator = new Communicator(window.opener, "");
 
   // useEffect(() => {
   //     communicator.onPopupLoaded(searchParams.get('id') || "");
