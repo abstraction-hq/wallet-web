@@ -32,7 +32,15 @@ const SignPage = () => {
     const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
     const [messageId, setMessageId] = useState<string>("");
     const [signData, setSignData] = useState<any>(null)
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
+
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(wallet.senderAddress).then(
+            (err) => {
+                console.error("Failed to copy text: ", err);
+            }
+        );
+    };
     // const communicator = new Communicator(window.opener, "");
 
     // useEffect(() => {
@@ -189,12 +197,15 @@ const SignPage = () => {
                                     <span className="text-base-1 text-theme-secondary">imduchuyyy – Account 01</span>
                                 </div>
                             </div>
-                            <div className="flex justify-end w-1/5">
-                                <Icon
-                                    className="fill-theme-primary md:ml-1.5"
-                                    name="copy"
-                                />
-                            </div>
+                            <button className="group ml-auto text-0" onClick={copyToClipboard}>
+                                <div className="flex justify-end w-1/5">
+                                    <Icon
+                                        className="fill-theme-primary md:ml-1.5"
+                                        name="copy"
+                                    />
+                                </div>
+                            </button>
+
                         </div>
                         <div className="flex items-center py-3">
                             <div className="flex flex-col text-left w-4/5">
