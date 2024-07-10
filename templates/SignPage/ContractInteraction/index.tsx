@@ -27,7 +27,7 @@ const ContractInteraction = ({
   console.log(signData)
   return (
     <div className="flex justify-center items-center">
-      <div className="card-sidebar max-w-[28.5rem] rounded-3xl w-full p-6 text-white shadow-lg">
+      <div className="max-w-[28.5rem] w-full p-6 text-white">
         <div className="mb-4 space-y-1">
           <div className="text-base-2 text-theme-secondary">Requested from</div>
           <div className="flex items-center">

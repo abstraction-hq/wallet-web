@@ -26,7 +26,7 @@ const SignMessage = ({
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="card-sidebar max-w-[28.5rem] rounded-3xl w-full p-6 text-white shadow-lg">
+      <div className="max-w-[28.5rem] w-full p-6 text-white">
         <div className="mb-4 text-xl text-center font-semibold text-theme-primary">
           Sign Message
         </div>
