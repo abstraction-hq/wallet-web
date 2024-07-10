@@ -17,7 +17,7 @@ const items = [
         title: "$308.2",
         price: -0.1,
         tooltip: "Toolltip Available to trade",
-        image: "/images/ethereum.png",
+        image: "/images/viction.jpeg",
     },
     {
         title: "$308.2",
@@ -113,8 +113,9 @@ const SignPage = () => {
                                 />
                             </div>
                             <div className="grow">
-                                {item?.price > 0 ? <div className="text-3xl font-medium text-green-600">{`+${item?.price} WETH`}</div> :
-                                    <div className="text-3xl text-theme-primary font-medium">{`${item?.price} ETH`}</div>}
+                                {item?.price > 0 ?
+                                    <div className="text-3xl font-medium text-green-600 mr-2">{`+${item?.price} WETH`}</div> :
+                                    <div className="text-3xl text-theme-primary font-medium">{`${item?.price} VIC`}</div>}
                                 <div className="flex justify-between items-center">
                                     <div className="text-base-2 text-theme-secondary">
                                         {`≈ ${item.title}`}
@@ -131,7 +132,7 @@ const SignPage = () => {
                     <div className="flex items-center">
                         <div className={`flex justify-center items-center w-12 h-12 mr-4 rounded-full`}>
                             <Image
-                                src={'/images/ethereum.png'}
+                                src={'/images/viction.jpeg'}
                                 width={48}
                                 height={48}
                                 alt=""
@@ -153,18 +154,23 @@ const SignPage = () => {
                             <div className="text-left">
                                 <div className="flex items-center">
                                     <Image
-                                        src="/images/ethereum.png"
+                                        src="/images/viction.jpeg"
                                         width={24}
                                         height={24}
-                                        alt="Ethereum"
+                                        alt="Viction"
                                         className="mr-2"
                                     />
                                     <div className="text-base-1 text-theme-secondary">
-                                        Ethereum Est network fee
+                                        Viction Est network fee
                                     </div>
                                 </div>
-                                <div className="text-title-1m font-medium text-theme-primary">Average | 0.0002005 ETH ≈ $0.6181</div>
-                                <div className="text-base-1 text-theme-secondary">The max network fee is 0.0002536 ETH ($0.7817)</div>
+                                <div className="text-title-1m font-medium text-theme-primary">Average</div>
+                                <div className="text-base-1s font-medium text-theme-primary">
+                                    0.0002005 VIC ≈
+                                    <span className="line-through mr-1 ml-1">$0.6181</span>
+                                    <span className="text-green-600">(Sponsor by Abstraction)</span>
+                                </div>
+                                <div className="text-base-1 text-theme-secondary">The max network fee is 0.0002536 VIC ($0.7817)</div>
                             </div>
                             <Icon
                                 className="ml-3 fill-theme-primary md:ml-1.5"
