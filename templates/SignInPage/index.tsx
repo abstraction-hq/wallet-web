@@ -39,7 +39,7 @@ const SignInPage = () => {
   }
 
   return (
-    <Login title="Sign in" image="/images/login-pic-1.png" signIn>
+    <Login title="Sign in" image="/images/login-pic-1.png" signIn allowToggle>
       <div className="mb-5 text-base-2">Sign in with Passkey</div>
       <button className="btn-primary w-full mb-3" onClick={loginWithPasskey}>Login with passkey</button>
     </Login>
