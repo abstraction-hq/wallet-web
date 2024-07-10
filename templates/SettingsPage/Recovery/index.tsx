@@ -7,8 +7,8 @@ import Details from "../Details";
 type RecoveryProps = {};
 
 const Recovery = ({}: RecoveryProps) => {
-  const [walletMetamask, setWalletMetamask] = useState("0x1e86...4d533B");
-  const [recoverMail, setRecoverMail] = useState<string>("contacts@abstraction.world");
+  const [walletMetamask, setWalletMetamask] = useState("Not connected");
+  const [recoverMail, setRecoverMail] = useState<string>("Not set up");
 
   return (
     <Details
@@ -45,7 +45,7 @@ const Recovery = ({}: RecoveryProps) => {
               value={recoverMail}
               onChange={(e) => setRecoverMail(e.target.value)}
             />
-            <button className="btn absolute right-1 bottom-1 w-38 h-10 bg-theme-on-surface-3 rounded-lg text-theme-primary hover:bg-theme-primary hover:text-theme-light">
+            <button className="btn absolute right-1 bottom-1 w-38 h-10 bg-theme-primary hover:bg-theme-on-surface-3 rounded-lg hover:text-theme-primary text-theme-light">
               Change Email
             </button>
           </div>
@@ -77,8 +77,8 @@ const Recovery = ({}: RecoveryProps) => {
               onChange={(e) => setWalletMetamask(e.target.value)}
               required
             />
-            <button className="btn absolute right-1 bottom-1 w-38 h-10 bg-theme-on-surface-3 rounded-lg text-theme-primary hover:bg-theme-primary hover:text-theme-light">
-              Disconnect
+            <button className="btn absolute right-1 bottom-1 w-38 h-10 bg-theme-primary hover:bg-theme-on-surface-3 rounded-lg hover:text-theme-primary text-theme-light">
+              Connect
             </button>
           </div>
         </div>

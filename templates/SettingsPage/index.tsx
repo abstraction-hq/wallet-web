@@ -11,10 +11,10 @@ import DeleteAccount from "./DeleteAccount";
 import Devices from "./Devices";
 
 const settings = [
-  {
-    id: "0",
-    title: "Profile",
-  },
+  // {
+  //   id: "0",
+  //   title: "Profile",
+  // },
   {
     id: "1",
     title: "Devices",
