@@ -48,7 +48,7 @@ const useAssetStore = create<AssetStore>((set) => ({
           `https://scan-api-testnet.viction.xyz/api/account/${address}/tokenBalance?offset=0&limit=50`
         ),
         await axios.get(
-          `https://assets.coin98.com/nfts/88/0x4fff0f708c768a46050f9b96c46c265729d1a62f`
+          `https://assets.coin98.com/nfts/88/${address}`
         ),
       ]);
 
@@ -56,8 +56,7 @@ const useAssetStore = create<AssetStore>((set) => ({
 
       const usdValue =
         parseFloat(formatEther(infoRes.data.balance)) *
-        infoRes.data.tomoPrice *
-        12452451;
+        infoRes.data.tomoPrice;
 
       const tokens: Token[] = [
         {
