@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import CurrencyInput from "react-currency-input-field";
 import Image from "@/components/Image";
 import Modal from "@/components/Modal";
@@ -10,6 +10,7 @@ import {
   Address,
   createPublicClient,
   encodeFunctionData,
+  erc721Abi,
   formatEther,
   formatGwei,
   formatUnits,
@@ -18,45 +19,61 @@ import {
   http,
   parseEther,
   toHex,
+  zeroAddress,
 } from "viem";
 import { CHAINS } from "@/constants/chain";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { handleUserOp } from "@/utils/bundler";
 import { erc20Abi } from "viem";
+import TokenAndNFTs from "@/components/TokenAndNFTs";
+import Icon from "@/components/Icon";
+import useAssetStore, { NFT, Token } from "@/stores/assetStore";
+import { getAssetLogo } from "@/utils/format";
 
 type SendProps = {
-  asset: any;
 };
 
-const Send = ({ asset }: SendProps) => {
+const Send = ({}: SendProps) => {
   const [visibleModal, setVisibleModal] = useState(false);
-  const [confirm, setConfirm] = useState(false);
 
+  const [visibleModalTokenAndNFTs, setVisibleModalTokenAndNFTs] =
+    useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
+  const tokens = useAssetStore((state) => state.tokens);
+  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0]);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const isToken = "balance" in selectedAsset;
 
   const onSend = async () => {
-    console.log("send", amount, receiver);
-    let target: Address;
-    let data: Hex;
-    let value: bigint
-
-    if (asset.id === "0") {
+    let target: Address = getAddress(selectedAsset.address);
+    let value: bigint = 0n;
+    let data: Hex = "0x";
+    if (selectedAsset.address == zeroAddress) {
+      // transfer native
       target = getAddress(receiver);
       value = parseEther(amount);
-      data = "0x";
-    } else {
-      target = getAddress(asset.id);
-      value = 0n;
+    } else if (isToken) {
+      // transfer token
       data = encodeFunctionData({
         abi: erc20Abi,
         functionName: "transfer",
         args: [getAddress(receiver), parseEther(amount)],
       });
+    } else {
+      // transfer NFT
+      data = encodeFunctionData({
+        abi: erc721Abi,
+        functionName: "transferFrom",
+        args: [
+          wallet.senderAddress,
+          getAddress(receiver),
+          BigInt(selectedAsset.id),
+        ],
+      });
     }
-    console.log("send", target, value, data);
+
     const ethClient = createPublicClient({
       chain: CHAINS["testnet"],
       transport: http(),
@@ -71,12 +88,11 @@ const Send = ({ asset }: SendProps) => {
       {
         target,
         value,
-        data
+        data,
       },
     ]);
 
     const txHash = await handleUserOp(userOp);
-    console.log("txHash", txHash);
     setTxHash(txHash);
 
     setVisibleModal(true);
@@ -84,7 +100,7 @@ const Send = ({ asset }: SendProps) => {
 
   return (
     <>
-      <CurrencyInput
+      {isToken && <CurrencyInput
         className="input-caret-color w-full h-40 mb-6 bg-transparent text-center text-h1 outline-none placeholder:text-theme-primary xl:text-h2 lg:text-h1 md:h-24 md:text-h2"
         name="price"
         placeholder="0.00"
@@ -92,21 +108,36 @@ const Send = ({ asset }: SendProps) => {
         decimalSeparator="."
         groupSeparator=","
         onValueChange={(value, name, values) => setAmount(value || "0")}
-      />
+      />}
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
           <div className="flex items-center grow">
-            <div className="shrink-0 mr-2">
-              <Image
-                className="crypto-logo w-6"
-                src={asset.logo}
-                width={24}
-                height={24}
-                alt=""
+            <button
+              className="flex items-center grow justify-between"
+              onClick={() => setVisibleModalTokenAndNFTs(true)}
+            >
+              <div className="shrink-0 mr-2">
+                <Image
+                  className="crypto-logo w-6"
+                  src={getAssetLogo(selectedAsset)}
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+              </div>
+              <div className="flex items-center grow">
+                {selectedAsset.name}
+                {isToken && (
+                  <span className="ml-2 text-theme-tertiary">
+                    {selectedAsset.symbol}
+                  </span>
+                )}
+              </div>
+              <Icon
+                name="arrow-next"
+                className="fill-theme-primary opacity-100"
               />
-            </div>
-            {asset.name}
-            <span className="ml-2 text-theme-tertiary">{asset.symbol}</span>
+            </button>
           </div>
         </Option>
         <Option classTitle="2xl:mr-3" title="To" color="bg-theme-green" stroke>
@@ -124,6 +155,11 @@ const Send = ({ asset }: SendProps) => {
       <Modal visible={visibleModal} onClose={() => setVisibleModal(false)}>
         <Confirm txHash={txHash} amount={amount} />
       </Modal>
+      <TokenAndNFTs
+        visibleModal={visibleModalTokenAndNFTs}
+        setSelectedAsset={setSelectedAsset}
+        onClose={() => setVisibleModalTokenAndNFTs(false)}
+      />
     </>
   );
 };
