@@ -37,7 +37,7 @@ const SignMessage = ({
               className={`flex justify-center items-center w-12 h-12 mr-4 rounded-full`}
             >
               <Image
-                src={"/images/viction.jpeg"}
+                src={signData?.dappInfo?.icon}
                 width={48}
                 height={48}
                 alt=""
@@ -45,11 +45,11 @@ const SignMessage = ({
             </div>
             <div className="grow">
               <div className="text-3xl text-theme-primary font-medium">
-                Uniswap Interface
+                {signData?.dappInfo?.title}
               </div>
               <div className="flex justify-between items-center">
                 <div className="text-base-2 text-theme-secondary">
-                  app.uniswap.org
+                  {signData?.dappInfo?.hostname}
                 </div>
               </div>
             </div>
@@ -80,7 +80,7 @@ const SignMessage = ({
                   </div>
                 </div>
                 <div className="text-base-1s font-medium text-theme-primary">
-                  0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2
+                  {signData?.params[1]}
                 </div>
               </div>
               <div className="flex justify-end w-1/5">
