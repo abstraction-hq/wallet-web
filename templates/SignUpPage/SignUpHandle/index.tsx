@@ -55,7 +55,7 @@ const SignUpHandle = ({ afterCreateWallet, allowToggle }: SignUpHandleProps) => 
       },
     ]);
 
-    await handleUserOp(initWalletOp);
+    console.log(await handleUserOp(initWalletOp));
     createWallet({
       id: 0,
       name: "Account 0",
