@@ -6,7 +6,6 @@ import { AuthenticateOptions, AuthenticationEncoded } from "@passwordless-id/web
 import { WebAuthnUtils } from "@/utils/webauthn";
 import { WALLET_FACTORY } from "@/constants";
 import Factory from "@/abis/Factory.json";
-import WebAuthn from "@/abis/WebAuthn.json";
 
 const WebAuthnAuth = [{
   components: [
