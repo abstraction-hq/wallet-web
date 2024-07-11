@@ -19,7 +19,9 @@ export default function Home() {
       route.push("/sign-up");
     }
 
-    fetchWalletBalance(wallet.senderAddress);
+    if (wallet) {
+      fetchWalletBalance(wallet.senderAddress);
+    }
   }, [wallet, loading])
 
   if (loading || !wallet) {
