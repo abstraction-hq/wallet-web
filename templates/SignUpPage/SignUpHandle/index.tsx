@@ -1,25 +1,31 @@
+"use client"
+
 import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
+import { ethClient } from "@/config";
 import { CHAINS } from "@/constants/chain";
 import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import { WebAuthnUtils } from "@/utils/webauthn";
+import Field from "@/components/Field";
 import { client, parsers, utils } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
-import { createPublicClient, http } from "viem";
+import { useState } from "react";
 
 type SignUpHandleProps = {
   afterCreateWallet?: () => void;
   allowToggle?: boolean;
 };
 
-const SignUpHandle = ({ afterCreateWallet, allowToggle }: SignUpHandleProps) => {
+const SignUpHandle = ({
+  afterCreateWallet,
+  allowToggle,
+}: SignUpHandleProps) => {
   const createWallet = useWalletStore((state) => state.onCreateWallet);
+  const [passkeyName, setPasskeyName] = useState<string>("");
 
   const onCreateWallet = async () => {
-    const passkeyName = "passkey";
-
     const payload = utils.randomChallenge();
 
     const regData: RegistrationEncoded = await client.register(
@@ -35,11 +41,6 @@ const SignUpHandle = ({ afterCreateWallet, allowToggle }: SignUpHandleProps) => 
     let passkey = await WebAuthnUtils.getPublicKeyFromBytes(
       parsedData.credential.publicKey
     );
-
-    const ethClient = createPublicClient({
-      chain: CHAINS["testnet"],
-      transport: http(),
-    });
 
     const account = new PasskeyAccount(
       parsedData.credential.id,
@@ -75,6 +76,13 @@ const SignUpHandle = ({ afterCreateWallet, allowToggle }: SignUpHandleProps) => 
       image="/images/login-pic-1.png"
       allowToggle={allowToggle}
     >
+      <Field
+        className="flex-1 mb-3"
+        placeholder="Enter your passkey name"
+        value={passkeyName}
+        onChange={(e) => setPasskeyName(e.target.value)}
+        required
+      />
       <button className="btn-primary w-full mb-3" onClick={onCreateWallet}>
         Create wallet
       </button>

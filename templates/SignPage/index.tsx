@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Icon } from "@chakra-ui/react";
 import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 import { MethodCategory, signMethods } from "@/constants/sign";
+import { ethClient } from "@/config";
 
 function determineMethodCategory(method: string): MethodCategory | undefined {
   for (const c in signMethods) {
@@ -55,10 +56,6 @@ const SignPage = () => {
 
   const onConfirm = async () => {
     if (!wallet) window.close();
-    const ethClient = createPublicClient({
-      chain: CHAINS["testnet"],
-      transport: http(),
-    });
     const account = new PasskeyAccount(
       wallet.passkeyCredentialId || "",
       0n,
