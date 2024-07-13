@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useColorMode } from "@chakra-ui/react";
 import Login from "@/components/Login";
-import Field from "@/components/Field";
 import { client, utils } from "@passwordless-id/webauthn";
 import { IWallet, useWalletStore } from "@/stores/walletStore";
 import { computeWalletAddress } from "@/utils/create2";

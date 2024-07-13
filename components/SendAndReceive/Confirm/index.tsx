@@ -16,9 +16,8 @@ const Confirm = ({txHash, amount}: ConfirmProps) => (
                 alt=""
             />
         </div>
-        <div className="text-h1 md:text-h2">Ξ {amount.toString()}</div>
         <div className="text-title-1s text-theme-green md:text-base-1s">
-            Successfully sent
+            Transaction success
         </div>
         <a className="btn-gray w-full mt-12 md:mt-8" href={`https://testnet.vicscan.xyz/tx/${txHash}`} target="_blank">
             View transaction

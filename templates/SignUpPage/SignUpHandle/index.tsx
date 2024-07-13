@@ -3,7 +3,6 @@
 import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";
-import { CHAINS } from "@/constants/chain";
 import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import { WebAuthnUtils } from "@/utils/webauthn";
