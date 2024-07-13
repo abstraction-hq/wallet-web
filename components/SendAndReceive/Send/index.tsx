@@ -29,6 +29,7 @@ import TokenAndNFTs from "@/components/TokenAndNFTs";
 import Icon from "@/components/Icon";
 import useAssetStore, { NFT, Token } from "@/stores/assetStore";
 import { getAssetLogo } from "@/utils/format";
+import { ethClient } from "@/config";
 
 type SendProps = {
 };
@@ -74,10 +75,6 @@ const Send = ({}: SendProps) => {
       });
     }
 
-    const ethClient = createPublicClient({
-      chain: CHAINS["testnet"],
-      transport: http(),
-    });
     const account = new PasskeyAccount(
       wallet.passkeyCredentialId || "",
       0n,
