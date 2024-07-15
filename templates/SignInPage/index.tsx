@@ -2,7 +2,7 @@
 
 import { useColorMode } from "@chakra-ui/react";
 import Login from "@/components/Login";
-import { client, utils } from "@passwordless-id/webauthn";
+import { client } from "@passwordless-id/webauthn";
 import { IWallet, useWalletStore } from "@/stores/walletStore";
 import { computeWalletAddress } from "@/utils/create2";
 import { hashMessage } from "viem";
@@ -14,7 +14,7 @@ const SignInPage = () => {
   const router = useRouter();
 
   const loginWithPasskey = async () => {
-    const payload = utils.randomChallenge();
+    const payload = "0x0000";
     const authData = await client.authenticate([], payload, {
       userVerification: "required",
       authenticatorType: "both",

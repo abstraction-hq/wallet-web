@@ -7,7 +7,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import { WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
-import { client, parsers, utils } from "@passwordless-id/webauthn";
+import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
 import { useState } from "react";
@@ -25,7 +25,7 @@ const SignUpHandle = ({
   const [passkeyName, setPasskeyName] = useState<string>("");
 
   const onCreateWallet = async () => {
-    const payload = utils.randomChallenge();
+    const payload = "0x0000";
 
     const regData: RegistrationEncoded = await client.register(
       passkeyName,
