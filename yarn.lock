@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@abstraction-hq/wallet-sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@abstraction-hq/wallet-sdk/-/wallet-sdk-1.0.0.tgz#05596eba5d7a3748a466b238a71a1705707d4b0e"
-  integrity sha512-OYRQxzovCQiR4foPOQ/990tehDLP4l0G8qFfbDsvRxNLVoQnVWqZ4far713qG0+2y/nd+5Q//xXEAm0sQZoBLg==
+"@abstraction-hq/wallet-sdk@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@abstraction-hq/wallet-sdk/-/wallet-sdk-1.0.2.tgz#86b659b8f4fae44e91b8d551320c5d05e4354863"
+  integrity sha512-EEDm5FIv3QwxG5KgoZjdicZ6sTlcpgRbDbIfOFFLqURIId9ZOPxnGGZiNIecx/8ad2UBz1veEDt3arIZcYdhyQ==
   dependencies:
     "@types/chai" "^4.3.16"
     "@types/mocha" "^10.0.7"
