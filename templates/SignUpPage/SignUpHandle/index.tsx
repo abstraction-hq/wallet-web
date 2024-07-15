@@ -1,5 +1,4 @@
 "use client"
-
 import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";

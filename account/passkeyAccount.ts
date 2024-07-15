@@ -1,3 +1,4 @@
+"use client"
 import { computePasskeyModuleAddress } from "@/utils/create2";
 import { BaseAccount } from "./baseAccount";
 import {
