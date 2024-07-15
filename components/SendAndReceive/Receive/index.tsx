@@ -9,7 +9,7 @@ const Receive = ({}: ReceiveProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet.senderAddress).then(
+    navigator.clipboard.writeText(wallet?.senderAddress).then(
       (err) => {
         console.error("Failed to copy text: ", err);
       }
@@ -46,7 +46,7 @@ const Receive = ({}: ReceiveProps) => {
           color="bg-theme-green"
           stroke
         >
-          {wallet.senderAddress.slice(0, 7)}...{wallet.senderAddress.slice(-7)}
+          {wallet?.senderAddress?.slice(0, 7)}...{wallet?.senderAddress?.slice(-7)}
           <button className="group ml-auto text-0" onClick={copyToClipboard}>
             <Icon
               className="!w-5 !h-5 fill-theme-tertiary transition-colors group-hover:fill-theme-primary"

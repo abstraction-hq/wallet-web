@@ -17,12 +17,13 @@ export default function Home() {
     }
     if (!wallet) {
       route.push("/sign-up");
+      return
     }
 
     if (wallet) {
-      fetchWalletBalance(wallet.senderAddress);
+      fetchWalletBalance(wallet?.senderAddress);
     }
-  }, [wallet, loading])
+  }, [wallet, loading, fetchWalletBalance, route])
 
   if (loading || !wallet) {
     return <div>Loading...</div>;

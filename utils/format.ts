@@ -2,6 +2,7 @@ import { NFT, Token } from "@/stores/assetStore";
 import { Address, formatEther, zeroAddress } from "viem";
 
 export const formatWalletAddress = (address: Address): string => {
+  if (!address) return "";
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 

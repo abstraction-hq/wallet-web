@@ -122,7 +122,7 @@ const ContractInteraction = ({
                   </div>
                 </div>
                 <div className="text-base-1s font-medium text-theme-primary">
-                  {wallet.senderAddress}
+                  {wallet?.senderAddress}
                 </div>
               </div>
               <div className="flex justify-end w-1/5">

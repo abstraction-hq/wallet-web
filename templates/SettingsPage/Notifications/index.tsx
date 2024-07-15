@@ -49,7 +49,7 @@ const Notifications = ({}: NotificationsProps) => {
     return (
         <Details
             title="Notification settings"
-            desciption="Connect wallets for a more flexible trading method and withdraw."
+            description="Connect wallets for a more flexible trading method and withdraw."
             image="/images/profile-notifications.png"
             colorImage="bg-theme-green-100"
         >

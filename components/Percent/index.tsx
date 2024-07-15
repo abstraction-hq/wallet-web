@@ -18,7 +18,7 @@ const Percent = ({ className, value }: PercentProps) => (
                 value > 0 ? "text-theme-green" : "text-theme-red"
             }`}
         >
-            {value > 0 ? value : value.toString().slice(1)}%
+            {value > 0 ? value : value.toString()?.slice(1)}%
         </div>
     </div>
 );

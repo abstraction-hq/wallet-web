@@ -18,7 +18,7 @@ const User = ({ className }: UserProps) => {
   const isLightMode = colorMode === "light";
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet.senderAddress).then((err) => {
+    navigator.clipboard.writeText(wallet?.senderAddress).then((err) => {
       console.error("Failed to copy text: ", err);
     });
   };
@@ -35,7 +35,7 @@ const User = ({ className }: UserProps) => {
         />
         <div className="grow pl-1.5">
           <div className="text-body-2m text-theme-primary text-base font-semibold">
-            {formatWalletAddress(wallet.senderAddress)}
+            {formatWalletAddress(wallet?.senderAddress)}
           </div>
         </div>
       </MenuButton>
@@ -85,7 +85,7 @@ const User = ({ className }: UserProps) => {
                 theme
               />
             </div>
-            <NavLink title="View on scan" icon="arrows" url={`http://testnet.vicscan.xyz/address/${wallet.senderAddress}`} />
+            <NavLink title="View on scan" icon="arrows" url={`http://testnet.vicscan.xyz/address/${wallet?.senderAddress}`} />
           </div>
         </MenuItems>
       </Transition>

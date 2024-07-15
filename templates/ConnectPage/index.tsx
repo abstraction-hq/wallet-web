@@ -30,7 +30,7 @@ const ConnectPage: NextPage = () => {
   });
 
   const onConnect = () => {
-    communicator.sendResponseMessage(messageId, [wallet.senderAddress]);
+    communicator.sendResponseMessage(messageId, [wallet?.senderAddress]);
     window.close();
   };
 
@@ -83,7 +83,7 @@ const ConnectPage: NextPage = () => {
                   </div>
                 </div>
                 <div className="text-base-1s font-medium text-theme-primary">
-                  {wallet.senderAddress}
+                  {wallet?.senderAddress}
                 </div>
               </div>
               <div className="flex justify-end w-1/5">

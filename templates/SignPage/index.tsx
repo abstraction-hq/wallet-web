@@ -33,7 +33,7 @@ const SignPage = () => {
   const communicator = new Communicator(window.opener, "");
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet.senderAddress).then((err) => {
+    navigator.clipboard.writeText(wallet?.senderAddress).then((err) => {
       console.error("Failed to copy text: ", err);
     });
   };

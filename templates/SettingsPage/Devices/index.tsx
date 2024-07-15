@@ -1,3 +1,4 @@
+"use client"
 import { devices } from "@/mocks/devices";
 import Image from "@/components/Image";
 import React from "react";

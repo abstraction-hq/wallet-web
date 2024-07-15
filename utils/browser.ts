@@ -1,5 +1,10 @@
-
 export const getCurrentBrowser = () => {
+  if (typeof window == "undefined")
+    return {
+      name: "Unknown",
+      version: "0",
+    };
+
   var ua = navigator.userAgent,
     tem,
     M =
@@ -28,4 +33,4 @@ export const getCurrentBrowser = () => {
     name: M[0],
     version: M[1],
   };
-}
+};

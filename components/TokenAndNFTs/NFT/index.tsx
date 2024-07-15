@@ -43,6 +43,7 @@ const NFT = ({ setSelectedAsset, onClose }: NFTProps) => {
             className={
               "flex items-center h-16 pl-3 pr-6 rounded-2xl cursor-pointer transition-colors hover:bg-theme-n-8"
             }
+            key={nft.id + nft.address}
             onClick={() => onSelectAsset(nft)}
           >
             <div className="mr-3">

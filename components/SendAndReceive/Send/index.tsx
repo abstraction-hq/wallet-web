@@ -68,7 +68,7 @@ const Send = ({}: SendProps) => {
         abi: erc721Abi,
         functionName: "transferFrom",
         args: [
-          wallet.senderAddress,
+          wallet?.senderAddress,
           getAddress(receiver),
           BigInt(selectedAsset.id),
         ],

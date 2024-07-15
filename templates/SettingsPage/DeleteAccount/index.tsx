@@ -10,7 +10,7 @@ const DeleteAccount = ({}: DeleteAccountProps) => {
     return (
         <Details
             title="Delete account"
-            desciption="Permanently deleting your account and all data associated with it is a manual process performed on our end."
+            description="Permanently deleting your account and all data associated with it is a manual process performed on our end."
             image="/images/profile-delete-account.png"
             colorImage="bg-theme-red-100"
         >

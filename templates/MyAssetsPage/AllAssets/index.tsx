@@ -139,7 +139,6 @@ const AllAssets = ({ }: AllAssetsProps) => {
       <SendAndReceive
         visibleModal={visibleModalSend}
         onClose={() => setVisibleModalSend(false)}
-        asset={selectedToken}
       />
     </>
   );
