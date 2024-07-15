@@ -4,7 +4,7 @@ import Login from "@/components/Login";
 import { ethClient } from "@/config";
 import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
-import { WebAuthnUtils } from "@/utils/webauthn";
+import { getXYCoordinates, WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
@@ -36,9 +36,7 @@ const SignUpHandle = ({
     );
     const parsedData = parsers.parseRegistration(regData);
 
-    let passkey = await WebAuthnUtils.getPublicKeyFromBytes(
-      parsedData.credential.publicKey
-    );
+    let passkey = getXYCoordinates(parsedData.credential.publicKey);
 
     const account = new PasskeyAccount(
       parsedData.credential.id,
