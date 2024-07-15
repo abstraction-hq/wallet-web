@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@abstraction-hq/wallet-sdk": "^1.0.0",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",

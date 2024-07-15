@@ -10,7 +10,7 @@ import ContractInteraction from "./ContractInteraction";
 import SignMessage from "./SignMessage";
 import Image from "next/image";
 import { Icon } from "@chakra-ui/react";
-import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
+import { Communicator } from "@abstraction-hq/wallet-sdk";
 import { MethodCategory, signMethods } from "@/constants/sign";
 import { ethClient } from "@/config";
 

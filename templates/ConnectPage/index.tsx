@@ -1,5 +1,5 @@
 "use client";
-import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
+import { Communicator } from "@abstraction-hq/wallet-sdk";
 import { useWalletStore } from "@/stores/walletStore";
 import type { NextPage } from "next";
 import React, { useEffect, useState } from "react";
