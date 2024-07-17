@@ -1,3 +1,4 @@
+import { ethClient } from "@/config";
 import axios from "axios";
 import { Address, formatEther, zeroAddress } from "viem";
 import { create } from "zustand";
@@ -40,43 +41,37 @@ const useAssetStore = create<AssetStore>((set) => ({
   nfts: [],
   fetchData: async (address: Address) => {
     try {
-      const [infoRes, tokensRes, nftsRes] = await Promise.all([
-        await axios.get(
-          `https://scan-api-testnet.viction.xyz/api/account/${address}`
-        ),
-        await axios.get(
-          `https://scan-api-testnet.viction.xyz/api/account/${address}/tokenBalance?offset=0&limit=50`
-        ),
-        await axios.get(
-          `https://assets.coin98.com/nfts/88/${address}`
-        ),
+      const [vicBalance, vicPrice, nftsRes] = await Promise.all([
+        await ethClient.getBalance({
+          address,
+        }),
+        await axios.get("https://www.binance.com/api/v3/ticker/price?symbol=VICUSDT"),
+        await axios.get(`https://assets.coin98.com/nfts/88/${address}`),
       ]);
 
-      console.log("NFT balances: ", nftsRes);
-
       const usdValue =
-        parseFloat(formatEther(infoRes.data.balance)) *
-        infoRes.data.tomoPrice;
+        parseFloat(formatEther(vicBalance)) * parseFloat(vicPrice.data.price);
+
 
       const tokens: Token[] = [
         {
           address: zeroAddress,
           symbol: "VIC",
           decimals: 18,
-          balance: BigInt(infoRes.data.balance),
+          balance: BigInt(vicBalance),
           name: "Viction",
         },
       ];
 
-      tokensRes.data.data?.map((token: any) => {
-        tokens.push({
-          address: token.token,
-          symbol: token.tokenSymbol,
-          decimals: token.tokenDecimals,
-          balance: BigInt(token.quantity),
-          name: token.tokenName,
-        });
-      });
+      // tokensRes.data.data?.map((token: any) => {
+      //   tokens.push({
+      //     address: token.token,
+      //     symbol: token.tokenSymbol,
+      //     decimals: token.tokenDecimals,
+      //     balance: BigInt(token.quantity),
+      //     name: token.tokenName,
+      //   });
+      // });
 
       const nfts: NFT[] = [];
       for (const data of nftsRes.data) {
@@ -94,8 +89,8 @@ const useAssetStore = create<AssetStore>((set) => ({
 
       set({
         walletInfo: {
-          vicBalance: BigInt(infoRes.data.balance),
-          vicPrice: infoRes.data.tomoPrice,
+          vicBalance,
+          vicPrice: vicPrice.data.price,
           usdValue,
         },
         tokens,
