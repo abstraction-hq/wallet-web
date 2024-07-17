@@ -41,7 +41,6 @@ const useAssetStore = create<AssetStore>((set) => ({
   tokens: [],
   nfts: [],
   fetchData: async (address: Address) => {
-    address = "0x4fff0f708c768a46050f9b96c46c265729d1a62f"
     try {
       const [vicBalance, vicPrice, nftsRes] = await Promise.all([
         await ethClient.getBalance({
