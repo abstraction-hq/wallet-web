@@ -97,10 +97,10 @@ const AllAssets = ({ }: AllAssetsProps) => {
                       />
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
-                      ${0}
+                      ${token.price || 0}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 text-base-1s text-theme-secondary md:hidden">
-                      ${(parseFloat(formatEther(token.balance)) * 0).toFixed(2)}
+                      ${(parseFloat(formatEther(token.balance)) * (token.price || 0)).toFixed(2)}
                     </td>
                     <td className="border-t border-theme-stroke pl-4 py-3 pr-6 text-right md:pr-4">
                       <div className="inline-flex space-x-2">
