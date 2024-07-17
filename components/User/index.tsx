@@ -85,7 +85,7 @@ const User = ({ className }: UserProps) => {
                 theme
               />
             </div>
-            <NavLink title="View on scan" icon="arrows" url={`http://testnet.vicscan.xyz/address/${wallet?.senderAddress}`} />
+            <NavLink title="View on scan" icon="arrows" url={`http://vicscan.xyz/address/${wallet?.senderAddress}`} target="_blank" />
           </div>
         </MenuItems>
       </Transition>

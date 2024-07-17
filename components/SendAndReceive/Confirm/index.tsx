@@ -19,7 +19,7 @@ const Confirm = ({txHash, amount}: ConfirmProps) => (
         <div className="text-title-1s text-theme-green md:text-base-1s">
             Transaction success
         </div>
-        <a className="btn-gray w-full mt-12 md:mt-8" href={`https://testnet.vicscan.xyz/tx/${txHash}`} target="_blank">
+        <a className="btn-gray w-full mt-12 md:mt-8" href={`https://vicscan.xyz/tx/${txHash}`} target="_blank">
             View transaction
         </a>
     </div>
