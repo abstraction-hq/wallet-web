@@ -19,7 +19,7 @@ const mainnet = defineChain({
   blockExplorers: {
     default: { name: "Explorer", url: "https://vicscan.xyz" },
   },
-  testnet: true,
+  testnet: false,
 });
 
 const testnet = defineChain({

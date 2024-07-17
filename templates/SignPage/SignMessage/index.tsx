@@ -1,6 +1,5 @@
 "use client";
 import PasskeyAccount from "@/account/passkeyAccount";
-import { CHAINS } from "@/constants/chain";
 import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";

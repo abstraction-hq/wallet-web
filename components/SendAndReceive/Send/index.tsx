@@ -21,7 +21,6 @@ import {
   toHex,
   zeroAddress,
 } from "viem";
-import { CHAINS } from "@/constants/chain";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { handleUserOp } from "@/utils/bundler";
 import { erc20Abi } from "viem";
