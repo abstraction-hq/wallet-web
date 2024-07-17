@@ -46,13 +46,14 @@ const useAssetStore = create<AssetStore>((set) => ({
         await ethClient.getBalance({
           address,
         }),
-        await axios.get("https://www.binance.com/api/v3/ticker/price?symbol=VICUSDT"),
+        await axios.get(
+          "https://www.binance.com/api/v3/ticker/price?symbol=VICUSDT"
+        ),
         await axios.get(`https://assets.coin98.com/nfts/88/${address}`),
       ]);
 
       const usdValue =
         parseFloat(formatEther(vicBalance)) * parseFloat(vicPrice.data.price);
-
 
       const tokens: Token[] = [
         {
@@ -78,12 +79,14 @@ const useAssetStore = create<AssetStore>((set) => ({
       const nfts: NFT[] = [];
       for (const data of nftsRes.data) {
         for (const nft of data.data) {
-          nfts.push({
-            address: nft.address,
-            id: nft.id,
-            name: nft.metaData.name,
-            image: nft.metaData.image,
-          });
+          if (nft) {
+            nfts.push({
+              address: nft.address,
+              id: nft.id,
+              name: nft.metaData?.name || "Unknown NFT",
+              image: nft.metaData?.image || "",
+            });
+          }
         }
       }
 
