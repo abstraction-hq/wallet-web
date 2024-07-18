@@ -114,6 +114,7 @@ export default class PasskeyAccount extends BaseAccount {
   };
 
   signMessage = async (message: any): Promise<Hex> => {
+    window.focus();
     const challenge = utils.toBase64url(toBytes(message));
     const authData = await this.authenticate(challenge, [this.credentialId], {
       userVerification: "required",

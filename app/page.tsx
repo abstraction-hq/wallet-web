@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
-import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useWalletStore } from "@/stores/walletStore";
 import { useRouter } from "next/navigation";
 import MyAssets from "./my-assets/page";
 import useAssetStore from "@/stores/assetStore";
+import Loading from "@/components/Loading";
 
 export default function Home() {
   const loading = useWalletStore((state) => state.loading);
@@ -27,17 +27,8 @@ export default function Home() {
   }, [wallet, loading, fetchWalletBalance, route]);
 
   if (loading || !wallet) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
-  return (
-    <>
-      <MyAssets />
-      <ProgressBar
-        height="4px"
-        options={{ showSpinner: false }}
-        shallowRouting
-      />
-    </>
-  );
+  return <MyAssets />;
 }
