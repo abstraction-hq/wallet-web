@@ -4,7 +4,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOp } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, zeroAddress } from "viem";
 import ContractInteraction from "./ContractInteraction";
 import SignMessage from "./SignMessage";
 import Image from "next/image";
@@ -12,6 +12,7 @@ import { Icon } from "@chakra-ui/react";
 import { Communicator } from "@abstraction-hq/wallet-sdk";
 import { MethodCategory, signMethods } from "@/constants/sign";
 import { ethClient } from "@/config";
+import Loading from "@/components/Loading";
 
 function determineMethodCategory(method: string): MethodCategory | undefined {
   for (const c in signMethods) {
@@ -24,26 +25,21 @@ function determineMethodCategory(method: string): MethodCategory | undefined {
 }
 
 const SignPage = () => {
-  const loading = useWalletStore((state) => state.loading);
+  const walletLoading = useWalletStore((state) => state.loading);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const [messageId, setMessageId] = useState<string>("");
   const [signData, setSignData] = useState<any>(null);
   const searchParams = useSearchParams();
   const communicator = new Communicator(window.opener, "");
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet?.senderAddress).then((err) => {
-      console.error("Failed to copy text: ", err);
-    });
-  };
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     communicator.onPopupLoaded(searchParams.get("id") || "");
-  }, [loading, wallet]);
+  }, [walletLoading, wallet]);
 
   useEffect(() => {
     communicator.listenRequestMessage((message) => {
-      console.log("message", message)
+      console.log("message", message);
       setMessageId(message.id);
       setSignData({
         method: determineMethodCategory(message.payload.method),
@@ -54,30 +50,39 @@ const SignPage = () => {
   });
 
   const onConfirm = async () => {
-    if (!wallet) window.close();
-    const account = new PasskeyAccount(
-      wallet.passkeyCredentialId || "",
-      0n,
-      0n
-    );
+    setLoading(true);
+    try {
+      if (!wallet) window.close();
+      const account = new PasskeyAccount(
+        wallet.passkeyCredentialId || "",
+        0n,
+        0n
+      );
 
-    const [userOp] = await account.sendTransactionOperation(ethClient, [
-      {
-        target: signData.params[0].to,
-        value: signData.params[0].value || 0n,
-        data: signData.params[0].data || "0x",
-      },
-    ]);
+      const [userOp] = await account.sendTransactionOperation(ethClient, [
+        {
+          target: signData?.params[0].to || zeroAddress,
+          value: signData?.params[0].value || 0n,
+          data: signData?.params[0].data || "0x",
+        },
+      ]);
 
-    const txHash = await handleUserOp(userOp);
-    communicator.sendResponseMessage(messageId, txHash)
+      const txHash = await handleUserOp(userOp);
+      communicator.sendResponseMessage(messageId, txHash);
+    } catch (error) {
+      console.error(error);
+    }
     window.close();
   };
 
   const onReject = () => {
-    communicator.sendResponseMessage(messageId, "rejected")
+    communicator.sendResponseMessage(messageId, "rejected");
     window.close();
   };
+
+  if (walletLoading || !wallet) {
+    return <Loading />;
+  }
 
   // if (!signData) {
   //     return (
@@ -93,14 +98,16 @@ const SignPage = () => {
 
   return (
     <>
-      {signData?.method == "contractInteraction" ? (
-        <ContractInteraction
+      {signData?.method == "signMessage" ? (
+        <SignMessage
+          loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}
         />
       ) : (
-        <SignMessage
+        <ContractInteraction
+          loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}

@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 
 type ContractInteractionProps = {
   signData: any;
+  loading: boolean;
   onConfirm: () => void;
   onReject: () => void;
 };

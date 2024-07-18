@@ -9,21 +9,24 @@ import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";
 import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
+import Loading from "@/components/Loading";
 // import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 type ContractInteractionProps = {
   signData: any;
+  loading: boolean;
   onConfirm: () => void;
   onReject: () => void;
 };
 
 const ContractInteraction = ({
+  loading,
   onConfirm,
   onReject,
   signData,
 }: ContractInteractionProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-  console.log(signData)
+  console.log(signData);
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[28.5rem] w-full p-6 text-white">
@@ -68,7 +71,10 @@ const ContractInteraction = ({
               />
             </div>
             <div className="grow">
-              <div className="text-3xl text-theme-primary font-medium">{`- ${parseInt(signData?.params[0].value, 16)} VIC`}</div>
+              <div className="text-3xl text-theme-primary font-medium">{`- ${parseInt(
+                signData?.params[0].value || 0,
+                16
+              )} VIC`}</div>
               <div className="flex justify-between items-center">
                 <div className="text-base-2 text-theme-secondary">
                   {`≈ ${0}`}
@@ -158,14 +164,25 @@ const ContractInteraction = ({
             </div>
           </div>
         </>
-        <div className="flex justify-center w-full mt-6">
-          <button onClick={onConfirm} className="btn-secondary mr-2 w-1/2 px-4">
-            Confirm
-          </button>
-          <button onClick={onReject} className="btn-gray w-1/2 px-4">
-            Reject
-          </button>
-        </div>
+        {loading ? (
+          <div className="flex justify-center w-full mt-6">
+            <button className="p-2 w-full btn-gray">
+              <Loading />
+            </button>
+          </div>
+        ) : (
+          <div className="flex justify-center w-full mt-6">
+            <button
+              onClick={onConfirm}
+              className="btn-secondary mr-2 w-1/2 px-4"
+            >
+              Confirm
+            </button>
+            <button onClick={onReject} className="btn-gray w-1/2 px-4">
+              Reject
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
