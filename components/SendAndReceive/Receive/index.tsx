@@ -1,6 +1,7 @@
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Option from "@/components/Option";
+import QRCode from "@/components/QRCode";
 import { useWalletStore } from "@/stores/walletStore";
 
 type ReceiveProps = {};
@@ -18,13 +19,7 @@ const Receive = ({}: ReceiveProps) => {
   return (
     <>
       <div className="mb-6 p-6 text-center md:py-0">
-        <Image
-          className="max-w-full opacity-100"
-          src="/images/qr-code.png"
-          width={180}
-          height={180}
-          alt=""
-        />
+        <QRCode value={wallet?.senderAddress} />
       </div>
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Network" stroke>
