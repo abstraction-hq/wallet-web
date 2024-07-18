@@ -59,13 +59,13 @@ export default function RootLayout({
                 />
                 <meta
                     name="twitter:description"
-                    content="Clean and minimal Crypto AI UI Design Kit"
+                    content="Your crypto gateway to the future"
                 />
-                <meta name="twitter:creator" content="@ui8" />
+                <meta name="twitter:creator" content="@abstraction-hq" />
                 {/* Twitter Summary card images must be at least 120x120px */}
                 <meta
                     name="twitter:image"
-                    content="https://ui8-neutrade-0d83b7d91614.herokuapp.com/twitter-card.png"
+                    content="/images/logo-dark.svg"
                 />
                 {/* Open Graph data for Facebook */}
                 <meta
@@ -75,21 +75,20 @@ export default function RootLayout({
                 <meta property="og:type" content="Article" />
                 <meta
                     property="og:url"
-                    content="https://ui8.net/ui8/products/neutrade--crypto-ai-ui-kit"
+                    content="https://wallet.abstraction.world"
                 />
                 <meta
                     property="og:image"
-                    content="https://ui8-neutrade-0d83b7d91614.herokuapp.com/fb-og-image.png"
+                    content="/images/logo-dark.svg"
                 />
                 <meta
                     property="og:description"
-                    content="Clean and minimal Crypto AI UI Design Kit"
+                    content="Your crypto gateway to the future"
                 />
                 <meta
                     property="og:site_name"
                     content="Abstraction Wallet"
                 />
-                <meta property="fb:admins" content="132951670226590" />
                 {/* Open Graph data for LinkedIn */}
                 <meta
                     property="og:title"
@@ -97,15 +96,15 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://ui8.net/ui8/products/neutrade--crypto-ai-ui-kit"
+                    content="https://wallet.abstraction.world"
                 />
                 <meta
                     property="og:image"
-                    content="https://ui8-neutrade-0d83b7d91614.herokuapp.com/linkedin-og-image.png"
+                    content="/images/logo-dark.svg"
                 />
                 <meta
                     property="og:description"
-                    content="Clean and minimal Crypto AI UI Design Kit"
+                    content="Your crypto gateway to the future"
                 />
                 {/* Open Graph data for Pinterest */}
                 <meta
@@ -114,15 +113,15 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://ui8.net/ui8/products/neutrade--crypto-ai-ui-kit"
+                    content="https://wallet.abstraction.world"
                 />
                 <meta
                     property="og:image"
-                    content="https://ui8-neutrade-0d83b7d91614.herokuapp.com/pinterest-og-image.png"
+                    content="/images/logo-dark.svg"
                 />
                 <meta
                     property="og:description"
-                    content="Clean and minimal Crypto AI UI Design Kit"
+                    content="Your crypto gateway to the future"
                 />
             </head>
             <body
