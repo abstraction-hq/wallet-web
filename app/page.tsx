@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
+import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useWalletStore } from "@/stores/walletStore";
 import { useRouter } from "next/navigation";
 import MyAssets from "./my-assets/page";
@@ -17,17 +18,26 @@ export default function Home() {
     }
     if (!wallet) {
       route.push("/sign-up");
-      return
+      return;
     }
 
     if (wallet) {
       fetchWalletBalance(wallet?.senderAddress);
     }
-  }, [wallet, loading, fetchWalletBalance, route])
+  }, [wallet, loading, fetchWalletBalance, route]);
 
   if (loading || !wallet) {
     return <div>Loading...</div>;
   }
 
-  return <MyAssets />;
+  return (
+    <>
+      <MyAssets />
+      <ProgressBar
+        height="4px"
+        options={{ showSpinner: false }}
+        shallowRouting
+      />
+    </>
+  );
 }
