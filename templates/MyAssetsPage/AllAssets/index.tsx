@@ -39,9 +39,9 @@ const AllAssets = ({ }: AllAssetsProps) => {
   return (
     <>
       <Card className="grow" title={"All assets"} tooltip="Tooltip all assets">
-        <div className="flex mb-4 md:hidden">
+        <div className="flex mb-4">
           <Tabs
-            className="mr-auto"
+            className="mr-auto md:hidden"
             items={typeItems}
             value={type}
             setValue={setType}
