@@ -1,7 +1,6 @@
 "use client";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createPublicClient, http } from "viem";

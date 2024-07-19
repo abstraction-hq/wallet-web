@@ -1,11 +1,12 @@
 import Image from "@/components/Image";
 
 type ConfirmProps = {
-  txHash: string;
+  txHash?: string;
   amount: string;
+  success?: boolean;
 };
 
-const Confirm = ({txHash, amount}: ConfirmProps) => (
+const Confirm = ({txHash, success}: ConfirmProps) => (
     <div className="pt-6 text-center">
         <div className="mb-8">
             <Image
@@ -16,8 +17,8 @@ const Confirm = ({txHash, amount}: ConfirmProps) => (
                 alt=""
             />
         </div>
-        <div className="text-title-1s text-theme-green md:text-base-1s">
-            Transaction success
+        <div className={`text-title-1s ${ success ? 'text-theme-green' : 'text-theme-red'} md:text-base-1s`}>
+            Transaction {success ? "successful" : "failed"}
         </div>
         <a className="btn-gray w-full mt-12 md:mt-8" href={`https://vicscan.xyz/tx/${txHash}`} target="_blank">
             View transaction

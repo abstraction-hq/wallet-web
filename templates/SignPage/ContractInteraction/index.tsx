@@ -1,13 +1,7 @@
 "use client";
-import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { createPublicClient, formatEther, http } from "viem";
 import Image from "@/components/Image";
-import CurrencyFormat from "@/components/CurrencyFormat";
-import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
 // import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
