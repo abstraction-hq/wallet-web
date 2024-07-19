@@ -1,15 +1,16 @@
-"use client"
+"use client";
 import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp } from "@/utils/bundler";
+import { handleUserOp, UserOpReceipt } from "@/utils/bundler";
 import { getXYCoordinates, WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 type SignUpHandleProps = {
   afterCreateWallet?: () => void;
@@ -44,24 +45,50 @@ const SignUpHandle = ({
       passkey[1] as bigint
     );
 
-    const [initWalletOp] = await account.sendTransactionOperation(ethClient, [
+    const [userOp, userOpHash] = await account.sendTransactionOperation(
+      ethClient,
+      [
+        {
+          target: account.getSender(),
+          value: 0n,
+          data: "",
+        },
+      ]
+    );
+    const userOpReceipt: UserOpReceipt = await toast.promise(
+      handleUserOp(userOp, userOpHash),
       {
-        target: account.getSender(),
-        value: 0n,
-        data: "",
-      },
-    ]);
+        loading: "Wallet creating...",
+        success: (data) => (
+          <div>
+            Transaction Success -{" "}
+            <a href={`https://vicscan.xyz/tx/${data.txHash}`} target="_blank">
+              Click to view on scan
+            </a>
+          </div>
+        ),
+        error: (err) => (
+          <div>
+            Transaction Fail -{" "}
+            <a href={`https://vicscan.xyz/tx/${err.txHash}`} target="_blank">
+              Click to view on scan
+            </a>
+          </div>
+        ),
+      }
+    );
 
-    console.log(await handleUserOp(initWalletOp));
-    createWallet({
-      id: 0,
-      name: "Account 0",
-      senderAddress: account.getSender(),
-      passkeyCredentialId: parsedData.credential.id,
-    });
+    if (userOpReceipt && userOpReceipt.success) {
+      createWallet({
+        id: 0,
+        name: "Account 0",
+        senderAddress: account.getSender(),
+        passkeyCredentialId: parsedData.credential.id,
+      });
 
-    if (afterCreateWallet) {
-      afterCreateWallet();
+      if (afterCreateWallet) {
+        afterCreateWallet();
+      }
     }
   };
 

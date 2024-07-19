@@ -59,7 +59,7 @@ const SignPage = () => {
         0n
       );
 
-      const [userOp] = await account.sendTransactionOperation(ethClient, [
+      const [userOp, userOpHash] = await account.sendTransactionOperation(ethClient, [
         {
           target: signData?.params[0].to || zeroAddress,
           value: signData?.params[0].value || 0n,
@@ -67,7 +67,7 @@ const SignPage = () => {
         },
       ]);
 
-      const txHash = await handleUserOp(userOp);
+      const txHash = await handleUserOp(userOp, userOpHash);
       communicator.sendResponseMessage(messageId, txHash);
     } catch (error) {
       console.error(error);
