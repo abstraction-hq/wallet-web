@@ -1,10 +1,19 @@
 "use client";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp } from "@/utils/bundler";
+import { handleUserOp, handleUserOpWithoutWait } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { createPublicClient, http, zeroAddress } from "viem";
+import {
+  createPublicClient,
+  encodeFunctionData,
+  http,
+  keccak256,
+  PublicClient,
+  stringToHex,
+  toHex,
+  zeroAddress,
+} from "viem";
 import ContractInteraction from "./ContractInteraction";
 import SignMessage from "./SignMessage";
 import Image from "next/image";
@@ -13,6 +22,9 @@ import { Communicator } from "@abstraction-hq/wallet-sdk";
 import { MethodCategory, signMethods } from "@/constants/sign";
 import { ethClient } from "@/config";
 import Loading from "@/components/Loading";
+import { computeNewContractAddress } from "@/utils/create2";
+import { FACTORY } from "@/constants";
+import GenericFactory from "@/abis/GenericFactory.json"
 
 function determineMethodCategory(method: string): MethodCategory | undefined {
   for (const c in signMethods) {
@@ -38,12 +50,19 @@ const SignPage = () => {
   }, [walletLoading, wallet]);
 
   useEffect(() => {
-    communicator.listenRequestMessage((message) => {
-      console.log("message", message);
+    communicator.listenRequestMessage(async (message) => {
       setMessageId(message.id);
+      const account = new PasskeyAccount(
+        wallet.passkeyCredentialId || "",
+        0n,
+        0n
+      );
       setSignData({
         method: determineMethodCategory(message.payload.method),
-        params: message.payload.params,
+        params: {
+          ...message.payload.params,
+          salt: message.payload.params[0].salt || keccak256(toHex(await account.getNonce(ethClient as PublicClient)))
+        },
         dappInfo: message.payload.dappInfo,
       });
     });
@@ -59,13 +78,36 @@ const SignPage = () => {
         0n
       );
 
-      const [userOp, userOpHash] = await account.sendTransactionOperation(ethClient, [
-        {
-          target: signData?.params[0].to || zeroAddress,
-          value: signData?.params[0].value || 0n,
-          data: signData?.params[0].data || "0x",
-        },
-      ]);
+      let userOp, userOpHash;
+
+      if (!signData?.params[0].to) {
+        // create contract
+        [userOp, userOpHash] = await account.sendTransactionOperation(
+          ethClient,
+          [
+            {
+              target: FACTORY,
+              value: signData?.params[0].value || 0n,
+              data: encodeFunctionData({
+                abi: GenericFactory.abi,
+                functionName: "create2",
+                args: [signData?.params[0].data, signData.salt]
+              }),
+            },
+          ]
+        );
+      } else {
+        [userOp, userOpHash] = await account.sendTransactionOperation(
+          ethClient,
+          [
+            {
+              target: signData?.params[0].to || zeroAddress,
+              value: signData?.params[0].value || 0n,
+              data: signData?.params[0].data || "0x",
+            },
+          ]
+        );
+      }
 
       const txHash = await handleUserOp(userOp, userOpHash);
       communicator.sendResponseMessage(messageId, txHash);

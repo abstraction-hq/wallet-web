@@ -12,6 +12,18 @@ export interface UserOpReceipt {
   actualGasUsed: number;
 }
 
+export const handleUserOpWithoutWait = async (
+  userOp: RawUserOperation
+): Promise<string> => {
+  const url = `${bundlerRpc}/eth_sendUserOperation`;
+  const data = {
+    userOp,
+    entrypoint: ENTRY_POINT,
+  };
+  const response = await axios.post(url, data);
+  return response.data
+};
+
 export const handleUserOp = async (
   userOp: RawUserOperation,
   userOpHash: Hex
@@ -35,7 +47,7 @@ export const handleUserOp = async (
       resolve({
         ...receipt,
         txHash: response.data,
-      })
+      });
     } catch (e) {
       reject(e);
     }
@@ -49,6 +61,8 @@ export const waitUserOpReceipt = async (
   const receipt = await ethClient.waitForTransactionReceipt({
     hash: txHash,
   });
+
+  console.log(receipt)
 
   if (receipt.status === 0) {
     return {
