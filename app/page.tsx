@@ -27,7 +27,11 @@ export default function Home() {
   }, [wallet, loading, fetchWalletBalance, route]);
 
   if (loading || !wallet) {
-    return <Loading />;
+    return (
+        <div className="flex items-center justify-center h-screen">
+          <Loading />
+        </div>
+    )
   }
 
   return <MyAssets />;

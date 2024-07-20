@@ -3,13 +3,12 @@ import CurrencyInput from "react-currency-input-field";
 import Image from "@/components/Image";
 import Modal from "@/components/Modal";
 import Option from "@/components/Option";
-import Sending from "../Sending";
 import Confirm from "../Confirm";
 import { useWalletStore } from "@/stores/walletStore";
 import {
   Address,
   encodeFunctionData,
-  erc721Abi,
+  erc721Abi, formatUnits,
   getAddress,
   Hex,
   parseEther,
@@ -41,6 +40,8 @@ const Send = ({}: SendProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
+  const maxValue = formatUnits(selectedAsset?.balance, selectedAsset?.decimals);
+  const isDisabled = maxValue === "0";
 
   const onSend = async () => {
     let target: Address = getAddress(selectedAsset.address);
@@ -94,19 +95,50 @@ const Send = ({}: SendProps) => {
     })
   };
 
+  const handleValueChange = (value: string | undefined, name: string | undefined, values: { float: number } | undefined) => {
+    if (isToken) {
+        if (values && values.float > maxValue) {
+            setAmount(maxValue);
+        } else {
+            setAmount(value || "0.00");
+        }
+    } else {
+        setAmount(value || "0.00");
+    }
+    console.log(values);
+  };
+
   return (
     <>
-      {isToken && (
-        <CurrencyInput
-          className="input-caret-color w-full h-40 mb-6 bg-transparent text-center text-h1 outline-none placeholder:text-theme-primary xl:text-h2 lg:text-h1 md:h-24 md:text-h2"
-          name="price"
-          placeholder="0.00"
-          decimalsLimit={8}
-          decimalSeparator="."
-          groupSeparator=","
-          onValueChange={(value, name, values) => setAmount(value || "0")}
-        />
-      )}
+      {isToken && <CurrencyInput
+        className="input-caret-color w-full h-20 mb-1 bg-transparent text-center text-h1 outline-none placeholder:text-theme-primary xl:text-h2 lg:text-h1 md:h-24 md:text-h2"
+        name="price"
+        placeholder="0.00"
+        decimalsLimit={4}
+        disabled={isDisabled}
+        // maxLength={4}
+        // max={formatUnits(selectedAsset.balance, selectedAsset.decimals)}
+        decimalSeparator="."
+        groupSeparator=","
+        value={amount}
+        onValueChange={handleValueChange}
+      />}
+      {/*<input*/}
+      {/*    className="w-full h-14 pl-14 pr-4 bg-transparent border border-theme-stroke text-base-1s text-theme-primary outline-none rounded-xl transition-colors placeholder:text-theme-tertiary focus:border-theme-brand md:text-[1rem]"*/}
+      {/*    type="text"*/}
+      {/*    placeholder="Search for asset"*/}
+      {/*    value={search}*/}
+      {/*    onChange={(e) => setSearch(e.target.value)}*/}
+      {/*    required*/}
+      {/*    data-autofocus*/}
+      {/*/>*/}
+      <div className={`text-center justify-center mb-7 h-20 ${
+          isDisabled
+              ? "text-theme-red"
+              : "text-gray-400"
+      }`}>
+        {isDisabled ? 'Insufficient funds' : `Max value: ${maxValue}`}
+      </div>
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
           <div className="flex items-center grow">
