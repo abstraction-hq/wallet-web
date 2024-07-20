@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
+import {history} from "@/mocks/chat";
 
 type MultiCallProps = {
   signData: any;
@@ -21,6 +22,8 @@ const MultiCall = ({
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const params = signData?.params[0];
   const dappInfo = signData?.dappInfo || {};
+  const [activeId, setActiveId] = useState("0");
+
 
   console.log("params", params);
 
@@ -123,53 +126,145 @@ const MultiCall = ({
               <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
             </div>
           </div>
-          {params.calls.map((call: any, index: number) => (
-            <div key={index}>
-              <div className="flex items-center py-3">
-                <div className="flex flex-col text-left w-4/5">
-                  <div className="flex items-center">
-                    <div className="text-base-1 text-theme-secondary">
-                      Interact with
+          <div className="mb-2 text-xl text-center font-semibold text-theme-primary">
+            Action Calls
+          </div>
+          <div className="pt-1 mt-3 scrollbar-none justify-center scroll-smooth h-96 overflow-y-auto">
+            {params.calls.map((call: any, index: number) => (
+                <div key={index} className="px-2">
+                  <div className="font-semibold text-theme-primary">
+                    Call {index + 1}
+                  </div>
+                  <div className="border-theme-stroke border-t mt-1">
+                    <div className="flex items-center py-1 mt-1">
+                      <div className="flex flex-col text-left w-4/5">
+                        <div className="flex items-center">
+                          <div className="text-base-1 text-theme-secondary">Interact with</div>
+                        </div>
+                        <div className="text-base-1s font-medium text-theme-primary">{call.to}</div>
+                      </div>
+                      <div className="flex justify-end w-1/5">
+                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-base-1s font-medium text-theme-primary">
-                    {call.to}
-                  </div>
-                </div>
-                <div className="flex justify-end w-1/5">
-                  <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                </div>
-              </div>
-              <div className="flex items-center py-3">
-                <div className="flex flex-col text-left w-4/5">
-                  <div className="flex items-center">
-                    <div className="text-base-1 text-theme-secondary">Data</div>
-                  </div>
-                  <div className="text-base-1s font-medium text-theme-primary">
-                    {call.data}
-                  </div>
-                </div>
-                <div className="flex justify-end w-1/5">
-                  <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                </div>
-              </div>
-              <div className="flex items-center py-3">
-                <div className="flex flex-col text-left w-4/5">
-                  <div className="flex items-center">
-                    <div className="text-base-1 text-theme-secondary">
-                      Value
+                    <div className="flex items-center py-1">
+                      <div className="flex flex-col text-left w-4/5">
+                        <div className="flex items-center">
+                          <div className="text-base-1 text-theme-secondary">Data</div>
+                        </div>
+                        <div className="text-base-1s font-medium text-theme-primary">{call.data}</div>
+                      </div>
+                      <div className="flex justify-end w-1/5">
+                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-base-1s font-medium text-theme-primary">
-                    {call.value.toString()}
+                    <div className="flex items-center py-1">
+                      <div className="flex flex-col text-left w-4/5">
+                        <div className="flex items-center">
+                          <div className="text-base-1 text-theme-secondary">Value</div>
+                        </div>
+                        <div className="text-base-1s font-medium text-theme-primary">
+                          {call.value.toString()}
+                        </div>
+                      </div>
+                      <div className="flex justify-end w-1/5">
+                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
+                      </div>
+                    </div>
+                    <div className="border-theme-stroke border-t mb-2"/>
                   </div>
                 </div>
-                <div className="flex justify-end w-1/5">
-                  <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
+            {/*{params.calls.map((call: any, index: number) => (*/}
+            {/*    <div key={index} className="border-t scrollbar-none scroll-smooth border-theme-stroke">*/}
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">*/}
+            {/*              Interact with*/}
+            {/*            </div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.to}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.data}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.data}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.data}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.data}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+
+            {/*      <div className="flex items-center py-3">*/}
+            {/*        <div className="flex flex-col text-left w-4/5">*/}
+            {/*          <div className="flex items-center">*/}
+            {/*            <div className="text-base-1 text-theme-secondary">*/}
+            {/*              Value*/}
+            {/*            </div>*/}
+            {/*          </div>*/}
+            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
+            {/*            {call.value.toString()}*/}
+            {/*          </div>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex justify-end w-1/5">*/}
+            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
+            {/*        </div>*/}
+            {/*      </div>*/}
+            {/*    </div>*/}
+            {/*))}*/}
+
+          </div>
+
         </div>
         {loading ? (
           <div className="flex justify-center w-full mt-6">
