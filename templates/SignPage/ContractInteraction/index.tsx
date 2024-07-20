@@ -1,15 +1,10 @@
 "use client";
-import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { createPublicClient, formatEther, http } from "viem";
 import Image from "@/components/Image";
-import CurrencyFormat from "@/components/CurrencyFormat";
-import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
+import { computeNewContractAddress } from "@/utils/create2";
 // import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 type ContractInteractionProps = {
@@ -26,7 +21,11 @@ const ContractInteraction = ({
   signData,
 }: ContractInteractionProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-  console.log(signData);
+  const params = signData?.params[0];
+  const dappInfo = signData?.dappInfo || {};
+  if (!params) {
+    return <Loading />;
+  }
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[28.5rem] w-full p-6 text-white">
@@ -36,20 +35,15 @@ const ContractInteraction = ({
             <div
               className={`flex justify-center items-center w-12 h-12 mr-4 rounded-full`}
             >
-              <Image
-                src={signData?.dappInfo?.icon}
-                width={48}
-                height={48}
-                alt=""
-              />
+              <Image src={dappInfo.icon} width={48} height={48} alt="" />
             </div>
             <div className="grow">
               <div className="text-3xl text-theme-primary font-medium">
-                {signData?.dappInfo?.title}
+                {dappInfo.title}
               </div>
               <div className="flex justify-between items-center">
                 <div className="text-base-2 text-theme-secondary">
-                  {signData?.dappInfo?.hostname}
+                  {dappInfo.hostname}
                 </div>
               </div>
             </div>
@@ -72,7 +66,7 @@ const ContractInteraction = ({
             </div>
             <div className="grow">
               <div className="text-3xl text-theme-primary font-medium">{`- ${parseInt(
-                signData?.params[0].value || 0,
+                params.value || 0,
                 16
               )} VIC`}</div>
               <div className="flex justify-between items-center">
@@ -134,34 +128,65 @@ const ContractInteraction = ({
                 <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
               </div>
             </div>
-            <div className="flex items-center py-3">
-              <div className="flex flex-col text-left w-4/5">
-                <div className="flex items-center">
-                  <div className="text-base-1 text-theme-secondary">
-                    Interact with
+            {params.to ? (
+              <>
+                <div className="flex items-center py-3">
+                  <div className="flex flex-col text-left w-4/5">
+                    <div className="flex items-center">
+                      <div className="text-base-1 text-theme-secondary">
+                        Interact with
+                      </div>
+                    </div>
+                    <div className="text-base-1s font-medium text-theme-primary">
+                      {params.to}
+                    </div>
+                  </div>
+                  <div className="flex justify-end w-1/5">
+                    <Icon
+                      className="fill-theme-primary md:ml-1.5"
+                      name="copy"
+                    />
                   </div>
                 </div>
-                <div className="text-base-1s font-medium text-theme-primary">
-                  {signData?.params[0].to}
+                <div className="flex items-center py-3">
+                  <div className="flex flex-col text-left w-4/5">
+                    <div className="flex items-center">
+                      <div className="text-base-1 text-theme-secondary">
+                        Data
+                      </div>
+                    </div>
+                    <div className="text-base-1s font-medium text-theme-primary">
+                      {params.data}
+                    </div>
+                  </div>
+                  <div className="flex justify-end w-1/5">
+                    <Icon
+                      className="fill-theme-primary md:ml-1.5"
+                      name="copy"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end w-1/5">
-                <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-              </div>
-            </div>
-            <div className="flex items-center py-3">
-              <div className="flex flex-col text-left w-4/5">
-                <div className="flex items-center">
-                  <div className="text-base-1 text-theme-secondary">Data</div>
+              </>
+            ): (
+                <div className="flex items-center py-3">
+                  <div className="flex flex-col text-left w-4/5">
+                    <div className="flex items-center">
+                      <div className="text-base-1 text-theme-secondary">
+                        New Contract Creation
+                      </div>
+                    </div>
+                    <div className="text-base-1s font-medium text-theme-primary">
+                      {computeNewContractAddress(signData.salt, params.data)}
+                    </div>
+                  </div>
+                  <div className="flex justify-end w-1/5">
+                    <Icon
+                      className="fill-theme-primary md:ml-1.5"
+                      name="copy"
+                    />
+                  </div>
                 </div>
-                <div className="text-base-1s font-medium text-theme-primary">
-                  {signData?.params[0].data}
-                </div>
-              </div>
-              <div className="flex justify-end w-1/5">
-                <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-              </div>
-            </div>
+            )}
           </div>
         </>
         {loading ? (

@@ -8,30 +8,25 @@ import Confirm from "../Confirm";
 import { useWalletStore } from "@/stores/walletStore";
 import {
   Address,
-  createPublicClient,
   encodeFunctionData,
   erc721Abi,
-  formatEther,
-  formatGwei,
-  formatUnits,
   getAddress,
   Hex,
-  http,
   parseEther,
-  toHex,
   zeroAddress,
 } from "viem";
 import PasskeyAccount from "@/account/passkeyAccount";
-import { handleUserOp } from "@/utils/bundler";
+import { handleUserOp, UserOpReceipt } from "@/utils/bundler";
 import { erc20Abi } from "viem";
 import TokenAndNFTs from "@/components/TokenAndNFTs";
 import Icon from "@/components/Icon";
 import useAssetStore, { NFT, Token } from "@/stores/assetStore";
 import { getAssetLogo } from "@/utils/format";
 import { ethClient } from "@/config";
+import Loading from "@/components/Loading";
+import toast from "react-hot-toast";
 
-type SendProps = {
-};
+type SendProps = {};
 
 const Send = ({}: SendProps) => {
   const [visibleModal, setVisibleModal] = useState(false);
@@ -40,10 +35,11 @@ const Send = ({}: SendProps) => {
     useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
-  const [txHash, setTxHash] = useState<string>("");
+  const [userOpReceipt, setUserOpReceipt] = useState<UserOpReceipt>();
   const tokens = useAssetStore((state) => state.tokens);
-  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0] || {});
+  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0]);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
   console.log(selectedAsset);
   const maxValue = 9999;
@@ -82,18 +78,22 @@ const Send = ({}: SendProps) => {
       0n
     );
 
-    const [userOp] = await account.sendTransactionOperation(ethClient, [
-      {
-        target,
-        value,
-        data,
-      },
-    ]);
+    const [userOp, userOpHash] = await account.sendTransactionOperation(
+      ethClient,
+      [
+        {
+          target,
+          value,
+          data,
+        },
+      ]
+    );
 
-    const txHash = await handleUserOp(userOp);
-    setTxHash(txHash);
-
-    setVisibleModal(true);
+    toast.promise(handleUserOp(userOp, userOpHash), {
+      loading: "Sending...",
+      success: (data) => <div>Transaction Success - <a href={`https://vicscan.xyz/tx/${data.txHash}`} target="_blank">Click to view on scan</a></div>,
+      error: (err) => <div>Transaction Fail - <a href={`https://vicscan.xyz/tx/${err.txHash}`} target="_blank">Click to view on scan</a></div>,
+    })
   };
 
   const handleValueChange = (value: string | undefined, name: string | undefined, values: { float: number } | undefined) => {
@@ -171,11 +171,19 @@ const Send = ({}: SendProps) => {
           />
         </Option>
       </div>
-      <button className="btn-primary w-full mt-6" onClick={() => onSend()}>
-        Send
-      </button>
+      {loading ? (
+        <div className="flex justify-center w-full mt-6">
+          <button className="p-2 w-full btn-gray">
+            <Loading />
+          </button>
+        </div>
+      ) : (
+        <button className="btn-primary w-full mt-6" onClick={() => onSend()}>
+          Send
+        </button>
+      )}
       <Modal visible={visibleModal} onClose={() => setVisibleModal(false)}>
-        <Confirm txHash={txHash} amount={amount} />
+        <Confirm txHash={userOpReceipt?.txHash} amount={amount} success={userOpReceipt?.success} />
       </Modal>
       <TokenAndNFTs
         visibleModal={visibleModalTokenAndNFTs}
