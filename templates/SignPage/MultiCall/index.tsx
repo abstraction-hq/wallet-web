@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
-import {history} from "@/mocks/chat";
 
 type MultiCallProps = {
   signData: any;
