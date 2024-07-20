@@ -1,11 +1,10 @@
 "use client";
 import { useWalletStore } from "@/stores/walletStore";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
 import { computeNewContractAddress } from "@/utils/create2";
-// import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
 type ContractInteractionProps = {
   signData: any;
