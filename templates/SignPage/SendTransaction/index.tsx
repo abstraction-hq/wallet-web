@@ -32,6 +32,7 @@ const ContractInteraction = ({
   const dappInfo = signData?.dappInfo || {};
 
   const displayValue = formatEther(BigInt(params.value || "0"));
+  const displayValueUsd = parseFloat(displayValue) * walletInfo?.vicPrice || 0;
 
   const onSignTransaction = async () => {
     setLoading(true);
@@ -127,11 +128,11 @@ const ContractInteraction = ({
             </div>
             <div className="grow">
               <div className="text-3xl text-theme-primary font-medium">{`- ${displayValue} VIC`}</div>
-              {/* <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center">
                 <div className="text-base-2 text-theme-secondary">
-                  {`≈ ${displayValueUsd}`}
+                  {`≈ $${displayValueUsd}`}
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>
