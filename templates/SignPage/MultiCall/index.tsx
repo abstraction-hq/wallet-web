@@ -23,7 +23,6 @@ const MultiCall = ({
   const dappInfo = signData?.dappInfo || {};
   const [activeId, setActiveId] = useState("0");
 
-
   console.log("params", params);
 
   return (
