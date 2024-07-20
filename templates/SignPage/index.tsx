@@ -109,7 +109,7 @@ const SignPage = () => {
         );
       }
 
-      const txHash = await handleUserOp(userOp, userOpHash);
+      const txHash = await handleUserOpWithoutWait(userOp);
       communicator.sendResponseMessage(messageId, txHash);
     } catch (error) {
       console.error(error);
