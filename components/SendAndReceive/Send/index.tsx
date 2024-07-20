@@ -3,7 +3,6 @@ import CurrencyInput from "react-currency-input-field";
 import Image from "@/components/Image";
 import Modal from "@/components/Modal";
 import Option from "@/components/Option";
-import Sending from "../Sending";
 import Confirm from "../Confirm";
 import { useWalletStore } from "@/stores/walletStore";
 import {
@@ -42,8 +41,6 @@ const Send = ({}: SendProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
   const maxValue = formatUnits(selectedAsset?.balance, selectedAsset?.decimals);
-  // const maxValue = Number(maxValueString).toFixed(2);
-  // const isDisabled = maxValue = 0;
   const isDisabled = maxValue === "0";
 
   const onSend = async () => {
