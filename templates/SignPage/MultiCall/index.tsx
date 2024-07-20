@@ -4,27 +4,64 @@ import React, { useEffect, useState } from "react";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Loading from "@/components/Loading";
+import { formatEther, zeroAddress } from "viem";
+import useAssetStore from "@/stores/assetStore";
+import PasskeyAccount from "@/account/passkeyAccount";
+import { ethClient } from "@/config";
+import { CallContractArgs } from "@/types/account";
+import { handleUserOpWithoutWait } from "@/utils/bundler";
 
 type MultiCallProps = {
   signData: any;
-  loading: boolean;
   onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };
 
-const MultiCall = ({
-  loading,
-  onConfirm,
-  onReject,
-  signData,
-}: MultiCallProps) => {
+const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const params = signData?.params[0];
   const dappInfo = signData?.dappInfo || {};
-  const [activeId, setActiveId] = useState("0");
+  const walletInfo = useAssetStore((state) => state.walletInfo);
 
+  let displayValueBigint = 0n;
+  for (const call of params.calls) {
+    displayValueBigint += BigInt(call.value || "0");
+  }
 
-  console.log("params", params);
+  const displayValue = formatEther(displayValueBigint);
+  const displayValueUsd = parseFloat(displayValue) * walletInfo?.vicPrice || 0;
+
+  const onSignCalls = async () => {
+    setLoading(true);
+    try {
+      if (!wallet) window.close();
+      const account = new PasskeyAccount(
+        wallet.passkeyCredentialId || "",
+        0n,
+        0n
+      );
+
+      let callArgs: CallContractArgs[] = [];
+
+      for (const call of params.calls) {
+        callArgs.push({
+          target: call.to || zeroAddress,
+          value: BigInt(call.value || "0"),
+          data: call.data || "0x",
+        });
+      }
+      const [userOp] = await account.sendTransactionOperation(
+        ethClient,
+        callArgs
+      );
+
+      const txHash = await handleUserOpWithoutWait(userOp);
+      onConfirm(txHash);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center">
@@ -65,13 +102,10 @@ const MultiCall = ({
               />
             </div>
             <div className="grow">
-              <div className="text-3xl text-theme-primary font-medium">{`- ${parseInt(
-                params.value || 0,
-                16
-              )} VIC`}</div>
+              <div className="text-3xl text-theme-primary font-medium">{`- ${displayValue} VIC`}</div>
               <div className="flex justify-between items-center">
                 <div className="text-base-2 text-theme-secondary">
-                  {`≈ ${0}`}
+                  {`≈ $${displayValueUsd}`}
                 </div>
               </div>
             </div>
@@ -130,140 +164,70 @@ const MultiCall = ({
           </div>
           <div className="pt-1 mt-3 scrollbar-none justify-center scroll-smooth h-96 overflow-y-auto">
             {params.calls.map((call: any, index: number) => (
-                <div key={index} className="px-2">
-                  <div className="font-semibold text-theme-primary">
-                    Call {index + 1}
-                  </div>
-                  <div className="border-theme-stroke border-t mt-1">
-                    <div className="flex items-center py-1 mt-1">
-                      <div className="flex flex-col text-left w-4/5">
-                        <div className="flex items-center">
-                          <div className="text-base-1 text-theme-secondary">Interact with</div>
-                        </div>
-                        <div className="text-base-1s font-medium text-theme-primary">{call.to}</div>
-                      </div>
-                      <div className="flex justify-end w-1/5">
-                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                      </div>
-                    </div>
-                    <div className="flex items-center py-1">
-                      <div className="flex flex-col text-left w-4/5">
-                        <div className="flex items-center">
-                          <div className="text-base-1 text-theme-secondary">Data</div>
-                        </div>
-                        <div className="text-base-1s font-medium text-theme-primary">{call.data}</div>
-                      </div>
-                      <div className="flex justify-end w-1/5">
-                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                      </div>
-                    </div>
-                    <div className="flex items-center py-1">
-                      <div className="flex flex-col text-left w-4/5">
-                        <div className="flex items-center">
-                          <div className="text-base-1 text-theme-secondary">Value</div>
-                        </div>
-                        <div className="text-base-1s font-medium text-theme-primary">
-                          {call.value.toString()}
-                        </div>
-                      </div>
-                      <div className="flex justify-end w-1/5">
-                        <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
-                      </div>
-                    </div>
-                    <div className="border-theme-stroke border-t mb-2"/>
-                  </div>
+              <div key={index} className="px-2">
+                <div className="font-semibold text-theme-primary">
+                  Call {index + 1}
                 </div>
+                <div className="border-theme-stroke border-t mt-1">
+                  <div className="flex items-center py-1 mt-1">
+                    <div className="flex flex-col text-left w-4/5">
+                      <div className="flex items-center">
+                        <div className="text-base-1 text-theme-secondary">
+                          Interact with
+                        </div>
+                      </div>
+                      <div className="text-base-1s font-medium text-theme-primary">
+                        {call.to}
+                      </div>
+                    </div>
+                    <div className="flex justify-end w-1/5">
+                      <Icon
+                        className="fill-theme-primary md:ml-1.5"
+                        name="copy"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center py-1">
+                    <div className="flex flex-col text-left w-4/5">
+                      <div className="flex items-center">
+                        <div className="text-base-1 text-theme-secondary">
+                          Data
+                        </div>
+                      </div>
+                      <div className="text-base-1s font-medium text-theme-primary">
+                        {call.data}
+                      </div>
+                    </div>
+                    <div className="flex justify-end w-1/5">
+                      <Icon
+                        className="fill-theme-primary md:ml-1.5"
+                        name="copy"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center py-1">
+                    <div className="flex flex-col text-left w-4/5">
+                      <div className="flex items-center">
+                        <div className="text-base-1 text-theme-secondary">
+                          Value
+                        </div>
+                      </div>
+                      <div className="text-base-1s font-medium text-theme-primary">
+                        {call.value.toString()}
+                      </div>
+                    </div>
+                    <div className="flex justify-end w-1/5">
+                      <Icon
+                        className="fill-theme-primary md:ml-1.5"
+                        name="copy"
+                      />
+                    </div>
+                  </div>
+                  <div className="border-theme-stroke border-t mb-2" />
+                </div>
+              </div>
             ))}
-            {/*{params.calls.map((call: any, index: number) => (*/}
-            {/*    <div key={index} className="border-t scrollbar-none scroll-smooth border-theme-stroke">*/}
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">*/}
-            {/*              Interact with*/}
-            {/*            </div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.to}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.data}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.data}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.data}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">Data</div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.data}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-
-            {/*      <div className="flex items-center py-3">*/}
-            {/*        <div className="flex flex-col text-left w-4/5">*/}
-            {/*          <div className="flex items-center">*/}
-            {/*            <div className="text-base-1 text-theme-secondary">*/}
-            {/*              Value*/}
-            {/*            </div>*/}
-            {/*          </div>*/}
-            {/*          <div className="text-base-1s font-medium text-theme-primary">*/}
-            {/*            {call.value.toString()}*/}
-            {/*          </div>*/}
-            {/*        </div>*/}
-            {/*        <div className="flex justify-end w-1/5">*/}
-            {/*          <Icon className="fill-theme-primary md:ml-1.5" name="copy" />*/}
-            {/*        </div>*/}
-            {/*      </div>*/}
-            {/*    </div>*/}
-            {/*))}*/}
-
           </div>
-
         </div>
         {loading ? (
           <div className="flex justify-center w-full mt-6">
@@ -274,7 +238,7 @@ const MultiCall = ({
         ) : (
           <div className="flex justify-center w-full mt-6">
             <button
-              onClick={onConfirm}
+              onClick={onSignCalls}
               className="btn-secondary mr-2 w-1/2 px-4"
             >
               Confirm

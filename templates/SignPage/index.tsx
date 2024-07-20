@@ -4,7 +4,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOpWithoutWait } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { encodeFunctionData, zeroAddress } from "viem";
+import { encodeFunctionData, keccak256, PublicClient, toHex, zeroAddress } from "viem";
 import ContractInteraction from "./SendTransaction";
 import SignMessage from "./SignMessage";
 import { Communicator } from "@abstraction-hq/wallet-sdk";
@@ -39,24 +39,18 @@ const SignPage = () => {
     communicator.onPopupLoaded(searchParams.get("id") || "");
   }, [walletLoading, wallet]);
 
-  // useEffect(() => {
-  //   communicator.listenRequestMessage(async (message) => {
-  //     setMessageId(message.id);
-  //     const account = new PasskeyAccount(
-  //       wallet.passkeyCredentialId || "",
-  //       0n,
-  //       0n
-  //     );
-  //     setSignData({
-  //       method: determineMethodCategory(message.payload.method),
-  //       params: {
-  //         ...message.payload.params,
-  //         salt: message.payload.params[0].salt || keccak256(toHex(await account.getNonce(ethClient as PublicClient)))
-  //       },
-  //       dappInfo: message.payload.dappInfo,
-  //     });
-  //   });
-  // }, []);
+  useEffect(() => {
+    communicator.listenRequestMessage(async (message) => {
+      setMessageId(message.id);
+      setSignData({
+        method: determineMethodCategory(message.payload.method),
+        params: {
+          ...message.payload.params,
+        },
+        dappInfo: message.payload.dappInfo,
+      });
+    });
+  }, []);
 
   // fake data: wallet_sendCalls
   // useEffect(() => {
@@ -72,12 +66,12 @@ const SignPage = () => {
   //         calls: [
   //           {
   //             to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-  //             value: "0x9184e72a",
+  //             value: "0x612DE0A62FAC40000",
   //             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
   //           },
   //           {
   //             to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-  //             value: "0x182183",
+  //             value: "0x612DE0A62FAC40000",
   //             data: "0xfbadbaf01",
   //           },
   //         ],
@@ -87,20 +81,20 @@ const SignPage = () => {
   // }, []);
 
   // fake data: eth_sendTransaction
-  useEffect(() => {
-    setSignData({
-      category: "contractInteraction",
-      dappInfo: {},
-      method: "eth_sendTransaction",
-      params: [
-        {
-          to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-          value: "0x612DE0A62FAC40000",
-          data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-        },
-      ],
-    });
-  }, []);
+  // useEffect(() => {
+  //   setSignData({
+  //     category: "contractInteraction",
+  //     dappInfo: {},
+  //     method: "eth_sendTransaction",
+  //     params: [
+  //       {
+  //         to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+  //         value: "0x612DE0A62FAC40000",
+  //         data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+  //       },
+  //     ],
+  //   });
+  // }, []);
 
   const onConfirm = async (returnValue: any) => {
     communicator.sendResponseMessage(messageId, returnValue);
@@ -120,7 +114,6 @@ const SignPage = () => {
     case "signMessage":
       return (
         <SignMessage
-          loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}
@@ -129,7 +122,6 @@ const SignPage = () => {
     case "contractInteraction":
       return (
         <ContractInteraction
-          loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}
@@ -138,7 +130,6 @@ const SignPage = () => {
     case "multiCall":
       return (
         <MultiCall
-          loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}

@@ -11,7 +11,6 @@ import Icon from "@/components/Icon";
 
 type SignMessageProps = {
   signData: any;
-  loading: boolean;
   onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };

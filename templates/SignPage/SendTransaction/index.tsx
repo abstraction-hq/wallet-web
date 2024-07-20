@@ -8,14 +8,21 @@ import { computeNewContractAddress } from "@/utils/create2";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { ethClient } from "@/config";
 import { FACTORY } from "@/constants";
-import { encodeFunctionData, formatEther, parseEther, zeroAddress } from "viem";
+import {
+  encodeFunctionData,
+  formatEther,
+  keccak256,
+  parseEther,
+  PublicClient,
+  toHex,
+  zeroAddress,
+} from "viem";
 import GenericFactory from "@/abis/GenericFactory.json";
 import { handleUserOpWithoutWait } from "@/utils/bundler";
 import useAssetStore from "@/stores/assetStore";
 
 type ContractInteractionProps = {
   signData: any;
-  loading: boolean;
   onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };
@@ -23,7 +30,7 @@ type ContractInteractionProps = {
 const ContractInteraction = ({
   onReject,
   signData,
-  onConfirm
+  onConfirm,
 }: ContractInteractionProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
@@ -44,35 +51,32 @@ const ContractInteraction = ({
         0n
       );
 
-      let userOp, userOpHash;
+      let userOp;
 
       if (!signData?.params[0].to) {
         // create contract
-        [userOp, userOpHash] = await account.sendTransactionOperation(
-          ethClient,
-          [
-            {
-              target: FACTORY,
-              value: signData?.params[0].value || 0n,
-              data: encodeFunctionData({
-                abi: GenericFactory.abi,
-                functionName: "create2",
-                args: [signData?.params[0].data, signData.salt],
-              }),
-            },
-          ]
-        );
+        const salt =
+          signData?.params[0].salt ||
+          keccak256(toHex(await account.getNonce(ethClient as PublicClient)));
+        [userOp] = await account.sendTransactionOperation(ethClient, [
+          {
+            target: FACTORY,
+            value: signData?.params[0].value || 0n,
+            data: encodeFunctionData({
+              abi: GenericFactory.abi,
+              functionName: "create2",
+              args: [signData?.params[0].data, salt],
+            }),
+          },
+        ]);
       } else {
-        [userOp, userOpHash] = await account.sendTransactionOperation(
-          ethClient,
-          [
-            {
-              target: signData?.params[0].to || zeroAddress,
-              value: signData?.params[0].value || 0n,
-              data: signData?.params[0].data || "0x",
-            },
-          ]
-        );
+        [userOp] = await account.sendTransactionOperation(ethClient, [
+          {
+            target: signData?.params[0].to || zeroAddress,
+            value: signData?.params[0].value || 0n,
+            data: signData?.params[0].data || "0x",
+          },
+        ]);
       }
 
       const txHash = await handleUserOpWithoutWait(userOp);
@@ -80,7 +84,6 @@ const ContractInteraction = ({
     } catch (error) {
       console.error(error);
     }
-    window.close();
   };
   if (!params) {
     return <Loading />;
@@ -116,9 +119,7 @@ const ContractInteraction = ({
             Est. Transaction detail
           </div>
           <div className="flex items-center">
-            <div
-              className={`flex justify-center items-center w-12 h-12 mr-4`}
-            >
+            <div className={`flex justify-center items-center w-12 h-12 mr-4`}>
               <Image
                 src={`/images/viction.jpeg`}
                 width={48}
