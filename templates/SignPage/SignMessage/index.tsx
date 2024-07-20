@@ -8,12 +8,11 @@ import Image from "@/components/Image";
 import CurrencyFormat from "@/components/CurrencyFormat";
 import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
-// import { Communicator } from "@abstraction-hq/wallet-sdk/communicator/communicator";
 
-type ContractInteractionProps = {
+type SignMessageProps = {
   signData: any;
   loading: boolean;
-  onConfirm: () => void;
+  onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };
 
@@ -21,7 +20,7 @@ const SignMessage = ({
   onConfirm,
   onReject,
   signData,
-}: ContractInteractionProps) => {
+}: SignMessageProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   return (
     <div className="flex justify-center items-center min-h-screen">

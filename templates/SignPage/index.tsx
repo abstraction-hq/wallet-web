@@ -4,10 +4,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import { handleUserOpWithoutWait } from "@/utils/bundler";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  encodeFunctionData,
-  zeroAddress,
-} from "viem";
+import { encodeFunctionData, zeroAddress } from "viem";
 import ContractInteraction from "./SendTransaction";
 import SignMessage from "./SignMessage";
 import { Communicator } from "@abstraction-hq/wallet-sdk";
@@ -17,6 +14,7 @@ import Loading from "@/components/Loading";
 import { FACTORY } from "@/constants";
 import GenericFactory from "@/abis/GenericFactory.json";
 import MultiCall from "./MultiCall";
+import useAssetStore from "@/stores/assetStore";
 
 function determineMethodCategory(method: string): MethodCategory | undefined {
   for (const c in signMethods) {
@@ -60,80 +58,52 @@ const SignPage = () => {
   //   });
   // }, []);
 
-  // fake data: Only for development
+  // fake data: wallet_sendCalls
+  // useEffect(() => {
+  //   setSignData({
+  //     category: "multiCall",
+  //     dappInfo: {},
+  //     method: "wallet_sendCalls",
+  //     params: [
+  //       {
+  //         version: "1.0",
+  //         chainId: "0x01",
+  //         from: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+  //         calls: [
+  //           {
+  //             to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+  //             value: "0x9184e72a",
+  //             data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
+  //           },
+  //           {
+  //             to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+  //             value: "0x182183",
+  //             data: "0xfbadbaf01",
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //   });
+  // }, []);
+
+  // fake data: eth_sendTransaction
   useEffect(() => {
     setSignData({
-      category: "multiCall",
+      category: "contractInteraction",
       dappInfo: {},
-      method: "wallet_sendCalls",
+      method: "eth_sendTransaction",
       params: [
         {
-          version: "1.0",
-          chainId: "0x01",
-          from: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-          calls: [
-            {
-              to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-              value: "0x9184e72a",
-              data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
-            },
-            {
-              to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
-              value: "0x182183",
-              data: "0xfbadbaf01",
-            },
-          ],
+          to: "0xd46e8dd67c5d32be8058bb8eb970870f07244567",
+          value: "0x612DE0A62FAC40000",
+          data: "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675",
         },
       ],
     });
   }, []);
 
-  const onConfirm = async () => {
-    setLoading(true);
-    try {
-      if (!wallet) window.close();
-      const account = new PasskeyAccount(
-        wallet.passkeyCredentialId || "",
-        0n,
-        0n
-      );
-
-      let userOp, userOpHash;
-
-      if (!signData?.params[0].to) {
-        // create contract
-        [userOp, userOpHash] = await account.sendTransactionOperation(
-          ethClient,
-          [
-            {
-              target: FACTORY,
-              value: signData?.params[0].value || 0n,
-              data: encodeFunctionData({
-                abi: GenericFactory.abi,
-                functionName: "create2",
-                args: [signData?.params[0].data, signData.salt],
-              }),
-            },
-          ]
-        );
-      } else {
-        [userOp, userOpHash] = await account.sendTransactionOperation(
-          ethClient,
-          [
-            {
-              target: signData?.params[0].to || zeroAddress,
-              value: signData?.params[0].value || 0n,
-              data: signData?.params[0].data || "0x",
-            },
-          ]
-        );
-      }
-
-      const txHash = await handleUserOpWithoutWait(userOp);
-      communicator.sendResponseMessage(messageId, txHash);
-    } catch (error) {
-      console.error(error);
-    }
+  const onConfirm = async (returnValue: any) => {
+    communicator.sendResponseMessage(messageId, returnValue);
     window.close();
   };
 
@@ -167,13 +137,13 @@ const SignPage = () => {
       );
     case "multiCall":
       return (
-        <MultiCall 
+        <MultiCall
           loading={loading}
           signData={signData}
           onConfirm={onConfirm}
           onReject={onReject}
         />
-      )
+      );
     default:
       return <Loading />;
   }

@@ -8,7 +8,7 @@ import Loading from "@/components/Loading";
 type MultiCallProps = {
   signData: any;
   loading: boolean;
-  onConfirm: () => void;
+  onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };
 
