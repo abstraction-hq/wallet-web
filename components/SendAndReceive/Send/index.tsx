@@ -9,7 +9,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import {
   Address,
   encodeFunctionData,
-  erc721Abi,
+  erc721Abi, formatUnits,
   getAddress,
   Hex,
   parseEther,
@@ -41,8 +41,10 @@ const Send = ({}: SendProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
-  console.log(selectedAsset);
-  const maxValue = 9999;
+  const maxValue = formatUnits(selectedAsset?.balance, selectedAsset?.decimals);
+  // const maxValue = Number(maxValueString).toFixed(2);
+  // const isDisabled = maxValue = 0;
+  const isDisabled = maxValue === "0";
 
   const onSend = async () => {
     let target: Address = getAddress(selectedAsset.address);
@@ -97,10 +99,14 @@ const Send = ({}: SendProps) => {
   };
 
   const handleValueChange = (value: string | undefined, name: string | undefined, values: { float: number } | undefined) => {
-    if (values && values.float > maxValue) {
-      setAmount("9999");
+    if (isToken) {
+        if (values && values.float > maxValue) {
+            setAmount(maxValue);
+        } else {
+            setAmount(value || "0.00");
+        }
     } else {
-      setAmount(value || "0.00");
+        setAmount(value || "0.00");
     }
     console.log(values);
   };
@@ -112,6 +118,7 @@ const Send = ({}: SendProps) => {
         name="price"
         placeholder="0.00"
         decimalsLimit={4}
+        disabled={isDisabled}
         // maxLength={4}
         // max={formatUnits(selectedAsset.balance, selectedAsset.decimals)}
         decimalSeparator="."
@@ -128,8 +135,12 @@ const Send = ({}: SendProps) => {
       {/*    required*/}
       {/*    data-autofocus*/}
       {/*/>*/}
-      <div className="text-center justify-center mb-7 h-20 text-gray-400">
-        {`Max value: ${maxValue}`}
+      <div className={`text-center justify-center mb-7 h-20 ${
+          isDisabled
+              ? "text-theme-red"
+              : "text-gray-400"
+      }`}>
+        {isDisabled ? 'Insufficient funds' : `Max value: ${maxValue}`}
       </div>
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
