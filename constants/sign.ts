@@ -1,5 +1,6 @@
 export const signMethods = {
   contractInteraction: ['eth_signTransaction', "eth_sendTransaction"],
+  multiCall: ['wallet_sendCalls'],
   signMessage: ["personal_sign", "eth_sign"],
 } as const
 
