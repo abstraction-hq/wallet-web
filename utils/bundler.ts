@@ -60,9 +60,8 @@ export const waitUserOpReceipt = async (
 ): Promise<UserOpReceipt> => {
   const receipt = await ethClient.waitForTransactionReceipt({
     hash: txHash,
+    pollingInterval: 1000
   });
-
-  console.log(receipt)
 
   if (receipt.status === 0) {
     return {
