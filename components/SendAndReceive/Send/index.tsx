@@ -42,9 +42,11 @@ const Send = ({}: SendProps) => {
   const [receiver, setReceiver] = useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
   const tokens = useAssetStore((state) => state.tokens);
-  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0]);
+  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0] || {});
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const isToken = "balance" in selectedAsset;
+  console.log(selectedAsset);
+  const maxValue = 9999;
 
   const onSend = async () => {
     let target: Address = getAddress(selectedAsset.address);
@@ -94,17 +96,41 @@ const Send = ({}: SendProps) => {
     setVisibleModal(true);
   };
 
+  const handleValueChange = (value: string | undefined, name: string | undefined, values: { float: number } | undefined) => {
+    if (values && values.float > maxValue) {
+      setAmount("9999");
+    } else {
+      setAmount(value || "0.00");
+    }
+    console.log(values);
+  };
+
   return (
     <>
       {isToken && <CurrencyInput
-        className="input-caret-color w-full h-40 mb-6 bg-transparent text-center text-h1 outline-none placeholder:text-theme-primary xl:text-h2 lg:text-h1 md:h-24 md:text-h2"
+        className="input-caret-color w-full h-20 mb-1 bg-transparent text-center text-h1 outline-none placeholder:text-theme-primary xl:text-h2 lg:text-h1 md:h-24 md:text-h2"
         name="price"
         placeholder="0.00"
-        decimalsLimit={8}
+        decimalsLimit={4}
+        // maxLength={4}
+        // max={formatUnits(selectedAsset.balance, selectedAsset.decimals)}
         decimalSeparator="."
         groupSeparator=","
-        onValueChange={(value, name, values) => setAmount(value || "0")}
+        value={amount}
+        onValueChange={handleValueChange}
       />}
+      {/*<input*/}
+      {/*    className="w-full h-14 pl-14 pr-4 bg-transparent border border-theme-stroke text-base-1s text-theme-primary outline-none rounded-xl transition-colors placeholder:text-theme-tertiary focus:border-theme-brand md:text-[1rem]"*/}
+      {/*    type="text"*/}
+      {/*    placeholder="Search for asset"*/}
+      {/*    value={search}*/}
+      {/*    onChange={(e) => setSearch(e.target.value)}*/}
+      {/*    required*/}
+      {/*    data-autofocus*/}
+      {/*/>*/}
+      <div className="text-center justify-center mb-7 h-20 text-gray-400">
+        {`Max value: ${maxValue}`}
+      </div>
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
           <div className="flex items-center grow">
