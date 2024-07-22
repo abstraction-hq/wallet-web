@@ -12,6 +12,21 @@ export interface UserOpReceipt {
   actualGasUsed: number;
 }
 
+export const submitUserOp = async (
+  userOp: RawUserOperation,
+  entrypoint: Hex
+): Promise<Hex> => {
+  const url = `${bundlerRpc}`;
+  const data = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "eth_sendUserOperation",
+    params: [userOp, entrypoint],
+  };
+  const response = await axios.post(url, data);
+  return response.data
+}
+
 export const handleUserOpWithoutWait = async (
   userOp: RawUserOperation
 ): Promise<string> => {
