@@ -40,13 +40,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/images/favicon.svg" />
         {/* Description no longer than 155 characters */}
         <meta name="description" content="Abstraction Wallet" />
         {/* Product Name */}
         <meta name="product-name" content="Abstraction Wallet" />
         {/* Twitter Card data */}
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:site" content="@ui8" />
+        <meta name="twitter:site" content="@abstraction-hq" />
         <meta name="twitter:title" content="Abstraction Wallet" />
         <meta
           name="twitter:description"
