@@ -4,7 +4,7 @@ import { useWalletStore } from "@/stores/walletStore";
 import type { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import SignUpHandle from "../SignUpPage/SignUpHandle";
+import SignUpHandle from "../CreatePage/SignUpHandle";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Tooltip from "@/components/Tooltip";

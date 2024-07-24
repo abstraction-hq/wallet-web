@@ -15,7 +15,7 @@ export default function Home() {
       return;
     }
     if (!wallet) {
-      route.push("/sign-up");
+      route.push("/create");
       return;
     }
   }, [wallet, loading, route]);
