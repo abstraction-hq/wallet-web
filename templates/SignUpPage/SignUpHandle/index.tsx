@@ -11,6 +11,8 @@ import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { submitUserOp } from "@/utils/bundler";
+import { hashMessage } from "viem";
+import { computeWalletAddress } from "@/utils/create2";
 
 type SignUpHandleProps = {
   afterCreateWallet?: () => void;
@@ -22,14 +24,15 @@ const SignUpHandle = ({
   allowToggle,
 }: SignUpHandleProps) => {
   const createWallet = useWalletStore((state) => state.onCreateWallet);
-  const [passkeyName, setPasskeyName] = useState<string>("");
 
   const onCreateWallet = async () => {
-    const payload = "0x0000";
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const salt = hashMessage(randomString);
+    const passkeyName = computeWalletAddress(salt);
 
     const regData: RegistrationEncoded = await client.register(
       passkeyName,
-      payload,
+      randomString,
       {
         authenticatorType: "both",
         userVerification: "required",
@@ -42,7 +45,8 @@ const SignUpHandle = ({
     const account = new PasskeyAccount(
       parsedData.credential.id,
       passkey[0] as bigint,
-      passkey[1] as bigint
+      passkey[1] as bigint,
+      salt
     );
 
     const [userOp, userOpHash] = await account.sendTransactionOperation(
@@ -62,7 +66,7 @@ const SignUpHandle = ({
         success: (data) => (
           <div>
             Transaction Success -{" "}
-            <a href={`https://vicscan.xyz/tx/${data.txHash}`} target="_blank">
+            <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">
               Click to view on scan
             </a>
           </div>
@@ -70,7 +74,7 @@ const SignUpHandle = ({
         error: (err) => (
           <div>
             Transaction Fail -{" "}
-            <a href={`https://vicscan.xyz/tx/${err.txHash}`} target="_blank">
+            <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">
               Click to view on scan
             </a>
           </div>
@@ -99,13 +103,6 @@ const SignUpHandle = ({
       image="/images/login-pic-1.png"
       allowToggle={allowToggle}
     >
-      <Field
-        className="flex-1 mb-3"
-        placeholder="Enter your passkey name"
-        value={passkeyName}
-        onChange={(e) => setPasskeyName(e.target.value)}
-        required
-      />
       <button className="btn-primary w-full mb-3" onClick={onCreateWallet}>
         Create wallet
       </button>
