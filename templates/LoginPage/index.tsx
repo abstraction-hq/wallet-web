@@ -1,4 +1,5 @@
 "use client";
+
 import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";
@@ -19,7 +20,14 @@ const LoginPage = () => {
   const createWallet = useWalletStore((state) => state.onCreateWallet);
   const [passkeyName, setPasskeyName] = useState("");
   const wallets = useWalletStore((state) => state.wallets);
+
+  const [loginLink, setLoginLink] = useState("");
   const route = useRouter();
+
+  const onLogin = async () => {
+
+  }
+
 
   const restoreWithPasskey = async () => {
     const randomString = Math.random().toString(36).substring(2, 15);
@@ -35,7 +43,9 @@ const LoginPage = () => {
     const parsedData = parsers.parseRegistration(regData);
 
     let passkey = getXYCoordinates(parsedData.credential.publicKey);
-    
+    const loginLink = `${window.origin}/add-key?passkeyId=${parsedData.credential.id}&x=${passkey[0]}&y=${passkey[1]}&device=browser`;
+
+    console.log(loginLink);
 
     // TODO: show passkey qr code and wait for pass key is add to wallet
 
@@ -61,10 +71,14 @@ const LoginPage = () => {
         onChange={(e) => setPasskeyName(e.target.value)}
         required
       />
-
-      <button className="btn-primary w-full mb-3" onClick={restoreWithPasskey}>
-        Login wallet
-      </button>
+      <div className="flex justify-center w-full mt-6">
+        <button className="btn-primary mr-2 w-1/2 px-4" onClick={restoreWithPasskey}>
+          Login
+        </button>
+        <button className="btn-primary w-1/2 px-4" onClick={restoreWithPasskey}>
+          Login with deep link
+        </button>
+      </div>
     </Login>
   );
 };

@@ -7,7 +7,7 @@ import { getXYCoordinates, WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { submitUserOp } from "@/utils/bundler";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,7 @@ const CreatePage = () => {
   const [passkeyName, setPasskeyName] = useState("");
   const wallets = useWalletStore((state) => state.wallets);
   const route = useRouter();
+
 
   const onCreateWallet = async () => {
     const randomString = Math.random().toString(36).substring(2, 15);
