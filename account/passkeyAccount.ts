@@ -61,9 +61,11 @@ export default class PasskeyAccount extends BaseAccount {
   x: bigint;
   y: bigint;
 
-  constructor(credentialId: string, x: bigint, y: bigint) {
-    const salt: Hex = hashMessage(credentialId);
+  constructor(credentialId: string, x: bigint, y: bigint, salt?: Hex, senderAddress?: Address) {
+    if (salt == undefined) salt = hashMessage(credentialId)
     super(salt);
+
+    if (senderAddress) this.address = senderAddress;
     this.credentialId = credentialId;
     this.x = x;
     this.y = y;
@@ -77,7 +79,6 @@ export default class PasskeyAccount extends BaseAccount {
     if (walletCode != undefined) {
       this.initCode = "0x";
     } else {
-      console.log(this.salt, this.x, this.y)
       const bootstrapInitData = encodeFunctionData({
         abi: Bootstrap.abi,
         functionName: "init",

@@ -48,7 +48,9 @@ const ContractInteraction = ({
       const account = new PasskeyAccount(
         wallet.passkeyCredentialId || "",
         0n,
-        0n
+        0n,
+        undefined,
+        wallet.senderAddress
       );
 
       let userOp;
