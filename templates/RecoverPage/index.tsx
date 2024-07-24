@@ -6,9 +6,13 @@ import { client } from "@passwordless-id/webauthn";
 import { IWallet, useWalletStore } from "@/stores/walletStore";
 import { computeWalletAddress } from "@/utils/create2";
 import { hashMessage } from "viem";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Field from "@/components/Field";
+import { useState } from "react";
 
-const SignInPage = () => {
+const RestorePage = () => {
+  const [email, setEmail] = useState("");
   const { colorMode } = useColorMode();
   const createWallet = useWalletStore((state) => state.onCreateWallet);
   const router = useRouter();
@@ -20,7 +24,9 @@ const SignInPage = () => {
       authenticatorType: "both",
     });
 
-    const walletAddress = computeWalletAddress(hashMessage(authData.credentialId))
+    const walletAddress = computeWalletAddress(
+      hashMessage(authData.credentialId)
+    );
     console.log("Wallet address:", walletAddress);
 
     const walletState: IWallet = {
@@ -28,20 +34,32 @@ const SignInPage = () => {
       name: "Account 0",
       passkeyCredentialId: authData.credentialId,
       senderAddress: walletAddress,
-    }
-
-    console.log(walletState)
+    };
 
     createWallet(walletState);
     router.push("/");
-  }
+  };
 
   return (
-    <Login title="Sign in" image="/images/login-pic-1.png" signIn allowToggle>
-      <div className="mb-5 text-base-2">Sign in with Passkey</div>
-      <button className="btn-primary w-full mb-3" onClick={loginWithPasskey}>Login with passkey</button>
+    <Login
+      title="Abstraction Wallet."
+      description="Your gateway to blockchain world."
+      image="/images/login-pic-1.png"
+    >
+      <Field
+        className="flex-1 mb-3"
+        label="Your email"
+        placeholder="Enter your email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <button className="btn-primary w-full mb-3" onClick={loginWithPasskey}>
+        Recover with mail
+      </button>
     </Login>
   );
 };
 
-export default SignInPage;
+export default RestorePage;
