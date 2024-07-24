@@ -34,7 +34,7 @@ const SignUpHandle = ({
       passkeyName,
       randomString,
       {
-        authenticatorType: "both",
+        authenticatorType: "auto",
         userVerification: "required",
       }
     );
