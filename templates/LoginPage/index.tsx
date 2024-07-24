@@ -7,18 +7,21 @@ import { getXYCoordinates, WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
+import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { submitUserOp } from "@/utils/bundler";
+import { hashMessage } from "viem";
+import { computeWalletAddress } from "@/utils/create2";
 import { useRouter } from "next/navigation";
 
-const CreatePage = () => {
+const LoginPage = () => {
   const createWallet = useWalletStore((state) => state.onCreateWallet);
   const [passkeyName, setPasskeyName] = useState("");
   const wallets = useWalletStore((state) => state.wallets);
   const route = useRouter();
 
-  const onCreateWallet = async () => {
+  const restoreWithPasskey = async () => {
     const randomString = Math.random().toString(36).substring(2, 15);
 
     const regData: RegistrationEncoded = await client.register(
@@ -32,53 +35,17 @@ const CreatePage = () => {
     const parsedData = parsers.parseRegistration(regData);
 
     let passkey = getXYCoordinates(parsedData.credential.publicKey);
+    
 
-    const account = new PasskeyAccount(
-      parsedData.credential.id,
-      passkey[0] as bigint,
-      passkey[1] as bigint
-    );
+    // TODO: show passkey qr code and wait for pass key is add to wallet
 
-    const [userOp, userOpHash] = await account.sendTransactionOperation(
-      ethClient,
-      [
-        {
-          target: account.getSender(),
-          value: 0n,
-          data: "",
-        },
-      ]
-    );
-    const userOpReceipt: any = await toast.promise(submitUserOp(userOp, true), {
-      loading: "Wallet creating...",
-      success: (data) => (
-        <div>
-          Transaction Success -{" "}
-          <a href={`https://vicscan.xyz/tx/${userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
-      error: (err) => (
-        <div>
-          Transaction Fail -{" "}
-          <a href={`https://vicscan.xyz/tx/${userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
-    });
-
-    if (userOpReceipt && userOpReceipt.success) {
-      createWallet({
-        id: wallets.length,
-        name: `Account ${wallets.length}`,
-        senderAddress: account.getSender(),
-        passkeyCredentialId: parsedData.credential.id,
-      });
-
-      route.replace("/");
-    }
+    // createWallet({
+    //   id: wallets.length,
+    //   name: `Account ${wallets.length}`,
+    //   passkeyCredentialId: authData.credentialId,
+    //   senderAddress: walletAddress,
+    // });
+    // route.replace("/");
   };
 
   return (
@@ -95,11 +62,11 @@ const CreatePage = () => {
         required
       />
 
-      <button className="btn-primary w-full mb-3" onClick={onCreateWallet}>
-        Create wallet
+      <button className="btn-primary w-full mb-3" onClick={restoreWithPasskey}>
+        Login wallet
       </button>
     </Login>
   );
 };
 
-export default CreatePage;
+export default LoginPage;

@@ -22,6 +22,7 @@ import { WebAuthnUtils } from "@/utils/webauthn";
 import { BOOTSTRAP, PASSKEY, WALLET_FACTORY } from "@/constants";
 import Factory from "@/abis/Factory.json";
 import Bootstrap from "@/abis/Bootstrap.json";
+import { hash } from "crypto";
 
 const WebAuthnAuth = [
   {
@@ -61,8 +62,8 @@ export default class PasskeyAccount extends BaseAccount {
   x: bigint;
   y: bigint;
 
-  constructor(credentialId: string, x: bigint, y: bigint, salt?: Hex, senderAddress?: Address) {
-    if (salt == undefined) salt = hashMessage(credentialId)
+  constructor(credentialId: string, x: bigint, y: bigint, senderAddress?: Address) {
+    const salt = hashMessage(credentialId);
     super(salt);
 
     if (senderAddress) this.address = senderAddress;
