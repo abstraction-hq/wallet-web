@@ -3,7 +3,6 @@ import PasskeyAccount from "@/account/passkeyAccount";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";
 import { useWalletStore } from "@/stores/walletStore";
-import { handleUserOp, UserOpReceipt } from "@/utils/bundler";
 import { getXYCoordinates, WebAuthnUtils } from "@/utils/webauthn";
 import Field from "@/components/Field";
 import { client, parsers } from "@passwordless-id/webauthn";
@@ -11,6 +10,7 @@ import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { submitUserOp } from "@/utils/bundler";
 
 type SignUpHandleProps = {
   afterCreateWallet?: () => void;
@@ -55,8 +55,8 @@ const SignUpHandle = ({
         },
       ]
     );
-    const userOpReceipt: UserOpReceipt = await toast.promise(
-      handleUserOp(userOp, userOpHash),
+    const userOpReceipt: any = await toast.promise(
+      submitUserOp(userOp, true),
       {
         loading: "Wallet creating...",
         success: (data) => (

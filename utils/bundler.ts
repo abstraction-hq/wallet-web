@@ -1,93 +1,57 @@
-import { Hex, parseEventLogs } from "viem";
+import { Hex } from "viem";
 import { RawUserOperation } from "@/types/account";
 import axios from "axios";
+import { bundlerRpc } from "@/config";
 import { ENTRY_POINT } from "@/constants";
-import { bundlerRpc, ethClient } from "@/config";
-import Entrypoint from "@/abis/Entrypoint.json";
 
-export interface UserOpReceipt {
-  txHash?: string;
-  userOpHash: string;
-  success: boolean;
-  actualGasUsed: number;
-}
-
-export const handleUserOpWithoutWait = async (
-  userOp: RawUserOperation
-): Promise<string> => {
-  const url = `${bundlerRpc}/eth_sendUserOperation`;
-  const data = {
-    userOp,
-    entrypoint: ENTRY_POINT,
-  };
-  const response = await axios.post(url, data);
-  return response.data
+const waitForUserOpHash = async (userOpHash: Hex): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    const interval = setInterval(async () => {
+      try {
+        const data = {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_getUserOperationReceipt",
+          params: [userOpHash],
+        };
+        const response = await axios.post(bundlerRpc, data);
+        if (response.data.result) {
+          clearInterval(interval);
+          if (response.data.result.success) {
+            resolve(response.data.result);
+          } else {
+            reject(response.data.result);
+          }
+        }
+      } catch (e) {
+        clearInterval(interval);
+        reject(e);
+      }
+    }, 1000);
+  });
 };
 
-export const handleUserOp = async (
+export const submitUserOp = async (
   userOp: RawUserOperation,
-  userOpHash: Hex
-): Promise<UserOpReceipt> => {
+  wailForReceipt = true
+): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const url = `${bundlerRpc}/eth_sendUserOperation`;
       const data = {
-        userOp,
-        entrypoint: ENTRY_POINT,
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_sendUserOperation",
+        params: [userOp, ENTRY_POINT],
       };
-      const response = await axios.post(url, data);
-      const receipt = await waitUserOpReceipt(response.data, userOpHash);
-      if (!receipt.success) {
-        reject({
-          ...receipt,
-          txHash: response.data,
-        });
-        return;
+      const response = await axios.post(bundlerRpc, data);
+      if (wailForReceipt) {
+        const receipt = await waitForUserOpHash(response.data.result);
+        resolve(receipt);
+      } else {
+        resolve(response.data.result);
       }
-      resolve({
-        ...receipt,
-        txHash: response.data,
-      });
     } catch (e) {
       reject(e);
     }
   });
-};
-
-export const waitUserOpReceipt = async (
-  txHash: Hex,
-  userOpHash: Hex
-): Promise<UserOpReceipt> => {
-  const receipt = await ethClient.waitForTransactionReceipt({
-    hash: txHash,
-    pollingInterval: 1000
-  });
-
-  if (receipt.status === 0) {
-    return {
-      userOpHash,
-      success: false,
-      actualGasUsed: 0,
-    };
-  }
-
-  const logs: any = parseEventLogs({
-    abi: Entrypoint.abi,
-    logs: receipt.logs,
-  });
-
-  for (const log of logs) {
-    if (
-      log.eventName == "UserOperationEvent" &&
-      (log.args.userOpHash as string).toLowerCase() === userOpHash.toLowerCase()
-    ) {
-      return log.args;
-    }
-  }
-
-  return {
-    userOpHash,
-    success: false,
-    actualGasUsed: 0,
-  };
 };

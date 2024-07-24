@@ -9,7 +9,7 @@ import useAssetStore from "@/stores/assetStore";
 import PasskeyAccount from "@/account/passkeyAccount";
 import { ethClient } from "@/config";
 import { CallContractArgs } from "@/types/account";
-import { handleUserOpWithoutWait } from "@/utils/bundler";
+import { submitUserOp } from "@/utils/bundler";
 
 type MultiCallProps = {
   signData: any;
@@ -56,7 +56,7 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
         callArgs
       );
 
-      const txHash = await handleUserOpWithoutWait(userOp);
+      const txHash = await submitUserOp(userOp, false);
       onConfirm(txHash);
     } catch (error) {
       console.error(error);
