@@ -18,7 +18,7 @@ import {
   zeroAddress,
 } from "viem";
 import GenericFactory from "@/abis/GenericFactory.json";
-import { handleUserOpWithoutWait } from "@/utils/bundler";
+import { submitUserOp } from "@/utils/bundler";
 import useAssetStore from "@/stores/assetStore";
 
 type ContractInteractionProps = {
@@ -79,8 +79,8 @@ const ContractInteraction = ({
         ]);
       }
 
-      const txHash = await handleUserOpWithoutWait(userOp);
-      onConfirm(txHash);
+      const userOpHash = await submitUserOp(userOp, false);
+      onConfirm(userOpHash);
     } catch (error) {
       console.error(error);
     }

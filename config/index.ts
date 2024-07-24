@@ -43,7 +43,6 @@ const testnet = defineChain({
 });
 
 export const activeNetwork = process.env.ACTIVE_NETWORK || "mainnet";
-console.log(process.env.NEXT_PUBLIC_BUNDLER_RPC)
 export const bundlerRpc = process.env.NEXT_PUBLIC_BUNDLER_RPC || "https://wallet.abstraction.world/bundler";
 
 export const networks: any = {

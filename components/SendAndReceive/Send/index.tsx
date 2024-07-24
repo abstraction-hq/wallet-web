@@ -16,7 +16,7 @@ import {
   zeroAddress,
 } from "viem";
 import PasskeyAccount from "@/account/passkeyAccount";
-import { handleUserOp, submitUserOp, UserOpReceipt } from "@/utils/bundler";
+import { submitUserOp } from "@/utils/bundler";
 import { erc20Abi } from "viem";
 import TokenAndNFTs from "@/components/TokenAndNFTs";
 import Icon from "@/components/Icon";
@@ -36,7 +36,7 @@ const Send = ({}: SendProps) => {
     useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
-  const [userOpReceipt, setUserOpReceipt] = useState<UserOpReceipt>();
+  const [userOpReceipt, setUserOpReceipt] = useState<any>();
   const tokens = useAssetStore((state) => state.tokens);
   const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0]);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
@@ -90,14 +90,11 @@ const Send = ({}: SendProps) => {
       ]
     );
 
-    const result = await submitUserOp(userOp, ENTRY_POINT);
-    console.log(result);
-
-    // toast.promise(handleUserOp(userOp, userOpHash), {
-    //   loading: "Sending...",
-    //   success: (data) => <div>Transaction Success - <a href={`https://vicscan.xyz/tx/${data.txHash}`} target="_blank">Click to view on scan</a></div>,
-    //   error: (err) => <div>Transaction Fail - <a href={`https://vicscan.xyz/tx/${err.txHash}`} target="_blank">Click to view on scan</a></div>,
-    // })
+    toast.promise(submitUserOp(userOp), {
+      loading: "Sending...",
+      success: (data) => <div>Transaction Success - <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">Click to view on scan</a></div>,
+      error: (err) => <div>Transaction Fail - <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">Click to view on scan</a></div>,
+    })
   };
 
   const handleValueChange = (
