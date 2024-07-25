@@ -3,7 +3,13 @@ import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { encodeFunctionData, keccak256, PublicClient, toHex, zeroAddress } from "viem";
+import {
+  encodeFunctionData,
+  keccak256,
+  PublicClient,
+  toHex,
+  zeroAddress,
+} from "viem";
 import ContractInteraction from "./SendTransaction";
 import SignMessage from "./SignMessage";
 import { Communicator } from "@abstraction-hq/wallet-sdk";
@@ -32,7 +38,6 @@ const SignPage = () => {
   const [signData, setSignData] = useState<any>(null);
   const searchParams = useSearchParams();
   const communicator = new Communicator(window.opener, "");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     communicator.onPopupLoaded(searchParams.get("id") || "");
@@ -42,10 +47,9 @@ const SignPage = () => {
     communicator.listenRequestMessage(async (message) => {
       setMessageId(message.id);
       setSignData({
+        category: determineMethodCategory(message.payload.method),
         method: determineMethodCategory(message.payload.method),
-        params: {
-          ...message.payload.params,
-        },
+        params: message.payload.params,
         dappInfo: message.payload.dappInfo,
       });
     });
@@ -106,8 +110,14 @@ const SignPage = () => {
   };
 
   if (walletLoading || !wallet) {
-    return <Loading />;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loading />
+      </div>
+    );
   }
+
+  console.log("signData", signData);
 
   switch (signData?.category) {
     case "signMessage":
