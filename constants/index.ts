@@ -2,8 +2,8 @@ import { Address, Hex } from "viem"
 
 export const ENTRY_POINT: Address = "0xB5BBaa433180574Dd242d166b8ff9cCc7Fa12df0"
 export const WALLET_FACTORY: Address = "0x5283c995eBD1eaADadccE298ace4d24812ec131f"
-export const BOOTSTRAP: Address = "0x568565Ceb52db8Cda129Cbd39673501409787cC4"
-export const PASSKEY: Address = "0x6664b53D20b5c164858eB834eAE724a1B93a428E"
+export const BOOTSTRAP: Address = "0x11154A2f670F6590876F37314bcfbCa7b6dBCD83"
+export const PASSKEY: Address = "0xb586BaC69b148B15a8D7132Af0853DCc800c869D"
 export const FACTORY: Address = "0xbC82703bDbE098773059957837016b8CA7374992"
 
 export const ERC1967_CREATION_CODE_HASH: Hex = "0xcfb46bc89e14c165fbbff6cf3d052fa9fb4dccb4478919a5a65ab20364c67071"
