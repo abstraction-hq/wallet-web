@@ -49,6 +49,7 @@ const Layout = ({ title, children }: LayoutProps) => {
                         title={title}
                         onClickBurger={() => setShowMenu(!showMenu)}
                         showMenu={showMenu}
+                        view={isMobile ? "mobile" : "desktop"}
                     />
                     {title && (
                         <div className="hidden md:flex items-center h-16 mb-2 px-4 bg-theme-on-surface-1 rounded-2xl text-h5">

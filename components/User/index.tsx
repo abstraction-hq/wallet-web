@@ -10,9 +10,10 @@ import { formatWalletAddress } from "@/utils/format";
 
 type UserProps = {
   className?: string;
+  view?: string;
 };
 
-const User = ({ className }: UserProps) => {
+const User = ({ className, view }: UserProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const { colorMode, toggleColorMode } = useColorMode();
   const isLightMode = colorMode === "light";
@@ -22,22 +23,23 @@ const User = ({ className }: UserProps) => {
       console.error("Failed to copy text: ", err);
     });
   };
+  const sizeIcon = view === 'desktop' ? 24 : 48;
 
   return (
     <Menu className={`relative ${className || ""}`} as="div">
-      <MenuButton className="group w-[7.75rem] flex items-center">
+      <MenuButton className={`group flex items-center ${ view === 'desktop' ? 'w-[7.75rem]' : 'w-[1.75rem]'}`}>
         <Image
-          className="w-6 h-6 object-cover rounded-full"
+          className="object-cover rounded-full"
           src="/images/avatar.jpg"
-          width={24}
-          height={24}
+          width={sizeIcon}
+          height={sizeIcon}
           alt=""
         />
-        <div className="grow pl-1.5">
+        {view === 'desktop' ? <div className="grow pl-1.5">
           <div className="text-body-2m text-theme-primary text-base font-semibold">
             {formatWalletAddress(wallet?.senderAddress)}
           </div>
-        </div>
+        </div> : null}
       </MenuButton>
       <Transition
         enter="duration-200 ease-out"
