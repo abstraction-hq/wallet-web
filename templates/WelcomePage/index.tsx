@@ -12,8 +12,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Address, hashMessage, zeroAddress } from "viem";
-import Passkey from "@/abis/Passkey.json"
+import { Address, hashMessage, Hex, zeroAddress } from "viem";
+import Passkey from "@/abis/Passkey.json";
 import { PASSKEY } from "@/constants";
 
 const WelcomePage = () => {
@@ -91,17 +91,38 @@ const WelcomePage = () => {
       userVerification: "required",
     });
 
-    const keyId = hashMessage(authData.credentialId)
+    const keyId = hashMessage(authData.credentialId);
 
+    const findWallet = async (keyId: Hex): Promise<Address> => {
+      return new Promise(async (resolve, reject) => {
+        const walletAddress = await ethClient.readContract({
+          abi: Passkey.abi,
+          address: PASSKEY,
+          functionName: "getWallet",
+          args: [keyId],
+        });
+        
+        if (!walletAddress || walletAddress == zeroAddress) {
+          reject("Wallet not found");
+        } else {
+          resolve(walletAddress as Address);
+        }
+      });
+    };
 
-    const walletAddress = await ethClient.readContract({
-      abi: Passkey.abi,
-      address: PASSKEY,
-      functionName: "getWallet",
-      args: [keyId],
-    })
-
-    console.log(walletAddress)
+    const walletAddress: Address = await toast.promise(findWallet(keyId), {
+      loading: "Find wallet...",
+      success: (data) => (
+        <div>
+          Found wallet
+        </div>
+      ),
+      error: (err) => (
+        <div>
+          Wallet not found
+        </div>
+      ),
+    });
 
     if (walletAddress && walletAddress != zeroAddress) {
       createWallet({
@@ -129,10 +150,16 @@ const WelcomePage = () => {
         required
       />
       <div className="justify-center w-full mt-6 flex md:flex-1">
-        <button className="btn-primary  mb-3 mr-2 w-full md:w-1/2" onClick={onCreateWallet}>
+        <button
+          className="btn-primary  mb-3 mr-2 w-full md:w-1/2"
+          onClick={onCreateWallet}
+        >
           Create new wallet
         </button>
-        <button className="btn-secondary mb-3 w-full md:w-1/2" onClick={onLogin}>
+        <button
+          className="btn-secondary mb-3 w-full md:w-1/2"
+          onClick={onLogin}
+        >
           Login with exited wallet
         </button>
       </div>
