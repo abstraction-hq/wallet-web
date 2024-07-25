@@ -120,7 +120,7 @@ export default class PasskeyAccount extends BaseAccount {
     const challenge = utils.toBase64url(toBytes(message));
     const authData = await this.authenticate(challenge, [this.credentialId], {
       userVerification: "required",
-      authenticatorType: "both",
+      authenticatorType: "auto",
     });
     const sig = WebAuthnUtils.getMessageSignature(authData.signature);
     const clientDataJSON = new TextDecoder().decode(

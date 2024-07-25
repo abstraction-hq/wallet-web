@@ -39,6 +39,7 @@ export const useWalletStore = create<IWalletStoreState>()(
     }),
     {
       name: "walletStore",
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: (_: IWalletStoreState) => {
         return (state: IWalletStoreState | undefined, error: unknown) => {

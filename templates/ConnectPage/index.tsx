@@ -4,7 +4,6 @@ import { useWalletStore } from "@/stores/walletStore";
 import type { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import SignUpHandle from "../CreatePage/SignUpHandle";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import Tooltip from "@/components/Tooltip";
@@ -29,6 +28,11 @@ const ConnectPage: NextPage = () => {
     });
   });
 
+  const onCreateNewWallet = () => {
+    window.open(`${window.origin}/welcome`, "_blank");
+    window.close();
+  };
+
   const onConnect = () => {
     communicator.sendResponseMessage(messageId, [wallet?.senderAddress]);
     window.close();
@@ -44,7 +48,25 @@ const ConnectPage: NextPage = () => {
   }
 
   if (!wallet) {
-    return <SignUpHandle allowToggle={false} />;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="max-w-[28.5rem] w-full p-6 text-white">
+          <div className="mb-4 text-xl text-center font-semibold text-theme-primary">
+            Don't have wallet
+          </div>
+          <div className="border-t border-theme-stroke mt-3 py-3">
+            <div className="flex justify-center w-full mt-6">
+              <button
+                onClick={onCreateNewWallet}
+                className="btn-secondary mr-2 w-full px-4"
+              >
+                Create new ?
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

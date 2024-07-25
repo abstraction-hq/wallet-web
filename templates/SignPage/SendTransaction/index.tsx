@@ -49,7 +49,6 @@ const ContractInteraction = ({
         wallet.passkeyCredentialId || "",
         0n,
         0n,
-        undefined,
         wallet.senderAddress
       );
 
@@ -87,9 +86,6 @@ const ContractInteraction = ({
       console.error(error);
     }
   };
-  if (!params) {
-    return <Loading />;
-  }
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-[28.5rem] w-full p-6 text-white">
