@@ -40,7 +40,6 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
         wallet.passkeyCredentialId || "",
         0n,
         0n,
-        undefined,
         wallet.senderAddress
       );
 
