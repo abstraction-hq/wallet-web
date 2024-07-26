@@ -56,7 +56,7 @@ const FooterBar = ({ className, visible, onClick }: FooterBarProps) => {
             >
                 {navigation.map((link) => (
                     <NavLink
-                        title={link.title}
+                        title={''}
                         icon={link.icon}
                         url={link.url}
                         key={link.id}
