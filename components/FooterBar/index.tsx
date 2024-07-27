@@ -61,24 +61,16 @@ const FooterBar = ({ className, visible, onClick }: FooterBarProps) => {
                         url={link.url}
                         key={link.id}
                         visible={visible}
+                        isMobile={true}
                     />
                 ))}
             </div>
-            <div className="group flex items-center h-12 px-4 rounded-xl transition-colors hover:bg-theme-on-surface-2 md:hover:bg-transparent">
+            <button className="group flex items-center h-12 px-4 rounded-xl transition-colors hover:bg-theme-on-surface-2 md:hover:bg-transparent" onClick={toggleColorMode}>
                 <Icon
                     className="shrink-0 mr-4 fill-theme-secondary transition-colors group-hover:fill-theme-primary md:group-hover:fill-theme-secondary"
                     name={isLightMode ? "moon" : "sun"}
                 />
-                <div className="mr-3 text-base-1s text-theme-secondary transition-colors group-hover:text-theme-primary md:group-hover:text-theme-secondary">
-                    {isLightMode ? "Dark" : "Light"}
-                </div>
-                <Switch
-                    value={colorMode}
-                    setValue={toggleColorMode}
-                    small
-                    theme
-                />
-            </div>
+            </button>
         </div>
     );
 };

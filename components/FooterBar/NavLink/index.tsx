@@ -8,9 +8,10 @@ type NavLinkProps = {
     url?: any;
     onClick?: () => void;
     visible?: boolean;
+    isMobile?: boolean;
 };
 
-const NavLink = ({ title, icon, url, onClick, visible }: NavLinkProps) => {
+const NavLink = ({ title, icon, url, onClick, visible, isMobile }: NavLinkProps) => {
     const CreatedTag = url ? Link : "button";
     const pathname = usePathname();
     const active = pathname === url;
@@ -38,12 +39,12 @@ const NavLink = ({ title, icon, url, onClick, visible }: NavLinkProps) => {
             <div className={`ml-4 text-base-1s ${visible ? "" : "hidden"}`}>
                 {title}
             </div>
-            <Icon
+            {!isMobile ? <Icon
                 className={`shrink-0 ml-auto fill-theme-primary opacity-0 transition-opacity ${
                     visible ? "" : "hidden"
                 } ${active ? "opacity-100" : ""}`}
                 name="arrow-next"
-            />
+            /> : null}
         </CreatedTag>
     );
 };
