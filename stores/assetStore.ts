@@ -92,8 +92,6 @@ const useAssetStore = create<AssetStore>((set) => ({
         }
       }
 
-      console.log("NFT balances: ", nfts);
-
       set({
         walletInfo: {
           vicBalance,
