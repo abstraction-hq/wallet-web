@@ -1,9 +1,7 @@
 import { useState } from "react";
 import CurrencyInput from "react-currency-input-field";
 import Image from "@/components/Image";
-import Modal from "@/components/Modal";
 import Option from "@/components/Option";
-import Confirm from "../Confirm";
 import { useWalletStore } from "@/stores/walletStore";
 import {
   Address,
@@ -30,21 +28,31 @@ type SendProps = {
   preSelectedAsset?: any;
 };
 
-const Send = ({preSelectedAsset}: SendProps) => {
-
+const Send = ({ preSelectedAsset }: SendProps) => {
   const [visibleModalTokenAndNFTs, setVisibleModalTokenAndNFTs] =
     useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
   const tokens = useAssetStore((state) => state.tokens);
-  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(preSelectedAsset ? preSelectedAsset : tokens[0]);
+  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(
+    preSelectedAsset ? preSelectedAsset : tokens[0]
+  );
+  if (!selectedAsset) {
+    return <Loading />;
+  }
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
-  const maxValue = isToken ? formatUnits(selectedAsset?.balance, selectedAsset?.decimals) : "1";
+  const maxValue = isToken
+    ? formatUnits(selectedAsset?.balance, selectedAsset?.decimals)
+    : "1";
   const isDisabled = maxValue === "0";
 
   const onSend = async () => {
+    if (!receiver || (isToken && parseFloat(amount) === 0)) {
+      toast.error("Invalid input");
+      return;
+    }
     setLoading(true);
     let target: Address = getAddress(selectedAsset.address);
     let value: bigint = 0n;
@@ -92,9 +100,23 @@ const Send = ({preSelectedAsset}: SendProps) => {
 
     await toast.promise(submitUserOp(userOp), {
       loading: "Sending...",
-      success: (data) => <div>Transaction Success - <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">Click to view on scan</a></div>,
-      error: (err) => <div>Transaction Fail - <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">Click to view on scan</a></div>,
-    })
+      success: (data) => (
+        <div>
+          Transaction Success -{" "}
+          <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">
+            Click to view on scan
+          </a>
+        </div>
+      ),
+      error: (err) => (
+        <div>
+          Transaction Fail -{" "}
+          <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">
+            Click to view on scan
+          </a>
+        </div>
+      ),
+    });
 
     setLoading(false);
   };
@@ -141,13 +163,15 @@ const Send = ({preSelectedAsset}: SendProps) => {
       {/*    required*/}
       {/*    data-autofocus*/}
       {/*/>*/}
-      <div
-        className={`text-center justify-center mb-7 h-20 ${
-          isDisabled ? "text-theme-red" : "text-gray-400"
-        }`}
-      >
-        {isDisabled ? "Insufficient funds" : `Max value: ${maxValue}`}
-      </div>
+      {isToken && (
+        <div
+          className={`text-center justify-center mb-7 h-20 ${
+            isDisabled ? "text-theme-red" : "text-gray-400"
+          }`}
+        >
+          {isDisabled ? "Insufficient funds" : `Max value: ${maxValue}`}
+        </div>
+      )}
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Asset" stroke>
           <div className="flex items-center grow">
@@ -195,7 +219,7 @@ const Send = ({preSelectedAsset}: SendProps) => {
           </button>
         </div>
       ) : (
-        <button className="btn-primary w-full mt-6" onClick={() => onSend()}>
+        <button className={`btn-primary w-full mt-6`} onClick={() => onSend()}>
           Send
         </button>
       )}
