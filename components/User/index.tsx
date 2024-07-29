@@ -7,6 +7,7 @@ import Switch from "@/components/Switch";
 import NavLink from "./NavLink";
 import { useWalletStore } from "@/stores/walletStore";
 import { formatWalletAddress } from "@/utils/format";
+import toast from "react-hot-toast";
 
 type UserProps = {
   className?: string;
@@ -18,8 +19,8 @@ const User = ({ className }: UserProps) => {
   const isLightMode = colorMode === "light";
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet?.senderAddress).then((err) => {
-      console.error("Failed to copy text: ", err);
+    navigator.clipboard.writeText(wallet?.senderAddress).then((data) => {
+      toast.success("Address copied to clipboard");
     });
   };
 

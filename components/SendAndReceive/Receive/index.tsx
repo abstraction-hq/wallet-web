@@ -3,6 +3,7 @@ import Icon from "@/components/Icon";
 import Option from "@/components/Option";
 import QRCode from "@/components/QRCode";
 import { useWalletStore } from "@/stores/walletStore";
+import toast from "react-hot-toast";
 
 type ReceiveProps = {};
 
@@ -10,11 +11,9 @@ const Receive = ({}: ReceiveProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet?.senderAddress).then(
-      (err) => {
-        console.error("Failed to copy text: ", err);
-      }
-    );
+    navigator.clipboard.writeText(wallet?.senderAddress).then((data) => {
+      toast.success("Address copied to clipboard");
+    });
   };
   return (
     <>
@@ -41,7 +40,8 @@ const Receive = ({}: ReceiveProps) => {
           color="bg-theme-green"
           stroke
         >
-          {wallet?.senderAddress?.slice(0, 7)}...{wallet?.senderAddress?.slice(-7)}
+          {wallet?.senderAddress?.slice(0, 7)}...
+          {wallet?.senderAddress?.slice(-7)}
           <button className="group ml-auto text-0" onClick={copyToClipboard}>
             <Icon
               className="!w-5 !h-5 fill-theme-tertiary transition-colors group-hover:fill-theme-primary"
@@ -54,7 +54,9 @@ const Receive = ({}: ReceiveProps) => {
           send assets from other networks, it may result in a loss of funds.
         </div>
       </div>
-      <button className="btn-secondary w-full mt-6" onClick={copyToClipboard}>Copy VIC address</button>
+      <button className="btn-secondary w-full mt-6" onClick={copyToClipboard}>
+        Copy VIC address
+      </button>
     </>
   );
 };
