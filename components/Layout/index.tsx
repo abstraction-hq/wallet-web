@@ -51,11 +51,11 @@ const Layout = ({ title, children }: LayoutProps) => {
                         showMenu={showMenu}
                         view={isMobile ? "mobile" : "desktop"}
                     />
-                    {title && (
+                    {/* {title && (
                         <div className="hidden md:flex items-center h-16 mb-2 px-4 bg-theme-on-surface-1 rounded-2xl text-h5">
                             {title}
                         </div>
-                    )}
+                    )} */}
                     {children}
                 </div>
                 {isMobile && (

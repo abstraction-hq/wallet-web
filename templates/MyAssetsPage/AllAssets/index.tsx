@@ -5,7 +5,7 @@ import Icon from "@/components/Icon";
 import { useColorMode } from "@chakra-ui/color-mode";
 
 import Tabs from "@/components/Tabs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Select from "@/components/Select";
 import NFTCard from "@/components/NFTCard";
 import { formatEther, zeroAddress } from "viem";
@@ -29,12 +29,21 @@ type AllAssetsProps = {
 
 const AllAssets = ({ }: AllAssetsProps) => {
   const [type, setType] = useState(typeItems[0]);
-  const [visibleModalSend, setVisibleModalSend] = useState<boolean>(false);
-  const [selectedToken, setSelectedToken] = useState<any>();
+  const [sendModalData, setSendModalData] = useState<any>({
+    visible: false,
+    selectedAsset: null,
+  });
   const { colorMode, setColorMode } = useColorMode();
   const tokens = useAssetStore((state) => state.tokens);
   const nfts = useAssetStore((state) => state.nfts);
   const isDarkMode = colorMode === "dark";
+
+  const onSendToken = async (token: any) => {
+    setSendModalData({
+      visible: true,
+      selectedAsset: token,
+    });
+  }
 
   return (
     <>
@@ -114,11 +123,11 @@ const AllAssets = ({ }: AllAssetsProps) => {
                             name="arrow-up-right-thin"
                         />
                       </button> */}
-                        <button className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0">
-                          <span className="md:hidden">Detail</span>
+                        <button className="btn-gray min-w-[5.5rem] h-10 md:min-w-fit md:w-10 md:p-0" onClick={() => onSendToken(token)}>
+                          <span className="md:hidden">Send</span>
                           <Icon
                             className="hidden !fill-theme-secondary md:inline-block md:!m-0"
-                            name="plus"
+                            name="arrow-up-right-thin"
                           />
                         </button>
                       </div>
@@ -137,8 +146,9 @@ const AllAssets = ({ }: AllAssetsProps) => {
         )}
       </Card>
       <SendAndReceive
-        visibleModal={visibleModalSend}
-        onClose={() => setVisibleModalSend(false)}
+        visibleModal={sendModalData.visible}
+        selectedAsset={sendModalData.selectedAsset}
+        onClose={() => setSendModalData({ visible: false, selectedAsset: null })}
       />
     </>
   );
