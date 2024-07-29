@@ -7,12 +7,14 @@ import Receive from "./Receive";
 
 type SendAndReceiveProps = {
   visibleModal: boolean;
+  selectedAsset?: any;
   onClose: () => void;
 };
 
 const SendAndReceive = ({
   visibleModal,
   onClose,
+  selectedAsset
 }: SendAndReceiveProps) => {
   const [type, setType] = useState<string>("send");
   const typeTasks = [
@@ -38,7 +40,7 @@ const SendAndReceive = ({
         value={type}
         setValue={setType}
       />
-      {type === "send" && <Send />}
+      {type === "send" && <Send preSelectedAsset={selectedAsset} />}
       {type === "receive" && <Receive />}
     </Modal>
 

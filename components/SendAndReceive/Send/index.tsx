@@ -25,20 +25,19 @@ import { getAssetLogo } from "@/utils/format";
 import { ethClient } from "@/config";
 import Loading from "@/components/Loading";
 import toast from "react-hot-toast";
-import { ENTRY_POINT } from "@/constants";
 
-type SendProps = {};
+type SendProps = {
+  preSelectedAsset?: any;
+};
 
-const Send = ({}: SendProps) => {
-  const [visibleModal, setVisibleModal] = useState(false);
+const Send = ({preSelectedAsset}: SendProps) => {
 
   const [visibleModalTokenAndNFTs, setVisibleModalTokenAndNFTs] =
     useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
-  const [userOpReceipt, setUserOpReceipt] = useState<any>();
   const tokens = useAssetStore((state) => state.tokens);
-  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(tokens[0]);
+  const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(preSelectedAsset ? preSelectedAsset : tokens[0]);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
   const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
@@ -46,6 +45,7 @@ const Send = ({}: SendProps) => {
   const isDisabled = maxValue === "0";
 
   const onSend = async () => {
+    setLoading(true);
     let target: Address = getAddress(selectedAsset.address);
     let value: bigint = 0n;
     let data: Hex = "0x";
@@ -90,11 +90,13 @@ const Send = ({}: SendProps) => {
       ]
     );
 
-    toast.promise(submitUserOp(userOp), {
+    await toast.promise(submitUserOp(userOp), {
       loading: "Sending...",
       success: (data) => <div>Transaction Success - <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">Click to view on scan</a></div>,
       error: (err) => <div>Transaction Fail - <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">Click to view on scan</a></div>,
     })
+
+    setLoading(false);
   };
 
   const handleValueChange = (
@@ -197,13 +199,6 @@ const Send = ({}: SendProps) => {
           Send
         </button>
       )}
-      <Modal visible={visibleModal} onClose={() => setVisibleModal(false)}>
-        <Confirm
-          txHash={userOpReceipt?.txHash}
-          amount={amount}
-          success={userOpReceipt?.success}
-        />
-      </Modal>
       <TokenAndNFTs
         visibleModal={visibleModalTokenAndNFTs}
         setSelectedAsset={setSelectedAsset}
