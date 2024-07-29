@@ -10,11 +10,12 @@ import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
 import { Address, hashMessage, Hex, zeroAddress } from "viem";
 import Passkey from "@/abis/Passkey.json";
 import { PASSKEY } from "@/constants";
+import {useMediaQuery} from "react-responsive";
 
 const WelcomePage = () => {
   const [passkeyName, setPasskeyName] = useState<string>("");
@@ -101,7 +102,7 @@ const WelcomePage = () => {
           functionName: "getWallet",
           args: [keyId],
         });
-        
+
         if (!walletAddress || walletAddress == zeroAddress) {
           reject("Wallet not found");
         } else {
@@ -149,19 +150,25 @@ const WelcomePage = () => {
         onChange={(e) => setPasskeyName(e.target.value)}
         required
       />
-      <div className="justify-center w-full mt-6 flex md:flex-1">
+      <div className="w-full mt-6 flex flex-row sm:flex-col justify-center items-center md:flex-1">
         <button
-          className="btn-primary  mb-3 mr-2 w-full md:w-1/2"
-          onClick={onCreateWallet}
+            className="btn-primary mb-3 sm:mb-3 sm:mr-0 mr-2 w-full"
+            onClick={onCreateWallet}
         >
           Create new wallet
         </button>
         <button
-          className="btn-secondary mb-3 w-full md:w-1/2"
-          onClick={onLogin}
+            className="btn-secondary mb-3 w-full"
+            onClick={onLogin}
         >
           Login with exited wallet
         </button>
+        {/*<button*/}
+        {/*    className="btn-secondary mb-3 w-full whitespace-pre sm:whitespace-pre-line"*/}
+        {/*    onClick={onLogin}*/}
+        {/*>*/}
+        {/*  {`Login with\nexited wallet`}*/}
+        {/*</button>*/}
       </div>
       <div className="mt-5 text-title-1s text-theme-tertiary md:mt-4 md:text-base-1s">
         Lost your wallet?{" "}

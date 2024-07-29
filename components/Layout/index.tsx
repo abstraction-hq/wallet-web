@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import FooterBar from "@/components/FooterBar";
 
 type LayoutProps = {
     title: string;
@@ -32,13 +33,15 @@ const Layout = ({ title, children }: LayoutProps) => {
                     : "pl-20 md:pl-0"
             }`}
         >
-            <Sidebar
-                className={`md:transition-transform ${
-                    showMenu ? "md:translate-x-0" : "md:-translate-x-full"
-                }`}
-                visible={visible}
-                onClick={() => setVisible(!visible)}
-            />
+            {!isMobile && (
+                <Sidebar
+                    className={`md:transition-transform ${
+                        showMenu ? "md:translate-x-0" : "md:-translate-x-full"
+                    }`}
+                    visible={visible}
+                    onClick={() => setVisible(!visible)}
+                />
+            )}
             <div className="">
                 <div className="max-w-[80rem] mx-auto pt-24 px-10 pb-10 lg:px-6 md:pt-20 md:px-4 md:pb-8">
                     <Header
@@ -46,6 +49,7 @@ const Layout = ({ title, children }: LayoutProps) => {
                         title={title}
                         onClickBurger={() => setShowMenu(!showMenu)}
                         showMenu={showMenu}
+                        view={isMobile ? "mobile" : "desktop"}
                     />
                     {title && (
                         <div className="hidden md:flex items-center h-16 mb-2 px-4 bg-theme-on-surface-1 rounded-2xl text-h5">
@@ -54,6 +58,12 @@ const Layout = ({ title, children }: LayoutProps) => {
                     )}
                     {children}
                 </div>
+                {isMobile && (
+                    <FooterBar
+                        visible={visible}
+                        onClick={() => setVisible(!visible)}
+                    />
+                )}
             </div>
         </div>
     );
