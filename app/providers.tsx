@@ -7,6 +7,7 @@ import theme from "./theme";
 import { useWalletStore } from "@/stores/walletStore";
 import useAssetStore from "@/stores/assetStore";
 import { useEffect } from "react";
+import { ethClient } from "@/config";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const loading = useWalletStore((state) => state.loading);
@@ -19,7 +20,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
 
     if (wallet) {
-      fetchWalletBalance(wallet?.senderAddress);
+      ethClient.watchBlockNumber({
+        onBlockNumber: (blockNumber) => {
+          fetchWalletBalance(wallet?.senderAddress);
+        },
+        onError: (error) => {
+          console.error("Error fetching block number", error);
+        },
+      })
     }
   }, [wallet, loading, fetchWalletBalance]);
 
