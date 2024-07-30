@@ -27,7 +27,6 @@ const RestorePage = () => {
     const walletAddress = computeWalletAddress(
       hashMessage(authData.credentialId)
     );
-    console.log("Wallet address:", walletAddress);
 
     const walletState: IWallet = {
       id: 0,

@@ -7,7 +7,7 @@ import Switch from "@/components/Switch";
 import NavLink from "./NavLink";
 import { useWalletStore } from "@/stores/walletStore";
 import { formatWalletAddress } from "@/utils/format";
-import toast from "react-hot-toast";
+import { copyToClipboard } from "@/utils/browser";
 
 type UserProps = {
   className?: string;
@@ -19,11 +19,6 @@ const User = ({ className, view }: UserProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isLightMode = colorMode === "light";
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(wallet?.senderAddress).then((data) => {
-      toast.success("Address copied to clipboard");
-    });
-  };
   const sizeIcon = view === 'desktop' ? 24 : 48;
 
   return (
@@ -70,7 +65,7 @@ const User = ({ className, view }: UserProps) => {
             </div>
           </div> */}
           <div className="mb-2 space-y-1">
-            <div onClick={copyToClipboard}>
+            <div onClick={() => copyToClipboard(wallet?.senderAddress)}>
               <NavLink title="Copy Address" icon="copy" url="/" />
             </div>
             <div className="group flex items-center h-12 px-4 rounded-xl transition-colors hover:bg-theme-on-surface-2">

@@ -20,6 +20,7 @@ import { FACTORY } from "@/constants";
 import GenericFactory from "@/abis/GenericFactory.json";
 import MultiCall from "./MultiCall";
 import useAssetStore from "@/stores/assetStore";
+import SignTypeData from "./signTypeData";
 
 function determineMethodCategory(method: string): MethodCategory | undefined {
   for (const c in signMethods) {
@@ -48,7 +49,7 @@ const SignPage = () => {
       setMessageId(message.id);
       setSignData({
         category: determineMethodCategory(message.payload.method),
-        method: determineMethodCategory(message.payload.method),
+        method: message.payload.method,
         params: message.payload.params,
         dappInfo: message.payload.dappInfo,
       });
@@ -117,8 +118,6 @@ const SignPage = () => {
     );
   }
 
-  console.log("signData", signData);
-
   switch (signData?.category) {
     case "signMessage":
       return (
@@ -128,6 +127,14 @@ const SignPage = () => {
           onReject={onReject}
         />
       );
+    case "signTypeData":
+      return (
+        <SignTypeData 
+          signData={signData}
+          onConfirm={onConfirm}
+          onReject={onReject}
+        />
+      )
     case "contractInteraction":
       return (
         <ContractInteraction

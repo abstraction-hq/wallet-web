@@ -2,27 +2,29 @@
 import PasskeyAccount from "@/account/passkeyAccount";
 import { useWalletStore } from "@/stores/walletStore";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { concat, createPublicClient, hashMessage, http } from "viem";
+import { concat, createPublicClient, hashMessage, hashTypedData, http } from "viem";
 import Image from "@/components/Image";
-import CurrencyFormat from "@/components/CurrencyFormat";
-import Tooltip from "@/components/Tooltip";
 import Icon from "@/components/Icon";
 import { ethClient } from "@/config";
 import Wallet from "@/abis/Wallet.json";
 import { copyToClipboard } from "@/utils/browser";
 
-type SignMessageProps = {
+type SignTypeDataProps = {
   signData: any;
   onConfirm: (returnValue: any) => void;
   onReject: () => void;
 };
 
-const SignMessage = ({ onConfirm, onReject, signData }: SignMessageProps) => {
+const SignTypeData = ({ onConfirm, onReject, signData }: SignTypeDataProps) => {
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
 
+  let signTypeData = signData?.params[1];
+  if (typeof signData?.params[1] === "string") {
+    signTypeData = JSON.parse(signData?.params[1]);
+  }
+
   const onSignMessage = async () => {
-    const signMessage = hashMessage(signData?.params[0]);
+    const signMessage = hashTypedData(signTypeData);
 
     const account = new PasskeyAccount(
       wallet.passkeyCredentialId || "",
@@ -40,11 +42,12 @@ const SignMessage = ({ onConfirm, onReject, signData }: SignMessageProps) => {
     onConfirm(signature)
   };
 
+  // TODO: implement UI
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="max-w-[28.5rem] w-full p-6 text-white">
         <div className="mb-4 text-xl text-center font-semibold text-theme-primary">
-          Sign Message
+          Sign Type Data
         </div>
         <div className="mb-4 space-y-1">
           <div className="text-base-2 text-theme-secondary">Requested from</div>
@@ -94,10 +97,10 @@ const SignMessage = ({ onConfirm, onReject, signData }: SignMessageProps) => {
                   <div className="text-base-1 text-theme-secondary">Data</div>
                 </div>
                 <div className="text-base-1s font-medium text-theme-primary">
-                  {signData?.params[0]}
+                  {JSON.stringify(signTypeData)}
                 </div>
               </div>
-              <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(signData?.params[0])}>
+              <div className="flex justify-end w-1/5">
                 <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
               </div>
             </div>
@@ -115,4 +118,4 @@ const SignMessage = ({ onConfirm, onReject, signData }: SignMessageProps) => {
     </div>
   );
 };
-export default SignMessage;
+export default SignTypeData;

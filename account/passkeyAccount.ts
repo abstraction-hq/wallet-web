@@ -89,7 +89,6 @@ export default class PasskeyAccount extends BaseAccount {
         parseAbiParameters("address, bytes memory"),
         [BOOTSTRAP, bootstrapInitData]
       );
-      console.log(bootstrapData)
       this.initCode = concat([
         WALLET_FACTORY,
         encodeFunctionData({
