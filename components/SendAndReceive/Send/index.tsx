@@ -34,14 +34,14 @@ const Send = ({ preSelectedAsset }: SendProps) => {
   const [amount, setAmount] = useState<string>("0");
   const [receiver, setReceiver] = useState<string>("");
   const tokens = useAssetStore((state) => state.tokens);
+  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(
     preSelectedAsset ? preSelectedAsset : tokens[0]
   );
   if (!selectedAsset) {
     return <Loading />;
   }
-  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
-  const [loading, setLoading] = useState<boolean>(false);
   const isToken = "balance" in selectedAsset;
   const maxValue = isToken
     ? formatUnits(selectedAsset?.balance, selectedAsset?.decimals)
