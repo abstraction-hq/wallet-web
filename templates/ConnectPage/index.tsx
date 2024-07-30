@@ -24,7 +24,6 @@ const ConnectPage: NextPage = () => {
     communicator.listenRequestMessage((message) => {
       setDappInfo(message.payload.dappInfo);
       setMessageId(message.id);
-      console.log("message", message);
     });
   });
 

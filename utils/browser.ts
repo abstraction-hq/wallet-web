@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export const getCurrentBrowser = () => {
   if (typeof window == "undefined")
     return {
@@ -33,4 +35,10 @@ export const getCurrentBrowser = () => {
     name: M[0],
     version: M[1],
   };
+};
+
+export const copyToClipboard = (data: any) => {
+  navigator.clipboard.writeText(data).then((data) => {
+    toast.success("Copied to clipboard");
+  });
 };

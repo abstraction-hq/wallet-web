@@ -10,6 +10,7 @@ import PasskeyAccount from "@/account/passkeyAccount";
 import { ethClient } from "@/config";
 import { CallContractArgs } from "@/types/account";
 import { submitUserOp } from "@/utils/bundler";
+import { copyToClipboard } from "@/utils/browser";
 
 type MultiCallProps = {
   signData: any;
@@ -156,8 +157,8 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
                 {wallet?.senderAddress}
               </div>
             </div>
-            <div className="flex justify-end w-1/5">
-              <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
+            <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(wallet?.senderAddress)}>
+              <Icon className="fill-theme-primary md:ml-1.5" name="copy"/>
             </div>
           </div>
           <div className="mb-2 text-xl text-center font-semibold text-theme-primary">
@@ -181,7 +182,7 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
                         {call.to}
                       </div>
                     </div>
-                    <div className="flex justify-end w-1/5">
+                    <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(call.to)}>
                       <Icon
                         className="fill-theme-primary md:ml-1.5"
                         name="copy"
@@ -199,7 +200,7 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
                         {call.data}
                       </div>
                     </div>
-                    <div className="flex justify-end w-1/5">
+                    <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(call.data)}>
                       <Icon
                         className="fill-theme-primary md:ml-1.5"
                         name="copy"
@@ -217,7 +218,7 @@ const MultiCall = ({ onConfirm, onReject, signData }: MultiCallProps) => {
                         {call.value.toString()}
                       </div>
                     </div>
-                    <div className="flex justify-end w-1/5">
+                    <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(call.value.toString())}>
                       <Icon
                         className="fill-theme-primary md:ml-1.5"
                         name="copy"

@@ -20,6 +20,7 @@ import {
 import GenericFactory from "@/abis/GenericFactory.json";
 import { submitUserOp } from "@/utils/bundler";
 import useAssetStore from "@/stores/assetStore";
+import { copyToClipboard } from "@/utils/browser";
 
 type ContractInteractionProps = {
   signData: any;
@@ -182,7 +183,7 @@ const ContractInteraction = ({
                   {wallet?.senderAddress}
                 </div>
               </div>
-              <div className="flex justify-end w-1/5">
+              <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(wallet?.senderAddress)}>
                 <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
               </div>
             </div>
@@ -199,7 +200,7 @@ const ContractInteraction = ({
                       {params.to}
                     </div>
                   </div>
-                  <div className="flex justify-end w-1/5">
+                  <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(params.to)}>
                     <Icon
                       className="fill-theme-primary md:ml-1.5"
                       name="copy"
@@ -217,7 +218,7 @@ const ContractInteraction = ({
                       {params.data}
                     </div>
                   </div>
-                  <div className="flex justify-end w-1/5">
+                  <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(params.data)}>
                     <Icon
                       className="fill-theme-primary md:ml-1.5"
                       name="copy"
@@ -237,7 +238,7 @@ const ContractInteraction = ({
                     {computeNewContractAddress(signData.salt, params.data)}
                   </div>
                 </div>
-                <div className="flex justify-end w-1/5">
+                <div className="flex justify-end w-1/5" onClick={() => copyToClipboard(computeNewContractAddress(signData.salt, params.data))}>
                   <Icon className="fill-theme-primary md:ml-1.5" name="copy" />
                 </div>
               </div>
