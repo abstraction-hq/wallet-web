@@ -66,7 +66,7 @@ const SignUpHandle = ({
         success: (data) => (
           <div>
             Transaction Success -{" "}
-            <a href={`https://vicscan.xyz/tx/${data.userOpHash}`} target="_blank">
+            <a href={`https://scan.abstraction.world/operation/${data.userOpHash}`} target="_blank">
               Click to view on scan
             </a>
           </div>
@@ -74,7 +74,7 @@ const SignUpHandle = ({
         error: (err) => (
           <div>
             Transaction Fail -{" "}
-            <a href={`https://vicscan.xyz/tx/${err.userOpHash}`} target="_blank">
+            <a href={`https://scan.abstraction.world/operation/${err.userOpHash}`} target="_blank">
               Click to view on scan
             </a>
           </div>

@@ -54,7 +54,7 @@ const CreatePage = () => {
       success: (data) => (
         <div>
           Transaction Success -{" "}
-          <a href={`https://vicscan.xyz/tx/${userOpHash}`} target="_blank">
+          <a href={`https://scan.abstraction.world/operation/${userOpHash}`} target="_blank">
             Click to view on scan
           </a>
         </div>
@@ -62,7 +62,7 @@ const CreatePage = () => {
       error: (err) => (
         <div>
           Transaction Fail -{" "}
-          <a href={`https://vicscan.xyz/tx/${userOpHash}`} target="_blank">
+          <a href={`https://scan.abstraction.world/operation/${userOpHash}`} target="_blank">
             Click to view on scan
           </a>
         </div>
