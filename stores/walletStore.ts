@@ -2,12 +2,17 @@ import { Address } from "viem";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+export interface IWalletPerChain {
+  chainId: string
+  passkeyCredentialId?: string;
+  senderAddress: Address
+  signerAddress?: Address;
+}
+
 export interface IWallet {
   id: number;
   name: string;
-  passkeyCredentialId?: string;
-  senderAddress: Address;
-  signerAddress?: Address;
+  wallets: IWalletPerChain[];
 }
 
 interface IWalletStoreState {
