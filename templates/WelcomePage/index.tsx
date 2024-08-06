@@ -1,21 +1,19 @@
 "use client";
-import PasskeyAccount from "@/account/passkeyAccount";
 import Field from "@/components/Field";
 import Login from "@/components/Login";
 import { ethClient } from "@/config";
-import { useWalletStore } from "@/stores/walletStore";
-import { submitUserOp } from "@/utils/bundler";
+import { PasskeyInfo, useWalletStore } from "@/stores/walletStore";
 import { getXYCoordinates } from "@/utils/webauthn";
 import { client, parsers } from "@passwordless-id/webauthn";
 import { RegistrationEncoded } from "@passwordless-id/webauthn/dist/esm/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {useEffect, useState} from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { Address, hashMessage, Hex, zeroAddress } from "viem";
 import Passkey from "@/abis/Passkey.json";
 import { PASSKEY } from "@/constants";
-import {useMediaQuery} from "react-responsive";
+import { computeWalletAddress } from "@/utils/create2";
 
 const WelcomePage = () => {
   const [passkeyName, setPasskeyName] = useState<string>("");
@@ -34,55 +32,30 @@ const WelcomePage = () => {
       }
     );
     const parsedData = parsers.parseRegistration(regData);
-
     let passkey = getXYCoordinates(parsedData.credential.publicKey);
 
-    const account = new PasskeyAccount(
-      parsedData.credential.id,
-      passkey[0] as bigint,
-      passkey[1] as bigint
+    const passkeyInfo: PasskeyInfo = {
+      passkeyCredentialId: parsedData.credential.id,
+      x: passkey[0].toString(),
+      y: passkey[1].toString(),
+    };
+
+    const chainId = await ethClient.getChainId();
+    const address = computeWalletAddress(
+      hashMessage(passkeyInfo.passkeyCredentialId)
     );
 
-    const [userOp, userOpHash] = await account.sendTransactionOperation(
-      ethClient,
-      [
-        {
-          target: account.getSender(),
-          value: 0n,
-          data: "",
-        },
-      ]
-    );
-    const userOpReceipt: any = await toast.promise(submitUserOp(userOp, true), {
-      loading: "Wallet creating...",
-      success: (data) => (
-        <div>
-          Transaction Success -{" "}
-          <a href={`https://scan.abstraction.world/operation/${userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
-      error: (err) => (
-        <div>
-          Transaction Fail -{" "}
-          <a href={`https://scan.abstraction.world/operation/${userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
+    createWallet({
+      id: wallets.length,
+      name: passkeyName,
+      passkeyAuthorization: passkeyInfo,
+      addresses: [{ 
+        chainId, 
+        address 
+      }],
     });
 
-    if (userOpReceipt && userOpReceipt.success) {
-      createWallet({
-        id: wallets.length,
-        name: `Account ${wallets.length}`,
-        senderAddress: account.getSender(),
-        passkeyCredentialId: parsedData.credential.id,
-      });
-
-      route.replace("/");
-    }
+    route.replace("/");
   };
 
   const onLogin = async () => {
@@ -113,28 +86,20 @@ const WelcomePage = () => {
 
     const walletAddress: Address = await toast.promise(findWallet(keyId), {
       loading: "Find wallet...",
-      success: (data) => (
-        <div>
-          Found wallet
-        </div>
-      ),
-      error: (err) => (
-        <div>
-          Wallet not found
-        </div>
-      ),
+      success: (data) => <div>Found wallet</div>,
+      error: (err) => <div>Wallet not found</div>,
     });
 
-    if (walletAddress && walletAddress != zeroAddress) {
-      createWallet({
-        id: wallets.length,
-        name: `Account ${wallets.length}`,
-        senderAddress: walletAddress as Address,
-        passkeyCredentialId: authData.credentialId,
-      });
+    // if (walletAddress && walletAddress != zeroAddress) {
+    //   createWallet({
+    //     id: wallets.length,
+    //     name: `Account ${wallets.length}`,
+    //     senderAddress: walletAddress as Address,
+    //     passkeyCredentialId: authData.credentialId,
+    //   });
 
-      route.replace("/");
-    }
+    //   route.replace("/");
+    // }
   };
 
   return (
@@ -152,15 +117,12 @@ const WelcomePage = () => {
       />
       <div className="w-full mt-6 flex flex-row sm:flex-col justify-center items-center md:flex-1">
         <button
-            className="btn-primary mb-3 sm:mb-3 sm:mr-0 mr-2 w-full"
-            onClick={onCreateWallet}
+          className="btn-primary mb-3 sm:mb-3 sm:mr-0 mr-2 w-full"
+          onClick={onCreateWallet}
         >
           Create new wallet
         </button>
-        <button
-            className="btn-secondary mb-3 w-full"
-            onClick={onLogin}
-        >
+        <button className="btn-secondary mb-3 w-full" onClick={onLogin}>
           Login with exited wallet
         </button>
         {/*<button*/}

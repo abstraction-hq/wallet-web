@@ -15,7 +15,7 @@ type UserProps = {
 };
 
 const User = ({ className, view }: UserProps) => {
-  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const walletAddress = useWalletStore((state) => state.activeAddress)() || "0x";
   const { colorMode, toggleColorMode } = useColorMode();
   const isLightMode = colorMode === "light";
 
@@ -33,7 +33,7 @@ const User = ({ className, view }: UserProps) => {
         />
         {view === 'desktop' ? <div className="grow pl-1.5">
           <div className="text-body-2m text-theme-primary text-base font-semibold">
-            {formatWalletAddress(wallet?.senderAddress)}
+            {formatWalletAddress(walletAddress)}
           </div>
         </div> : null}
       </MenuButton>
@@ -65,7 +65,7 @@ const User = ({ className, view }: UserProps) => {
             </div>
           </div> */}
           <div className="mb-2 space-y-1">
-            <div onClick={() => copyToClipboard(wallet?.senderAddress)}>
+            <div onClick={() => copyToClipboard(walletAddress)}>
               <NavLink title="Copy Address" icon="copy" url="/" />
             </div>
             <div className="group flex items-center h-12 px-4 rounded-xl transition-colors hover:bg-theme-on-surface-2">
@@ -83,7 +83,7 @@ const User = ({ className, view }: UserProps) => {
                 theme
               />
             </div>
-            <NavLink title="View on scan" icon="arrows" url={`http://vicscan.xyz/address/${wallet?.senderAddress}`} target="_blank" />
+            <NavLink title="View on scan" icon="arrows" url={`https://sepolia.etherscan.io/address/${walletAddress}`} target="_blank" />
           </div>
         </MenuItems>
       </Transition>

@@ -9,7 +9,7 @@ export const formatWalletAddress = (address: Address): string => {
 export const getAssetLogo = (asset: Token | NFT): string => {
   if ("balance" in asset) {
     if (asset.address == zeroAddress) {
-      return "/images/viction.jpeg";
+      return "/images/ethereum.png";
     } else {
       return "/images/dcr.svg";
     }

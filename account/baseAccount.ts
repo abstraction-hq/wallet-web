@@ -21,15 +21,17 @@ import {
   UserOperation,
 } from "@/types/account";
 import { computeWalletAddress } from "@/utils/create2";
+import { estimateGas } from "@/utils/bundler";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 
 export const DEFAULT_USER_OP: UserOperation = {
   sender: zeroAddress,
   nonce: 0n,
   initCode: "0x",
   callData: "0x",
-  callGasLimit: 1000000n,
-  verificationGasLimit: 4000000n,
-  preVerificationGas: 1000000n,
+  callGasLimit: 0n,
+  verificationGasLimit: 0n,
+  preVerificationGas: 0n,
   maxFeePerGas: 0n,
   maxPriorityFeePerGas: 0n,
   paymasterAndData: "0x",
@@ -41,10 +43,10 @@ export abstract class BaseAccount {
   initCode: Hex | undefined;
   nonceKey = 0n;
 
-  salt: Hex
+  salt: Hex;
 
   constructor(salt: Hex) {
-    this.salt = salt
+    this.salt = salt;
   }
 
   abstract getSignerAddress(): Address;
@@ -106,12 +108,15 @@ export abstract class BaseAccount {
     callData: Hex
   ): Promise<[RawUserOperation, Hex]> => {
     let userOp = DEFAULT_USER_OP;
-    const [sender, nonce, initCode, chainId] = await Promise.all([
-      this.getSender(),
-      this.getNonce(client),
-      this.getInitCode(client),
-      this.getChainId(client),
-    ]);
+    const [sender, nonce, initCode, chainId, gasPrice, block] =
+      await Promise.all([
+        this.getSender(),
+        this.getNonce(client),
+        this.getInitCode(client),
+        this.getChainId(client),
+        client.getGasPrice(),
+        client.getBlock(),
+      ]);
 
     userOp = {
       ...userOp,
@@ -119,17 +124,39 @@ export abstract class BaseAccount {
       nonce,
       initCode,
       callData,
+      signature: await privateKeyToAccount(generatePrivateKey()).signMessage({
+        message: { raw: "0xdead" },
+      }),
     };
-    const userOpHash = this.calculateUserOpHash(userOp, chainId);
+
+    const gasValue = await estimateGas(this.toRawUserOperation(userOp));
+
+    let maxFeePerGas = gasPrice,
+      maxPriorityFeePerGas = gasPrice;
+
+    if (block.baseFeePerGas) {
+      const maxPriorityFPG = await client.estimateMaxPriorityFeePerGas();
+      maxFeePerGas = block.baseFeePerGas * 2n + maxPriorityFPG;
+      maxPriorityFeePerGas = 0n;
+    }
 
     userOp = {
       ...userOp,
-      signature: concat([
-        this.getSignerAddress(),
-        await this.signMessage(userOpHash),
-      ]),
+      callGasLimit: 21000n,
+      preVerificationGas: 60000n,
+      verificationGasLimit: 100000n,
+      maxFeePerGas,
+      maxPriorityFeePerGas,
     };
+    const userOpHash = this.calculateUserOpHash(userOp, chainId);
+    const signature = concat([
+      this.getSignerAddress(),
+      await this.signMessage(userOpHash),
+    ]);
 
+    console.log("Transaction Fee", userOp.maxFeePerGas * (userOp.callGasLimit + userOp.verificationGasLimit));
+
+    userOp.signature = signature;
     return [this.toRawUserOperation(userOp), userOpHash];
   };
 

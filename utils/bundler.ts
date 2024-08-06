@@ -31,6 +31,24 @@ const waitForUserOpHash = async (userOpHash: Hex): Promise<any> => {
   });
 };
 
+export const estimateGas = async (userOp: RawUserOperation): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_estimateUserOperationGas",
+        params: [userOp, ENTRY_POINT],
+      };
+      const response = await axios.post(bundlerRpc, data);
+      console.log(response)
+      resolve(response.data.result);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
 export const submitUserOp = async (
   userOp: RawUserOperation,
   wailForReceipt = true

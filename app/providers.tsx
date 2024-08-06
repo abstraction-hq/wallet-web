@@ -11,7 +11,7 @@ import { ethClient } from "@/config";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const loading = useWalletStore((state) => state.loading);
-  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const walletAddress = useWalletStore((state) => state.activeAddress)();
   const fetchWalletBalance = useAssetStore((state) => state.fetchData);
 
   useEffect(() => {
@@ -19,17 +19,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (wallet) {
+    if (walletAddress) {
+      // TODO: Fetch balance on third party service
       ethClient.watchBlockNumber({
         onBlockNumber: (blockNumber) => {
-          fetchWalletBalance(wallet?.senderAddress);
+          fetchWalletBalance(walletAddress);
         },
         onError: (error) => {
           console.error("Error fetching block number", error);
         },
       })
     }
-  }, [wallet, loading, fetchWalletBalance]);
+  }, [walletAddress, loading, fetchWalletBalance]);
 
   return (
     <>

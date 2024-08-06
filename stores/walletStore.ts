@@ -2,35 +2,50 @@ import { Address } from "viem";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export interface IWalletPerChain {
-  chainId: string
-  passkeyCredentialId?: string;
-  senderAddress: Address
-  signerAddress?: Address;
+export interface Addresses {
+  chainId: number
+  address: Address
+}
+
+export interface PasskeyInfo {
+  passkeyCredentialId: string
+  x: string
+  y: string
+}
+
+export interface MnemonicInfo {
+  encryptedMnemonic: string
 }
 
 export interface IWallet {
   id: number;
   name: string;
-  wallets: IWalletPerChain[];
+  passkeyAuthorization?: PasskeyInfo;
+  mnemonicAuthorization?: MnemonicInfo;
+  addresses: Addresses[];
 }
 
 interface IWalletStoreState {
   wallets: IWallet[];
   activeWallet: number;
+  activeNetwork: number;
   loading: boolean;
+  activeAddress: () => Address | undefined;
   onCreateWallet: (wallet: IWallet) => void;
   setActiveWallet: (id: number) => void;
 }
 
 export const useWalletStore = create<IWalletStoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       wallets: [],
       activeWallet: 0,
+      activeNetwork: 11155111,
       loading: true,
+      activeAddress: () => get().wallets[get().activeWallet].addresses.find((address) => address.chainId === get().activeNetwork)?.address,
       onCreateWallet: (wallet: IWallet) => {
         set((state) => ({
+          ...state,
           wallets: [...state.wallets, wallet],
           activeWallet: wallet.id,
         }));
@@ -41,6 +56,12 @@ export const useWalletStore = create<IWalletStoreState>()(
           activeWallet: id,
         }));
       },
+      setActiveNetwork: (network: number) => {
+        set((state) => ({
+          ...state,
+          activeNetwork: network,
+        }));
+      }
     }),
     {
       name: "walletStore",

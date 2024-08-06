@@ -35,6 +35,8 @@ const Send = ({ preSelectedAsset }: SendProps) => {
   const [receiver, setReceiver] = useState<string>("");
   const tokens = useAssetStore((state) => state.tokens);
   const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const walletAddress =
+    useWalletStore((state) => state.activeAddress)() || "0x";
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedAsset, setSelectedAsset] = useState<Token | NFT>(
     preSelectedAsset ? preSelectedAsset : tokens[0]
@@ -49,10 +51,10 @@ const Send = ({ preSelectedAsset }: SendProps) => {
   const isDisabled = maxValue === "0";
 
   const onSend = async () => {
-    if (!receiver || (isToken && parseFloat(amount) === 0)) {
-      toast.error("Invalid input");
-      return;
-    }
+    // if (!receiver || (isToken && parseFloat(amount) === 0)) {
+    //   toast.error("Invalid input");
+    //   return;
+    // }
     setLoading(true);
     let target: Address = getAddress(selectedAsset.address);
     let value: bigint = 0n;
@@ -73,50 +75,56 @@ const Send = ({ preSelectedAsset }: SendProps) => {
       data = encodeFunctionData({
         abi: erc721Abi,
         functionName: "transferFrom",
-        args: [
-          wallet?.senderAddress,
-          getAddress(receiver),
-          BigInt(selectedAsset.id),
-        ],
+        args: [walletAddress, getAddress(receiver), BigInt(selectedAsset.id)],
       });
     }
 
-    const account = new PasskeyAccount(
-      wallet.passkeyCredentialId || "",
-      0n,
-      0n
-    );
+    if (wallet.passkeyAuthorization) {
+      const account = new PasskeyAccount(
+        wallet.passkeyAuthorization.passkeyCredentialId,
+        BigInt(wallet.passkeyAuthorization.x),
+        BigInt(wallet.passkeyAuthorization.y)
+      );
 
-    const [userOp, userOpHash] = await account.sendTransactionOperation(
-      ethClient,
-      [
-        {
-          target,
-          value,
-          data,
-        },
-      ]
-    );
+      const [userOp, userOpHash] = await account.sendTransactionOperation(
+        ethClient,
+        [
+          {
+            target,
+            value,
+            data,
+          },
+        ]
+      );
 
-    await toast.promise(submitUserOp(userOp), {
-      loading: "Sending...",
-      success: (data) => (
-        <div>
-          Transaction Success -{" "}
-          <a href={`https://scan.abstraction.world/operation/${data.userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
-      error: (err) => (
-        <div>
-          Transaction Fail -{" "}
-          <a href={`https://scan.abstraction.world/operation/${err.userOpHash}`} target="_blank">
-            Click to view on scan
-          </a>
-        </div>
-      ),
-    });
+      console.log(userOp, userOpHash);
+
+      await toast.promise(submitUserOp(userOp), {
+        loading: "Sending...",
+        success: (data) => (
+          <div>
+            Transaction Success -{" "}
+            <a
+              href={`https://scan.abstraction.world/operation/${data.userOpHash}`}
+              target="_blank"
+            >
+              Click to view on scan
+            </a>
+          </div>
+        ),
+        error: (err) => (
+          <div>
+            Transaction Fail -{" "}
+            <a
+              href={`https://scan.abstraction.world/operation/${err.userOpHash}`}
+              target="_blank"
+            >
+              Click to view on scan
+            </a>
+          </div>
+        ),
+      });
+    }
 
     setLoading(false);
   };

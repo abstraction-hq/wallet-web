@@ -20,8 +20,6 @@ export interface NFT {
 }
 
 export interface IWalletInfo {
-  vicBalance: bigint;
-  vicPrice: number;
   usdValue: number;
 }
 
@@ -34,72 +32,50 @@ interface AssetStore {
 
 const useAssetStore = create<AssetStore>((set) => ({
   walletInfo: {
-    vicBalance: BigInt(0),
-    vicPrice: 0,
     usdValue: 0,
   },
-  tokens: [],
+  tokens: [
+    {
+      address: zeroAddress,
+      symbol: "ETH",
+      decimals: 18,
+      balance: BigInt(0),
+      name: "Ethereum",
+      price: 0,
+    },
+  ],
   nfts: [],
   fetchData: async (address: Address) => {
     try {
-      const [vicBalance, vicPrice, nftsRes, tokenRes] = await Promise.all([
+      const [etherBalance, etherPrice] = await Promise.all([
         await ethClient.getBalance({
           address,
         }),
         await axios.get(
-          "https://www.binance.com/api/v3/ticker/price?symbol=VICUSDT"
+          "https://www.binance.com/api/v3/ticker/price?symbol=ETHUSDT"
         ),
-        await axios.get(`https://assets.coin98.com/nfts/88/${address}`),
-        await axios.get(`https://www.vicscan.xyz/api/account/${address}/tokenBalance?offset=0&limit=50`),
       ]);
 
       const usdValue =
-        parseFloat(formatEther(vicBalance)) * parseFloat(vicPrice.data.price);
+        parseFloat(formatEther(etherBalance)) * parseFloat(etherPrice.data.price);
 
       const tokens: Token[] = [
         {
           address: zeroAddress,
-          symbol: "VIC",
+          symbol: "ETH",
           decimals: 18,
-          balance: BigInt(vicBalance),
-          name: "Viction",
-          price: vicPrice.data.price,
+          balance: BigInt(etherBalance),
+          name: "Ethereum",
+          price: etherPrice.data.price,
         },
       ];
 
-      tokenRes.data?.data?.map((token: any) => {
-        tokens.push({
-          address: token.token,
-          symbol: token.tokenSymbol,
-          decimals: token.tokenDecimals,
-          balance: BigInt(token.quantity),
-          name: token.tokenName,
-          price: token.priceUsd
-        });
-      });
-
-      const nfts: NFT[] = [];
-      for (const data of nftsRes.data) {
-        for (const nft of data.data) {
-          if (nft) {
-            nfts.push({
-              address: nft.address,
-              id: nft.id,
-              name: nft.metaData?.name || "Unknown NFT",
-              image: nft.metaData?.image || "",
-            });
-          }
-        }
-      }
-
       set({
         walletInfo: {
-          vicBalance,
-          vicPrice: vicPrice.data.price,
           usdValue,
         },
         tokens,
-        nfts,
+        // nfts,
       });
     } catch (error: any) {
       console.log("Error fetching wallet balance: ", error);

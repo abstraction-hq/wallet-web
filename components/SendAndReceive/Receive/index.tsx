@@ -9,12 +9,12 @@ import { copyToClipboard } from "@/utils/browser";
 type ReceiveProps = {};
 
 const Receive = ({}: ReceiveProps) => {
-  const wallet = useWalletStore((state) => state.wallets[state.activeWallet]);
+  const walletAddress = useWalletStore((state) => state.activeAddress)();
 
   return (
     <>
       <div className="mb-6 p-6 text-center md:py-0">
-        <QRCode value={wallet?.senderAddress} />
+        <QRCode value={walletAddress || ""} />
       </div>
       <div className="space-y-1">
         <Option classTitle="2xl:mr-3" title="Network" stroke>
@@ -36,9 +36,9 @@ const Receive = ({}: ReceiveProps) => {
           color="bg-theme-green"
           stroke
         >
-          {wallet?.senderAddress?.slice(0, 7)}...
-          {wallet?.senderAddress?.slice(-7)}
-          <button className="group ml-auto text-0" onClick={() => copyToClipboard(wallet?.senderAddress)}>
+          {walletAddress?.slice(0, 7)}...
+          {walletAddress?.slice(-7)}
+          <button className="group ml-auto text-0" onClick={() => copyToClipboard(walletAddress)}>
             <Icon
               className="!w-5 !h-5 fill-theme-tertiary transition-colors group-hover:fill-theme-primary"
               name="copy"
@@ -50,7 +50,7 @@ const Receive = ({}: ReceiveProps) => {
           send assets from other networks, it may result in a loss of funds.
         </div>
       </div>
-      <button className="btn-secondary w-full mt-6" onClick={() => copyToClipboard(wallet?.senderAddress)}>
+      <button className="btn-secondary w-full mt-6" onClick={() => copyToClipboard(walletAddress)}>
         Copy VIC address
       </button>
     </>
