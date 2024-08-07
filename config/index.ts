@@ -1,5 +1,5 @@
 import { createPublicClient, http } from "viem";
-import { sepolia } from "viem/chains"
+import { bscTestnet } from "viem/chains"
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -8,6 +8,6 @@ export const bundlerRpc = process.env.NEXT_PUBLIC_BUNDLER_RPC || "https://wallet
 export const supportedNetworks = ["sepolia"];
 
 export const ethClient = createPublicClient({
-  chain: sepolia,
+  chain: bscTestnet,
   transport: http(),
 });

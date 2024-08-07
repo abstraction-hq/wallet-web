@@ -40,9 +40,9 @@ export const useWalletStore = create<IWalletStoreState>()(
     (set, get) => ({
       wallets: [],
       activeWallet: 0,
-      activeNetwork: 11155111,
+      activeNetwork: 97,
       loading: true,
-      activeAddress: () => get().wallets[get().activeWallet].addresses.find((address) => address.chainId === get().activeNetwork)?.address,
+      activeAddress: () => get().wallets[get().activeWallet]?.addresses?.find((address) => address.chainId === get().activeNetwork)?.address,
       onCreateWallet: (wallet: IWallet) => {
         set((state) => ({
           ...state,

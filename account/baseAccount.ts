@@ -129,7 +129,8 @@ export abstract class BaseAccount {
       }),
     };
 
-    const gasValue = await estimateGas(this.toRawUserOperation(userOp));
+    // const gasValue = await estimateGas(this.toRawUserOperation(userOp));
+    // console.log("Gas Value", gasValue);
 
     let maxFeePerGas = gasPrice,
       maxPriorityFeePerGas = gasPrice;
@@ -142,11 +143,11 @@ export abstract class BaseAccount {
 
     userOp = {
       ...userOp,
-      callGasLimit: 21000n,
+      callGasLimit: 100000n,
       preVerificationGas: 60000n,
       verificationGasLimit: 100000n,
-      maxFeePerGas,
-      maxPriorityFeePerGas,
+      maxFeePerGas: 0n,
+      maxPriorityFeePerGas: 0n,
     };
     const userOpHash = this.calculateUserOpHash(userOp, chainId);
     const signature = concat([
