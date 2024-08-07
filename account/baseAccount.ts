@@ -144,8 +144,8 @@ export abstract class BaseAccount {
     userOp = {
       ...userOp,
       callGasLimit: 100000n,
-      preVerificationGas: 60000n,
-      verificationGasLimit: 100000n,
+      preVerificationGas: 70000n,
+      verificationGasLimit: 1500000n,
       maxFeePerGas: 0n,
       maxPriorityFeePerGas: 0n,
     };

@@ -49,10 +49,12 @@ const WelcomePage = () => {
       id: wallets.length,
       name: passkeyName,
       passkeyAuthorization: passkeyInfo,
-      addresses: [{ 
-        chainId, 
-        address 
-      }],
+      addresses: [
+        {
+          chainId,
+          address,
+        },
+      ],
     });
 
     route.replace("/");
@@ -66,20 +68,27 @@ const WelcomePage = () => {
     });
 
     const keyId = hashMessage(authData.credentialId);
+    console.log(keyId)
 
     const findWallet = async (keyId: Hex): Promise<Address> => {
       return new Promise(async (resolve, reject) => {
-        const walletAddress = await ethClient.readContract({
-          abi: Passkey.abi,
-          address: PASSKEY,
-          functionName: "getWallet",
-          args: [keyId],
-        });
+        try {
+          const chainId = await ethClient.getChainId();
+          const walletAddress = await ethClient.readContract({
+            abi: Passkey.abi,
+            address: PASSKEY,
+            functionName: "getWallet",
+            args: [keyId],
+          });
 
-        if (!walletAddress || walletAddress == zeroAddress) {
+          if (!walletAddress || walletAddress == zeroAddress) {
+            reject("Wallet not found");
+          } else {
+            resolve(walletAddress as Address);
+          }
+        } catch (err) {
+          console.log(err)
           reject("Wallet not found");
-        } else {
-          resolve(walletAddress as Address);
         }
       });
     };
